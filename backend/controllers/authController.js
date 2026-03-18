@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const generateToken = require('../utils/generateToken');
+const { createAndEmitNotification } = require('../utils/notificationHelper');
 
 const registerUser = async (req, res) => {
   try {
@@ -17,6 +18,22 @@ const registerUser = async (req, res) => {
     });
 
     if (user) {
+      // Log Transaction (Initial Bonus)
+      const Transaction = require('../models/Transaction');
+      await Transaction.create({
+        user: user._id,
+        type: 'PURCHASE', // Or 'EARN'? PURCHASE feels like a deposit
+        amount: 100,
+        description: 'Welcome Bonus'
+      });
+
+      // 🔔 Notify User about Welcome Bonus
+      await createAndEmitNotification(req.io, {
+        user: user._id,
+        sender: user._id,
+        type: 'WALLET_UPDATE',
+        content: `Welcome to Skwap! We've added 100 credits to your wallet to get you started.`,
+      });
       res.status(201).json({
         _id: user._id,
         email: user.email,

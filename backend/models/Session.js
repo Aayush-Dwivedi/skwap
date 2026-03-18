@@ -23,6 +23,14 @@ const sessionSchema = mongoose.Schema(
       default: 'PENDING_START',
     },
     startTime: { type: Date },
+    learnerStarted: {
+      type: Boolean,
+      default: false,
+    },
+    teacherStarted: {
+      type: Boolean,
+      default: false,
+    },
     learnerCompleted: {
       type: Boolean,
       default: false,
@@ -30,6 +38,14 @@ const sessionSchema = mongoose.Schema(
     teacherCompleted: {
       type: Boolean,
       default: false,
+    },
+    isReverse: {
+      type: Boolean,
+      default: false,
+    },
+    originalSession: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Session',
     },
   },
   {

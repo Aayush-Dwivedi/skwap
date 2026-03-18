@@ -73,10 +73,11 @@ const SetupProfile = () => {
   };
 
   return (
-    <div className="min-h-screen bg-skwap-bgPrimary bg-gradient-to-br from-skwap-bgPrimary to-skwap-light/20 flex items-center justify-center p-4">
-      <div className="bg-skwap-card/30 backdrop-blur-xl border border-skwap-card/50 p-8 rounded-[2rem] shadow-2xl w-full max-w-2xl">
+    <div className="min-h-screen bg-transparent flex items-center justify-center p-4">
+      <div className="glass-strong p-10 rounded-[3rem] shadow-2xl w-full max-w-2xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-skwap-accent/10 rounded-full blur-[100px] -mr-16 -mt-16 pointer-events-none"></div>
         <div className="text-center mb-10">
-          <h2 className="text-4xl font-extrabold text-white mb-3">Complete Your Profile</h2>
+          <h2 className="text-4xl font-extrabold text-skwap-textPrimary mb-3">Complete Your Profile</h2>
           <p className="text-skwap-textSecondary text-lg">Just a few more details to get you started in the community.</p>
         </div>
 
@@ -85,7 +86,7 @@ const SetupProfile = () => {
             {/* Basic Info */}
             <div className="space-y-6">
               <div>
-                <label className="flex items-center gap-2 text-white text-sm font-semibold mb-2">
+                <label className="flex items-center gap-2 text-skwap-textSecondary text-sm font-bold mb-3">
                   <User size={18} className="text-skwap-accent" /> Full Name
                 </label>
                 <input 
@@ -95,15 +96,15 @@ const SetupProfile = () => {
                   onChange={handleChange}
                   required
                   placeholder="e.g. Alex Johnson" 
-                  className="w-full bg-skwap-cardLight/10 border border-skwap-card/50 text-white rounded-2xl px-5 py-3.5 focus:outline-none focus:ring-2 focus:ring-skwap-buttonFocus placeholder-white/20 transition-all"
+                  className="w-full glass-input rounded-2xl px-5 py-4 placeholder-white/20 transition-all font-medium"
                 />
               </div>
               <div>
-                <label className="flex items-center gap-2 text-white text-sm font-semibold mb-3">
+                <label className="flex items-center gap-2 text-skwap-textSecondary text-sm font-bold mb-3">
                   <ImageIcon size={18} className="text-skwap-accent" /> Profile Photo
                 </label>
                 <div className="flex items-center gap-4">
-                  <div className="w-20 h-20 rounded-2xl bg-skwap-cardLight/10 border border-skwap-card/50 overflow-hidden flex items-center justify-center flex-shrink-0">
+                  <div className="w-20 h-20 rounded-2xl glass border border-white/10 overflow-hidden flex items-center justify-center flex-shrink-0 shadow-inner">
                     {formData.photoUrl ? (
                       <img src={formData.photoUrl} alt="Preview" className="w-full h-full object-cover" />
                     ) : (
@@ -113,11 +114,11 @@ const SetupProfile = () => {
                     )}
                   </div>
                   <label className="flex-grow cursor-pointer box-border">
-                    <div className="w-full bg-skwap-cardLight/10 hover:bg-skwap-cardLight/20 border border-skwap-card/50 border-dashed text-white rounded-2xl px-5 py-4 text-center transition-all">
-                      <span className="text-xs font-medium text-skwap-textSecondary block mb-1">
+                    <div className="w-full glass hover:bg-white/10 border border-white/20 border-dashed text-white rounded-2xl px-5 py-4 text-center transition-all">
+                      <span className="text-xs font-bold text-skwap-accent block mb-1">
                         {uploading ? 'Uploading...' : 'Click to upload photo'}
                       </span>
-                      <span className="text-[10px] text-white/30">JPG or PNG, max 5MB</span>
+                      <span className="text-[10px] text-skwap-textSecondary font-bold">JPG or PNG, max 5MB</span>
                     </div>
                     <input 
                       type="file" 
@@ -134,7 +135,7 @@ const SetupProfile = () => {
             {/* Skills */}
             <div className="space-y-6">
               <div>
-                <label className="flex items-center gap-2 text-white text-sm font-semibold mb-2">
+                <label className="flex items-center gap-2 text-skwap-textSecondary text-sm font-bold mb-3">
                   <Briefcase size={18} className="text-skwap-accent" /> Skills You Can Teach
                 </label>
                 <textarea 
@@ -144,11 +145,11 @@ const SetupProfile = () => {
                   required
                   rows={2}
                   placeholder="React, Design, Piano (comma separated)" 
-                  className="w-full bg-skwap-cardLight/10 border border-skwap-card/50 text-white rounded-2xl px-5 py-3.5 focus:outline-none focus:ring-2 focus:ring-skwap-buttonFocus placeholder-white/20 transition-all resize-none"
+                  className="w-full glass-input rounded-2xl px-5 py-4 placeholder-white/20 transition-all resize-none font-medium h-24"
                 ></textarea>
               </div>
               <div>
-                <label className="flex items-center gap-2 text-white text-sm font-semibold mb-2">
+                <label className="flex items-center gap-2 text-skwap-textSecondary text-sm font-bold mb-3">
                   <GraduationCap size={18} className="text-skwap-accent" /> Skills You Want to Learn
                 </label>
                 <textarea 
@@ -158,7 +159,7 @@ const SetupProfile = () => {
                   required
                   rows={2}
                   placeholder="Python, Cooking, Karate (comma separated)" 
-                  className="w-full bg-skwap-cardLight/10 border border-skwap-card/50 text-white rounded-2xl px-5 py-3.5 focus:outline-none focus:ring-2 focus:ring-skwap-buttonFocus placeholder-white/20 transition-all resize-none"
+                  className="w-full glass-input rounded-2xl px-5 py-4 placeholder-white/20 transition-all resize-none font-medium h-24"
                 ></textarea>
               </div>
             </div>
@@ -168,11 +169,11 @@ const SetupProfile = () => {
             <button 
               type="submit" 
               disabled={submitting}
-              className="w-full bg-skwap-accent hover:bg-skwap-accent/80 text-white font-bold py-4 rounded-2xl transition-all shadow-xl shadow-skwap-accent/20 flex items-center justify-center gap-2 text-lg disabled:opacity-50"
+              className="w-full glass-btn text-white font-black py-5 rounded-2xl transition-all shadow-2xl flex items-center justify-center gap-3 text-xl disabled:opacity-50 uppercase tracking-widest"
             >
               {submitting ? 'Setting up...' : (
                 <>
-                  Ready to Go <ArrowRight size={20} />
+                  Ready to Go <ArrowRight size={24} />
                 </>
               )}
             </button>

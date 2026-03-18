@@ -1,11 +1,30 @@
 const Notification = require('../models/Notification');
+const Profile = require('../models/Profile');
 
 const getNotifications = async (req, res) => {
   try {
     const notifications = await Notification.find({ user: req.user._id })
+      .populate('sender', 'email')
       .sort({ createdAt: -1 });
 
-    res.json(notifications);
+    // Fetch profiles for all unique senders
+    const senderIds = [...new Set(notifications.filter(n => n.sender).map(n => n.sender._id))];
+    const profiles = await Profile.find({ user: { $in: senderIds } });
+    const profileMap = profiles.reduce((map, p) => {
+      map[p.user.toString()] = { name: p.name, photoUrl: p.photoUrl };
+      return map;
+    }, {});
+
+    // Attach profile info to notification objects
+    const notificationsWithProfiles = notifications.map(n => {
+      const notifObj = n.toObject();
+      if (notifObj.sender) {
+        notifObj.sender = { ...notifObj.sender, ...profileMap[n.sender._id.toString()] };
+      }
+      return notifObj;
+    });
+
+    res.json(notificationsWithProfiles);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

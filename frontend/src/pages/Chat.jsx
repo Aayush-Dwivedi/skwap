@@ -118,7 +118,12 @@ const Chat = () => {
           </button>
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-white/10 overflow-hidden border border-skwap-card">
-              <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${otherUser.name}`} alt="avatar" />
+              <img 
+                src={otherUser.photoUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${otherUser.name}`} 
+                alt="avatar" 
+                className="w-full h-full object-cover"
+                onError={(e) => { e.target.src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${otherUser.name}`; }}
+              />
             </div>
             <div>
               <h3 className="text-white font-bold text-sm">{otherUser.name}</h3>
@@ -169,7 +174,12 @@ const Chat = () => {
             <div key={m._id} className={`flex gap-3 max-w-[80%] ${isMine ? 'ml-auto flex-row-reverse' : ''}`}>
               {!isMine && (
                 <div className="w-8 h-8 rounded-full bg-white/10 overflow-hidden flex-shrink-0 border border-skwap-card mt-auto hidden sm:block">
-                  <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${m.sender.name}`} alt="avatar" />
+                  <img 
+                    src={m.sender.photoUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${m.sender.name}`} 
+                    alt="avatar" 
+                    className="w-full h-full object-cover"
+                    onError={(e) => { e.target.src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${m.sender.name}`; }}
+                  />
                 </div>
               )}
               <div className={`p-4 rounded-2xl text-sm leading-relaxed shadow-sm ${

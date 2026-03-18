@@ -47,6 +47,7 @@ app.use('/api/notifications', require('./routes/notificationRoutes'));
 app.use('/api/fraud', require('./routes/fraudRoutes'));
 app.use('/api/reviews', require('./routes/reviewRoutes'));
 app.use('/api/upload', require('./routes/uploadRoutes'));
+app.use('/api/contact', require('./routes/contactRoutes'));
 
 app.get('/', (req, res) => {
   res.send('Skwap API is running...');
@@ -65,16 +66,30 @@ io.on('connection', (socket) => {
     socket.join(room);
   });
 
-  socket.on('new message', (newMessageReceived) => {
-    var session = newMessageReceived.session;
-
-    if (!session.learner || !session.teacher) return;
-
-    if (session.learner === newMessageReceived.sender._id) {
-        socket.in(session.teacher).emit('message received', newMessageReceived);
-    } else {
-        socket.in(session.learner).emit('message received', newMessageReceived);
+  socket.on('new message', async (newMessageReceived) => {
+    let session = newMessageReceived.session;
+    
+    // If session is just an ID, we need to fetch it to know who to notify
+    if (typeof session === 'string' || session instanceof String || (session && !session.learner)) {
+      const Session = require('./models/Session');
+      session = await Session.findById(session);
     }
+
+    if (!session || !session.learner || !session.teacher) return;
+
+    // Emit to both parties rooms so ChatContext/unread counts work even if chat window is closed
+    const learnerId = session.learner.toString();
+    const teacherId = session.teacher.toString();
+    const senderId = newMessageReceived.sender._id || newMessageReceived.sender;
+
+    if (learnerId === senderId.toString()) {
+      socket.to(teacherId).emit('message received', newMessageReceived);
+    } else {
+      socket.to(learnerId).emit('message received', newMessageReceived);
+    }
+    
+    // REMOVED redundant broadcast to specific chat room to avoid duplication
+    // Personal room broadcast above handles it correctly.
   });
 
   socket.on('disconnect', () => {

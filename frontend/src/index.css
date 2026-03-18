@@ -4,23 +4,177 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  body {
-    @apply bg-gradient-to-br from-skwap-bgPrimary to-skwap-bgSecondary text-skwap-textPrimary antialiased min-h-screen m-0;
+/* ── Glassmorphism Keyframes ── */
+@keyframes floatOrb {
+  0%, 100% { transform: translateY(0) scale(1); opacity: 0.2; }
+  50% { transform: translateY(-30px) scale(1.1); opacity: 0.35; }
+}
+
+@keyframes shimmerBorder {
+  0%   { opacity: 0.4; }
+  50%  { opacity: 1; }
+  100% { opacity: 0.4; }
+}
+
+@keyframes glassReveal {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); backdrop-filter: blur(0px); }
+  to   { opacity: 1; transform: translateY(0) scale(1);   backdrop-filter: blur(24px); }
+}
+
+:root {
+  /* Dynamic Theme Variables (RGB format) - Fallbacks provided */
+  --skwap-bg-primary: 77, 59, 67;      /* #4D3B43 */
+  --skwap-bg-secondary: 53, 37, 42;    /* #35252A */
+  --skwap-sidebar: 88, 71, 77;         /* #58474D */
+  --skwap-card: 96, 76, 83;            /* #604C53 */
+  
+  /* These will be overridden dynamically by ThemeContext based on wallpaper */
+  --skwap-accent: 164, 127, 139;       /* #A47F8B */
+  --skwap-button-dark: 74, 59, 64;     /* #4A3B40 */
+  --skwap-button-focus: 109, 86, 93;   /* #6D565D */
+  --skwap-text-secondary: 215, 205, 210; /* #D7CDD2 */
+  
+  --skwap-text-primary: 255, 255, 255;
+  --skwap-btn-text: 255, 255, 255;
+  
+  /* Background wallpaper variable for zero-flash loads */
+  --skwap-bg-image: url("/bg-wallpaper.png");
+  
+  /* Transparency levels */
+  --glass-card-opacity: 0.22;
+  --glass-strong-opacity: 0.32;
+  --glass-sidebar-opacity: 0.28;
+  --glass-blur: 40px;
+}
+
+/* ── Global Dark Mode Overlay removed in favor of composite backgrounds ── */
+
+/* ── Glassmorphism Utility Classes ── */
+@layer components {
+  .glass {
+    background: rgba(var(--skwap-text-primary), 0.05);
+    backdrop-filter: blur(16px) saturate(1.4);
+    -webkit-backdrop-filter: blur(16px) saturate(1.4);
+    border: 1px solid rgba(var(--skwap-text-primary), 0.10);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15), inset 0 1px 0 rgba(var(--skwap-text-primary), 0.08);
+  }
+
+  .glass-card {
+    background: linear-gradient(135deg, rgba(var(--skwap-card), var(--glass-card-opacity)) 0%, rgba(var(--skwap-bg-primary), 0.2) 100%);
+    backdrop-filter: blur(var(--glass-blur)) saturate(1.5);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.5);
+    border: 1px solid rgba(var(--skwap-text-primary), 0.12);
+    box-shadow:
+      0 8px 32px rgba(0,0,0,0.25),
+      inset 0 1px 0 rgba(var(--skwap-text-primary), 0.12),
+      inset 0 -1px 0 rgba(0,0,0,0.10);
+  }
+
+  .glass-strong {
+    background: linear-gradient(160deg, rgba(var(--skwap-bg-secondary), var(--glass-strong-opacity)) 0%, rgba(var(--skwap-bg-primary), 0.85) 100%);
+    backdrop-filter: blur(40px) saturate(1.6);
+    -webkit-backdrop-filter: blur(40px) saturate(1.6);
+    border: 1px solid rgba(var(--skwap-text-primary), 0.10);
+    box-shadow:
+      0 25px 60px rgba(0,0,0,0.4),
+      inset 0 1px 0 rgba(var(--skwap-text-primary), 0.10),
+      inset 0 -1px 0 rgba(0,0,0,0.20),
+      0 0 0 0.5px rgba(var(--skwap-text-primary), 0.04);
+  }
+
+  .glass-input {
+    background: rgba(var(--skwap-text-primary), 0.04);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(var(--skwap-text-primary), 0.10);
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    color: rgb(var(--skwap-text-primary));
+  }
+  
+  .glass-input:focus {
+    background: rgba(var(--skwap-text-primary), 0.07);
+    border-color: rgba(var(--skwap-accent), 0.6);
+    box-shadow: 0 0 0 3px rgba(var(--skwap-accent), 0.15), inset 0 1px 0 rgba(var(--skwap-text-primary), 0.06);
+    outline: none;
+  }
+
+  .glass-btn {
+    background: linear-gradient(135deg, rgba(var(--skwap-button-focus), 0.90) 0%, rgba(var(--skwap-button-dark), 0.95) 100%);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.15);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.15);
+    transition: all 0.2s ease;
+    color: rgb(var(--skwap-btn-text));
+  }
+  
+  .glass-btn:hover {
+    background: linear-gradient(135deg, rgba(var(--skwap-accent), 0.45) 0%, rgba(var(--skwap-button-dark), 0.98) 100%);
+    box-shadow: 0 6px 24px rgba(0,0,0,0.35), 0 0 20px rgba(var(--skwap-accent), 0.25), inset 0 1px 0 rgba(255,255,255,0.20);
+    transform: translateY(-1px);
   }
 }
 
-/* Custom minimal scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+@layer base {
+  body {
+    background-color: rgb(var(--skwap-bg-primary));
+    background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.6)), var(--skwap-bg-image);
+    color: rgb(var(--skwap-text-primary));
+    @apply antialiased min-h-screen m-0 relative;
+    background-attachment: fixed;
+    background-size: cover;
+    background-position: center;
+  }
+
+  /* Overlay handled via composite backgroundImage in JS/HTML */
+  body::after {
+    display: none;
+  }
 }
+
+/* Ambient orb animation helper */
+.orb-float { animation: floatOrb 12s ease-in-out infinite; }
+.orb-float-slow { animation: floatOrb 18s ease-in-out infinite reverse; }
+.orb-float-mid { animation: floatOrb 15s ease-in-out 4s infinite; }
+
+/* ── Global Scrollbar Polish ── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+*:hover {
+  scrollbar-color: rgba(var(--skwap-accent), 0.3) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
 ::-webkit-scrollbar-track {
   background: transparent;
 }
+
 ::-webkit-scrollbar-thumb {
-  @apply rounded-full bg-skwap-card;
+  background: transparent;
+  border-radius: 20px;
+  border: 1px solid transparent;
+  transition: background 0.3s ease;
 }
+
+/* Show scrollbar on hover of the scrollable element */
+*:hover::-webkit-scrollbar-thumb,
+html:hover::-webkit-scrollbar-thumb,
+body:hover::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(var(--skwap-accent), 0.2), rgba(var(--skwap-accent), 0.1));
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-skwap-buttonFocus;
+  background: linear-gradient(180deg, rgba(var(--skwap-accent), 0.4), rgba(var(--skwap-accent), 0.2)) !important;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
 }

@@ -8,16 +8,16 @@ export default {
     extend: {
       colors: {
         skwap: {
-          bgPrimary: '#4D3B43',
-          bgSecondary: '#35252A',
-          sidebar: '#58474D',
-          card: '#604C53',
-          cardLight: '#E8DFE2', // For the login/landing cards
+          bgPrimary: 'rgb(var(--skwap-bg-primary))',
+          bgSecondary: 'rgb(var(--skwap-bg-secondary))',
+          sidebar: 'rgb(var(--skwap-sidebar))',
+          card: 'rgb(var(--skwap-card))',
+          cardLight: '#E8DFE2', // Keep static for now as it's for light cards
           textPrimary: '#FFFFFF',
-          textSecondary: '#C8B9BF',
-          accent: '#A47F8B',
-          buttonDark: '#4A3B40',
-          buttonFocus: '#6D565D'
+          textSecondary: 'rgb(var(--skwap-text-secondary))',
+          accent: 'rgb(var(--skwap-accent))',
+          buttonDark: 'rgb(var(--skwap-button-dark))',
+          buttonFocus: 'rgb(var(--skwap-button-focus))'
         }
       },
       fontFamily: {

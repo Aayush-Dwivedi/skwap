@@ -43,7 +43,7 @@ const MyPostings = () => {
         </div>
         <Link 
           to="/create-request"
-          className="bg-skwap-buttonFocus hover:bg-white hover:text-skwap-bgPrimary border border-white/10 text-white shadow-lg rounded-xl px-5 py-2.5 flex items-center gap-2 font-medium transition-all"
+          className="glass-btn text-white shadow-lg rounded-xl px-5 py-2.5 flex items-center gap-2 font-medium transition-all"
         >
           <Plus className="w-5 h-5" />
           Create New Listing
@@ -54,7 +54,7 @@ const MyPostings = () => {
       {loading ? (
         <div className="text-white">Loading your postings...</div>
       ) : listings.length === 0 ? (
-        <div className="text-skwap-textSecondary text-center py-20 bg-skwap-card/20 rounded-3xl border border-skwap-card/50 border-dashed">
+        <div className="text-skwap-textSecondary text-center py-20 glass rounded-3xl border-dashed border-white/20">
           You haven't posted any skills to teach or learn yet!
         </div>
       ) : (
@@ -85,8 +85,8 @@ const MyPostings = () => {
 
 const PreviewModal = ({ listing, onClose }) => {
   return (
-    <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
-      <div className="bg-[#1E1218] border border-white/10 rounded-3xl p-8 max-w-md w-full relative" onClick={e => e.stopPropagation()}>
+    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-300" onClick={onClose}>
+      <div className="glass-strong rounded-[2.5rem] p-8 max-w-md w-full relative border border-white/15 shadow-2xl" onClick={e => e.stopPropagation()}>
         <button onClick={onClose} className="absolute top-6 right-6 text-white/40 hover:text-white">
           <X size={20} />
         </button>
@@ -97,7 +97,7 @@ const PreviewModal = ({ listing, onClose }) => {
           <div className="flex items-center gap-3 p-4 bg-white/5 rounded-2xl border border-white/10">
             <Zap className="text-amber-400" size={20} />
             <div>
-              <p className="text-white font-bold text-sm">{listing.creditsPerHour} credits / hr</p>
+              <p className="text-white font-bold text-sm">1 credit / hr</p>
               <p className="text-white/40 text-[10px] uppercase">Exchange Rate</p>
             </div>
           </div>
@@ -111,10 +111,10 @@ const PreviewModal = ({ listing, onClose }) => {
         </div>
         
         <div className="mt-8 flex gap-3">
-          <Link to={`/edit-listing/${listing._id}`} className="flex-1 bg-white/10 hover:bg-white/20 text-white font-bold py-3 rounded-xl text-center transition-all">
+          <Link to={`/edit-listing/${listing._id}`} className="flex-1 glass text-white font-bold py-3 rounded-xl text-center hover:bg-white/10 transition-all border border-white/10">
             Edit Listing
           </Link>
-          <button onClick={onClose} className="flex-1 bg-skwap-buttonFocus text-white font-bold py-3 rounded-xl transition-all">
+          <button onClick={onClose} className="flex-1 glass-btn text-white font-bold py-3 rounded-xl transition-all">
             Close
           </button>
         </div>

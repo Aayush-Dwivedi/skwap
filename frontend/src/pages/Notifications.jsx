@@ -4,11 +4,14 @@ import api from '../services/api';
 import toast from 'react-hot-toast';
 import { Bell, Check, X, Clock, Zap, BookOpen, MessageSquare, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
+import { useSocket } from '../contexts/SocketContext';
+import { useChat } from '../contexts/ChatContext';
 
 const Notifications = () => {
-  const navigate = useNavigate();
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { socket } = useSocket();
+  const { openSession } = useChat();
 
   const fetchNotifications = async () => {
     try {
@@ -24,7 +27,17 @@ const Notifications = () => {
 
   useEffect(() => {
     fetchNotifications();
-  }, []);
+
+    if (socket) {
+      socket.on('notification received', (newNotif) => {
+        setNotifications(prev => [newNotif, ...prev]);
+      });
+    }
+
+    return () => {
+      if (socket) socket.off('notification received');
+    };
+  }, [socket]);
 
   const handleAction = async (notifId, requestId, status) => {
     try {
@@ -79,7 +92,7 @@ const Notifications = () => {
         {notifications.some(n => !n.read) && (
           <button 
             onClick={markAllRead}
-            className="text-xs font-bold text-skwap-accent hover:text-white transition-colors uppercase tracking-widest bg-white/5 px-4 py-2 rounded-xl border border-white/10"
+            className="text-xs font-bold text-skwap-accent hover:text-white transition-colors uppercase tracking-widest glass px-4 py-2 rounded-xl border border-white/10"
           >
             Mark all as read
           </button>
@@ -89,12 +102,12 @@ const Notifications = () => {
       {loading ? (
         <div className="space-y-4">
           {[1, 2, 3].map(i => (
-            <div key={i} className="h-24 bg-white/5 animate-pulse rounded-2xl border border-white/5" />
+            <div key={i} className="h-24 glass animate-pulse rounded-[1.5rem]" />
           ))}
         </div>
       ) : notifications.length === 0 ? (
-        <div className="text-center py-20 bg-white/5 rounded-3xl border border-white/10 border-dashed">
-          <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
+        <div className="text-center py-20 glass rounded-[2.5rem] border-white/10 border-dashed">
+          <div className="w-16 h-16 glass rounded-full flex items-center justify-center mx-auto mb-4">
             <Bell size={24} className="text-white/20" />
           </div>
           <p className="text-skwap-textSecondary font-medium">No notifications yet!</p>
@@ -104,22 +117,32 @@ const Notifications = () => {
           {notifications.map((notif) => (
             <div 
               key={notif._id}
-              className={`group relative p-5 rounded-2xl border transition-all duration-300 ${
-                notif.read ? 'bg-white/[0.02] border-white/5 opacity-80' : 'bg-white/[0.06] border-white/15 shadow-lg ring-1 ring-white/10'
+              className={`group relative p-5 rounded-[1.5rem] border transition-all duration-300 ${
+                notif.read ? 'glass opacity-60 border-white/5' : 'glass-card shadow-lg ring-1 ring-white/5'
               }`}
             >
               <div className="flex gap-4">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
-                  notif.read ? 'bg-white/5' : 'bg-white/10 shadow-inner'
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 relative ${
+                  notif.read ? 'glass' : 'glass-strong shadow-inner'
                 }`}>
-                  {getNotifIcon(notif.type)}
+                  {notif.type === 'NEW_REQUEST' || notif.type === 'REQUEST_ACCEPTED' ? (
+                    <img 
+                      src={notif.sender?.photoUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${notif.sender?.name || 'User'}`} 
+                      className="w-full h-full object-cover rounded-xl" 
+                      alt="avatar" 
+                      onError={(e) => { e.target.src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${notif.sender?.name || 'User'}`; }}
+                    />
+                  ) : getNotifIcon(notif.type)}
+                  <div className="absolute -bottom-1 -right-1 bg-skwap-card rounded-full p-0.5 border border-white/10 shadow-lg">
+                    {getNotifIcon(notif.type)}
+                  </div>
                 </div>
                 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2 mb-1">
                     <div className="flex items-center gap-2">
                       <p className={`text-sm font-medium ${notif.read ? 'text-white/70' : 'text-white'}`}>
-                        {notif.content}
+                        {notif.content?.replace(/undefined/g, 'User')}
                       </p>
                       {notif.type === 'NEW_REQUEST' && !notif.read && (
                         <span className="text-[9px] bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded border border-amber-500/20 font-bold uppercase tracking-tighter">Action Required</span>
@@ -154,11 +177,11 @@ const Notifications = () => {
                       <button
                         onClick={() => {
                           handleMarkRead(notif._id);
-                          navigate(`/chat/${notif.relatedId}`);
+                          openSession(notif.relatedId);
                         }}
-                        className="flex items-center gap-2 bg-skwap-accent hover:bg-skwap-accent/80 text-white text-xs font-bold py-2.5 px-6 rounded-xl shadow-lg transition-all"
+                        className="flex items-center gap-2 bg-skwap-accent hover:bg-skwap-accent/90 text-[#0f1715] text-xs font-bold py-2.5 px-6 rounded-xl shadow-lg transition-all hover:scale-[1.02] active:scale-95"
                       >
-                        <MessageSquare size={14} /> Open Chat
+                        <MessageSquare size={14} className="fill-[#0f1715]/20" /> Open Chat
                       </button>
                     </div>
                   )}

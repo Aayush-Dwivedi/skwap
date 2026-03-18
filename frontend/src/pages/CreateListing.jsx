@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
-import { PlusCircle, Info, Tag, Clock, ArrowRight } from 'lucide-react';
+import { PlusCircle, Info, Tag, Clock, ArrowRight, Briefcase, ExternalLink, GraduationCap } from 'lucide-react';
 
 const CreateListing = () => {
   const { user } = useAuth();
@@ -15,7 +15,7 @@ const CreateListing = () => {
     description: '',
     method: 'BARTER', // 'BARTER', 'CREDITS', or 'BOTH'
     barterSkills: '',
-    creditsPerHour: 0,
+    creditsPerHour: 1,
     availability: '',
     portfolioLink: ''
   });
@@ -53,20 +53,20 @@ const CreateListing = () => {
         <p className="text-skwap-textSecondary text-sm">Offer your expertise or request someone else's.</p>
       </div>
 
-      <div className="bg-skwap-card/30 border border-skwap-card rounded-3xl p-5 backdrop-blur-sm shadow-xl relative overflow-hidden h-fit">
+      <div className="glass-card rounded-[2.5rem] p-8 shadow-2xl relative overflow-hidden h-fit">
         {/* Decorative background glow */}
-        <div className="absolute -top-32 -right-32 w-96 h-96 bg-skwap-accent/20 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute -top-32 -right-32 w-96 h-96 bg-skwap-accent/15 rounded-full blur-[100px] pointer-events-none"></div>
 
         <form onSubmit={handleSubmit} className="space-y-4 relative z-10">
           
           {/* Type Toggle */}
-          <div className="flex gap-3 p-1 bg-skwap-cardLight/5 border border-skwap-card rounded-2xl w-fit">
+          <div className="flex gap-3 p-1 glass rounded-2xl w-fit">
             <button
               type="button"
               onClick={() => setFormData({ ...formData, type: 'TEACH' })}
               className={`px-6 py-2 rounded-xl font-bold text-sm transition-all ${
                 formData.type === 'TEACH' 
-                  ? 'bg-skwap-buttonFocus text-white shadow-md' 
+                  ? 'glass-btn text-white shadow-md' 
                   : 'text-skwap-textSecondary hover:text-white'
               }`}
             >
@@ -77,7 +77,7 @@ const CreateListing = () => {
               onClick={() => setFormData({ ...formData, type: 'LEARN' })}
               className={`px-6 py-2 rounded-xl font-bold text-sm transition-all ${
                 formData.type === 'LEARN' 
-                  ? 'bg-skwap-buttonFocus text-white shadow-md' 
+                  ? 'glass-btn text-white shadow-md' 
                   : 'text-skwap-textSecondary hover:text-white'
               }`}
             >
@@ -101,15 +101,15 @@ const CreateListing = () => {
                     onChange={handleChange}
                     required
                     placeholder={formData.type === 'TEACH' ? 'e.g. Advanced React Patterns' : 'e.g. Conversational French'} 
-                    className="w-full bg-skwap-cardLight/5 border border-skwap-card/50 text-white rounded-xl px-4 py-2.5 pl-10 focus:outline-none focus:ring-2 focus:ring-skwap-buttonFocus placeholder-white/20 transition-all font-medium text-sm"
+                    className="w-full glass-input rounded-xl px-4 py-3 pl-10 placeholder-white/20 transition-all font-medium text-sm"
                   />
                   <Tag size={15} className="absolute inset-y-0 left-3.5 my-auto text-skwap-accent" />
                 </div>
               </div>
 
               <div>
-                <label className="block text-skwap-textSecondary text-[10px] font-bold mb-1.5 uppercase tracking-wider ml-1">
-                  Description
+                <label className="flex items-center gap-2 text-skwap-textSecondary text-sm font-bold mb-3">
+                  <Briefcase size={18} className="text-skwap-accent" /> Description
                 </label>
                 <textarea 
                   name="description"
@@ -118,14 +118,14 @@ const CreateListing = () => {
                   required
                   rows={3}
                   placeholder={`Detail exactly what the session will entail...`} 
-                  className="w-full bg-skwap-cardLight/5 border border-skwap-card/50 text-white rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-skwap-buttonFocus placeholder-white/20 transition-all resize-none text-sm leading-relaxed"
+                  className="w-full glass-input rounded-xl px-4 py-3 transition-all resize-none text-sm leading-relaxed"
                 ></textarea>
               </div>
 
               {formData.type === 'TEACH' && (
                 <div>
-                  <label className="block text-skwap-textSecondary text-[10px] font-bold mb-1.5 uppercase tracking-wider ml-1">
-                    Portfolio / Proof of Work (Optional)
+                  <label className="flex items-center gap-2 text-skwap-textSecondary text-sm font-bold mb-3">
+                    <ExternalLink size={18} className="text-skwap-accent" /> Portfolio / Reference
                   </label>
                   <input 
                     type="url" 
@@ -133,7 +133,7 @@ const CreateListing = () => {
                     value={formData.portfolioLink}
                     onChange={handleChange}
                     placeholder="Link to your Github, Dribbble, or personal site" 
-                    className="w-full bg-skwap-cardLight/5 border border-skwap-card/50 text-white rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-skwap-buttonFocus placeholder-white/20 transition-all text-sm"
+                    className="w-full glass-input rounded-xl px-4 py-3 transition-all text-sm"
                   />
                 </div>
               )}
@@ -146,18 +146,18 @@ const CreateListing = () => {
                 
                 <div className="space-y-3">
                   <div>
-                    <label className="block text-skwap-textSecondary text-[10px] font-bold mb-1.5 uppercase tracking-widest">
-                      Method
-                    </label>
+                    <label className="flex items-center gap-2 text-skwap-textSecondary text-sm font-bold mb-3">
+                    <GraduationCap size={18} className="text-skwap-accent" /> Payment Method
+                  </label>
                     <select 
                       name="method"
                       value={formData.method}
                       onChange={handleChange}
-                      className="w-full bg-skwap-bgPrimary border border-skwap-card text-white rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-skwap-buttonFocus text-sm appearance-none cursor-pointer"
+                      className="w-full glass-input rounded-xl px-3 py-3 text-sm cursor-pointer"
                     >
-                      <option value="BARTER">Barter Skills (No credits)</option>
-                      <option value="CREDITS">Use Credits (1 Cr/hr)</option>
-                      <option value="BOTH">Accept Both</option>
+                      <option value="BARTER" className="bg-skwap-bgSecondary text-white">Barter Skills (No credits)</option>
+                      <option value="CREDITS" className="bg-skwap-bgSecondary text-white">Use Credits (1 Cr/hr)</option>
+                      <option value="BOTH" className="bg-skwap-bgSecondary text-white">Accept Both (1 Cr/hr or Barter)</option>
                     </select>
                   </div>
 
@@ -173,33 +173,24 @@ const CreateListing = () => {
                         onChange={handleChange}
                         required={formData.method === 'BARTER'}
                         placeholder="CSS, Node.js, Cooking..." 
-                        className="w-full bg-skwap-bgPrimary border border-skwap-card text-white rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-skwap-buttonFocus placeholder-white/20 transition-all text-sm"
+                        className="w-full glass-input rounded-xl px-3 py-3 placeholder-white/20 transition-all text-sm"
                       />
                     </div>
                   )}
 
                   {(formData.method === 'CREDITS' || formData.method === 'BOTH') && (
-                    <div>
-                      <label className="block text-skwap-textSecondary text-[10px] font-bold mb-1.5 uppercase tracking-widest">
-                        Credits Per Hour
-                      </label>
-                      <input 
-                        type="number" 
-                        name="creditsPerHour"
-                        value={formData.creditsPerHour}
-                        onChange={handleChange}
-                        required={formData.method === 'CREDITS' || formData.method === 'BOTH'}
-                        min="1"
-                        className="w-full bg-skwap-bgPrimary border border-skwap-card text-white rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-skwap-buttonFocus placeholder-white/20 transition-all text-sm"
-                      />
+                    <div className="bg-white/5 border border-white/10 rounded-xl p-3">
+                      <p className="text-[10px] font-bold text-skwap-accent uppercase tracking-widest mb-1">Platform Rate</p>
+                      <p className="text-white font-bold text-sm">1 credit / hour</p>
+                      <p className="text-[9px] text-white/40 mt-1">Standardized rate for all skill exchanges.</p>
                     </div>
                   )}
                 </div>
               </div>
 
-              <div>
-                <label className="block text-skwap-textSecondary text-[10px] font-bold mb-1.5 uppercase tracking-wider ml-1">
-                  Availability
+              <div className="md:col-span-2">
+                <label className="flex items-center gap-2 text-skwap-textSecondary text-sm font-bold mb-3">
+                  <Clock size={18} className="text-skwap-accent" /> Availability / Schedule
                 </label>
                 <div className="relative">
                   <input 
@@ -208,7 +199,7 @@ const CreateListing = () => {
                     value={formData.availability}
                     onChange={handleChange}
                     placeholder="e.g. Weekends only, Evenings GST" 
-                    className="w-full bg-skwap-cardLight/5 border border-skwap-card/50 text-white rounded-xl px-4 py-2.5 pl-10 focus:outline-none focus:ring-2 focus:ring-skwap-buttonFocus placeholder-white/20 transition-all text-sm"
+                    className="w-full glass-input rounded-xl px-4 py-3 pl-10 placeholder-white/20 transition-all text-sm"
                   />
                   <Clock size={14} className="absolute inset-y-0 left-3.5 my-auto text-white/40" />
                 </div>
@@ -221,7 +212,7 @@ const CreateListing = () => {
             <button 
               type="submit" 
               disabled={saving} 
-              className="px-6 py-2.5 bg-skwap-card hover:bg-skwap-buttonFocus text-white font-bold rounded-xl shadow-xl transition-all disabled:opacity-50 flex items-center gap-2 group text-sm"
+              className="px-8 py-3 glass-btn text-white font-bold rounded-xl shadow-xl transition-all disabled:opacity-50 flex items-center gap-2 group text-sm"
             >
               {saving ? 'Publishing...' : 'Publish Listing'}
               <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />

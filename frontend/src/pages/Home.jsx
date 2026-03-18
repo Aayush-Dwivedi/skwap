@@ -44,16 +44,26 @@ const Home = () => {
     <div>
       {/* Header Tabs & Search */}
       <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-6 mb-10">
-        <div className="bg-skwap-card/40 p-1 rounded-full inline-flex flex-shrink-0 border border-skwap-card self-start xl:self-auto shadow-sm">
+        <div
+          className="p-1 rounded-full inline-flex flex-shrink-0 self-start xl:self-auto glass"
+        >
           <button
             onClick={() => setTab('LEARNING')}
-            className={`text-sm font-medium px-8 py-2.5 rounded-full transition-all duration-300 ${tab === 'LEARNING' ? 'bg-skwap-buttonFocus text-white shadow-md' : 'text-skwap-textSecondary hover:text-white hover:bg-skwap-card/50'}`}
+            className={`text-sm font-medium px-8 py-2.5 rounded-full transition-all duration-300 ${
+              tab === 'LEARNING'
+                ? 'glass-btn text-white shadow-md'
+                : 'text-skwap-textSecondary hover:text-white'
+            }`}
           >
             I want to Learn
           </button>
           <button
             onClick={() => setTab('TEACHING')}
-            className={`text-sm font-medium px-8 py-2.5 rounded-full transition-all duration-300 ${tab === 'TEACHING' ? 'bg-skwap-buttonFocus text-white shadow-md' : 'text-skwap-textSecondary hover:text-white hover:bg-skwap-card/50'}`}
+            className={`text-sm font-medium px-8 py-2.5 rounded-full transition-all duration-300 ${
+              tab === 'TEACHING'
+                ? 'glass-btn text-white shadow-md'
+                : 'text-skwap-textSecondary hover:text-white'
+            }`}
           >
             I want to Teach
           </button>
@@ -71,7 +81,7 @@ const Home = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={`Search ${tab === 'LEARNING' ? 'skills to learn' : 'people to teach'}...`}
-              className="bg-white/5 border border-white/15 text-white text-sm rounded-full pl-11 pr-5 py-3 w-full xl:w-96 focus:outline-none focus:ring-2 focus:ring-skwap-accent focus:border-skwap-accent placeholder-skwap-textSecondary transition-all"
+              className="text-skwap-accent text-sm rounded-full pl-11 pr-5 py-3 w-full xl:w-96 placeholder-skwap-textSecondary glass-input"
             />
           </div>
         </div>
@@ -95,7 +105,7 @@ const Home = () => {
           ))}
         </div>
       ) : filteredListings.length === 0 ? (
-        <div className="text-skwap-textSecondary text-center py-20 bg-skwap-card/20 rounded-3xl border border-skwap-card/50 border-dashed">
+        <div className="text-skwap-textSecondary text-center py-20 glass rounded-3xl border-dashed border-white/20">
           No listings found in this category. Be the first to add one!
         </div>
       ) : (
@@ -168,7 +178,13 @@ const BookingModal = ({ listing, onClose }) => {
       className="fixed inset-0 z-[100] bg-black/70 backdrop-blur-sm flex items-end sm:items-center justify-center p-4"
       onClick={handleBackdrop}
     >
-      <div className="bg-[#1E1218] border border-white/10 rounded-3xl w-full max-w-md shadow-2xl overflow-hidden animate-[slideUp_0.25s_ease]">
+      <div
+        className="w-full max-w-md rounded-3xl overflow-hidden animate-[slideUp_0.25s_ease] glass-strong"
+        style={{
+          border: '1px solid rgba(var(--skwap-text-primary), 0.12)',
+          boxShadow: '0 30px 70px rgba(0,0,0,0.35), inset 0 1.5px 0 rgba(var(--skwap-text-primary), 0.12)',
+        }}
+      >
         {/* Header */}
         <div className="relative p-6 pb-4 border-b border-white/8">
           <button onClick={onClose} className="absolute top-5 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-white/8 hover:bg-white/15 transition-colors">
@@ -184,17 +200,17 @@ const BookingModal = ({ listing, onClose }) => {
               />
             </div>
             <div>
-              <h3 className="text-white font-bold text-lg leading-tight">{listing.skillName}</h3>
+              <h3 className="text-skwap-textPrimary font-bold text-lg leading-tight">{listing.skillName}</h3>
               <p className="text-skwap-textSecondary text-sm">with {listing.uploader?.name || 'User'}</p>
             </div>
           </div>
 
           {/* Listing meta pills */}
           <div className="flex gap-2 mt-4 flex-wrap">
-            <span className="text-[11px] font-semibold px-2.5 py-1 bg-white/8 border border-white/10 rounded-full text-white/70 uppercase tracking-wider">{listing.method}</span>
+            <span className="text-[11px] font-semibold px-2.5 py-1 bg-white/8 border border-white/10 rounded-full text-skwap-textSecondary/70 uppercase tracking-wider">{listing.method}</span>
             {listing.creditsPerHour > 0 && (
               <span className="text-[11px] font-semibold px-2.5 py-1 bg-amber-500/15 border border-amber-500/25 rounded-full text-amber-300 flex items-center gap-1">
-                <Zap size={10} /> {listing.creditsPerHour} credits / hr
+                <Zap size={10} /> 1 credit / hr
               </span>
             )}
           </div>
@@ -206,7 +222,7 @@ const BookingModal = ({ listing, onClose }) => {
           {/* Booking Type Summary */}
           <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-white/40 text-xs uppercase font-bold tracking-widest">Type</span>
+              <span className="text-skwap-textSecondary/40 text-xs uppercase font-bold tracking-widest">Type</span>
               <span className={`text-[10px] font-black px-2 py-0.5 rounded-lg uppercase tracking-wider ${
                 (listing.method === 'BARTER' || (listing.method === 'BOTH' && matchedSkill)) ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
               }`}>
@@ -215,17 +231,17 @@ const BookingModal = ({ listing, onClose }) => {
             </div>
             
             <div className="flex items-center justify-between">
-              <span className="text-white/40 text-xs uppercase font-bold tracking-widest">Cost</span>
+              <span className="text-skwap-textSecondary/40 text-xs uppercase font-bold tracking-widest">Cost</span>
               <div className="flex items-center gap-1.5">
                 {(listing.method === 'BARTER' || (listing.method === 'BOTH' && matchedSkill)) ? (
                   <>
                     <BookOpen size={12} className="text-emerald-400" />
-                    <span className="text-white text-sm font-bold">Offer #{matchedSkill || 'Matching Skill'}</span>
+                    <span className="text-skwap-textPrimary text-sm font-bold">Offer #{matchedSkill || 'Matching Skill'}</span>
                   </>
                 ) : (
                   <>
                     <Zap size={12} className="text-amber-400" />
-                    <span className="text-white text-sm font-bold">{listing.creditsPerHour * duration} credits</span>
+                    <span className="text-skwap-textPrimary text-sm font-bold">{duration} credits</span>
                   </>
                 )}
               </div>
@@ -264,7 +280,7 @@ const BookingModal = ({ listing, onClose }) => {
               onChange={(e) => setMessage(e.target.value)}
               rows={3}
               placeholder={`Tell ${listing.uploader?.name || 'User'} what you'd like to learn...`}
-              className="w-full bg-white/5 border border-white/10 text-white text-sm rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-skwap-buttonFocus placeholder-white/25 resize-none transition-all"
+              className="w-full text-white text-sm rounded-xl px-4 py-3 resize-none transition-all glass-input"
             />
           </div>
 
@@ -280,7 +296,7 @@ const BookingModal = ({ listing, onClose }) => {
             <button
               type="submit"
               disabled={submitting}
-              className="flex-1 py-3 rounded-xl text-sm font-bold text-white bg-skwap-buttonFocus hover:brightness-110 disabled:opacity-60 disabled:cursor-not-allowed transition-all shadow-lg"
+              className="flex-1 py-3 rounded-xl text-sm font-bold text-white glass-btn disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {submitting ? 'Sending...' : 'Request Session'}
             </button>

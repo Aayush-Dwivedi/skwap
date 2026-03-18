@@ -3,10 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 import { Calendar, MessageCircle, CheckCircle2, XCircle, Clock } from 'lucide-react';
+import { useChat } from '../contexts/ChatContext';
 
 const MySessions = () => {
   const { user } = useAuth();
-  const navigate = useNavigate();
+  const { openSession } = useChat();
   const [sessions, setSessions] = useState([]);
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -61,20 +62,24 @@ const MySessions = () => {
             </h2>
 
             {sessions.length === 0 ? (
-              <div className="bg-skwap-card/20 border border-skwap-card/50 border-dashed rounded-3xl p-10 text-center text-skwap-textSecondary">
+              <div className="glass border-dashed border-white/20 rounded-[2rem] p-10 text-center text-skwap-textSecondary">
                 You don't have any active sessions yet. Get out there and start swapping!
               </div>
             ) : (
               sessions.map(session => (
-                <div key={session._id} className="bg-skwap-card/30 border border-skwap-card rounded-3xl p-6 backdrop-blur-sm shadow-xl hover:border-skwap-buttonFocus/50 transition-colors">
+                <div key={session._id} className="glass-card rounded-[2.5rem] p-6 shadow-xl hover:border-skwap-accent/50 transition-colors">
                   <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-full overflow-hidden bg-white/10">
+                      <div className="w-12 h-12 rounded-full overflow-hidden bg-white/10 border border-white/10">
                         {/* Display the other person's avatar */}
                         <img 
-                          src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${session.learner._id === user?._id ? session.teacher.name : session.learner.name}`} 
+                          src={(session.learner._id === user?._id ? session.teacher.photoUrl : session.learner.photoUrl) || `https://api.dicebear.com/7.x/avataaars/svg?seed=${session.learner._id === user?._id ? session.teacher.name : session.learner.name}`} 
                           alt="Avatar" 
                           className="w-full h-full object-cover" 
+                          onError={(e) => {
+                            const name = session.learner._id === user?._id ? session.teacher.name : session.learner.name;
+                            e.target.src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${name}`;
+                          }}
                         />
                       </div>
                       <div>
@@ -98,8 +103,8 @@ const MySessions = () => {
 
                   <div className="flex gap-3">
                     <button 
-                      onClick={() => navigate(`/chat/${session._id}`)}
-                      className="px-6 py-2.5 bg-white hover:bg-gray-100 text-[#4A3B40] text-sm font-bold rounded-xl transition-all shadow-md flex items-center gap-2"
+                      onClick={() => openSession(session)}
+                      className="px-6 py-2.5 glass-btn text-white text-sm font-bold rounded-xl transition-all shadow-md flex items-center gap-2"
                     >
                       <MessageCircle size={16} /> Open Chat
                     </button>
@@ -116,15 +121,20 @@ const MySessions = () => {
             </h2>
 
             {requests.length === 0 ? (
-               <div className="bg-skwap-card/20 border border-skwap-card/50 rounded-3xl p-6 text-center text-sm text-skwap-textSecondary">
+               <div className="glass border-white/10 rounded-[2rem] p-6 text-center text-sm text-skwap-textSecondary">
                 No pending requests.
               </div>
             ) : (
               requests.map(req => (
-                <div key={req._id} className="bg-skwap-card/30 border border-skwap-card rounded-2xl p-5 shadow-lg relative overflow-hidden group">
+                <div key={req._id} className="glass-card rounded-3xl p-5 shadow-lg relative overflow-hidden group">
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="w-8 h-8 rounded-full bg-white/10 overflow-hidden">
-                      <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${req.learner.name}`} alt="Avatar" />
+                    <div className="w-8 h-8 rounded-full bg-white/10 overflow-hidden border border-white/10">
+                      <img 
+                        src={req.learner.photoUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${req.learner.name}`} 
+                        alt="Avatar" 
+                        className="w-full h-full object-cover"
+                        onError={(e) => { e.target.src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${req.learner.name}`; }}
+                      />
                     </div>
                     <span className="text-white text-sm font-bold">{req.learner.name}</span>
                   </div>

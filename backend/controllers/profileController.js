@@ -28,6 +28,10 @@ const createOrUpdateProfile = async (req, res) => {
     github,
     portfolio,
     twitter,
+    themeBackground,
+    isDynamicTheme,
+    colorMode,
+    showSocialLinks,
   } = req.body;
 
   const profileFields = {};
@@ -45,11 +49,25 @@ const createOrUpdateProfile = async (req, res) => {
       : skillsToLearn.split(',').map((skill) => skill.trim());
   }
 
-  profileFields.socialLinks = {};
-  if (linkedin) profileFields.socialLinks.linkedin = linkedin;
-  if (github) profileFields.socialLinks.github = github;
-  if (portfolio) profileFields.socialLinks.portfolio = portfolio;
-  if (twitter) profileFields.socialLinks.twitter = twitter;
+  // Handle social links — only update if provided to avoid wiping existing ones
+  const sl = req.body.socialLinks || {};
+  const linked = linkedin || sl.linkedin;
+  const git = github || sl.github;
+  const port = portfolio || sl.portfolio;
+  const twit = twitter || sl.twitter;
+
+  if (linked || git || port || twit) {
+    profileFields.socialLinks = {};
+    if (linked) profileFields.socialLinks.linkedin = linked;
+    if (git) profileFields.socialLinks.github = git;
+    if (port) profileFields.socialLinks.portfolio = port;
+    if (twit) profileFields.socialLinks.twitter = twit;
+  }
+
+  if (themeBackground) profileFields.themeBackground = themeBackground;
+  if (isDynamicTheme !== undefined) profileFields.isDynamicTheme = isDynamicTheme;
+  if (colorMode) profileFields.colorMode = colorMode;
+  if (showSocialLinks !== undefined) profileFields.showSocialLinks = showSocialLinks;
 
   try {
     let profile = await Profile.findOne({ user: req.user._id });

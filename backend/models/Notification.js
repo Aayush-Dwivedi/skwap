@@ -7,6 +7,10 @@ const notificationSchema = mongoose.Schema(
       ref: 'User',
       required: true,
     },
+    sender: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
     type: {
       type: String,
       enum: ['NEW_REQUEST', 'REQUEST_ACCEPTED', 'REQUEST_DECLINED', 'SESSION_STARTED', 'SESSION_COMPLETED', 'NEW_MESSAGE', 'CREDITS_RECEIVED'],

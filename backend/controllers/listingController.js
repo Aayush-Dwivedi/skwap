@@ -13,6 +13,11 @@ const createListing = async (req, res) => {
   } = req.body;
 
   try {
+    let finalCredits = creditsPerHour;
+    if (method === 'CREDITS' || method === 'BOTH') {
+      finalCredits = 1;
+    }
+
     const listing = new Listing({
       user: req.user._id,
       type,
@@ -20,7 +25,7 @@ const createListing = async (req, res) => {
       description,
       method,
       barterSkills,
-      creditsPerHour,
+      creditsPerHour: finalCredits,
       portfolioLink,
       availability,
     });
@@ -59,7 +64,9 @@ const getListings = async (req, res) => {
         photoUrl: p.photoUrl,
         currentSkills: p.currentSkills,
         skillsToLearn: p.skillsToLearn,
-        rating: p.rating
+        rating: p.rating,
+        socialLinks: p.socialLinks,
+        showSocialLinks: p.showSocialLinks,
       };
     });
 
@@ -93,7 +100,9 @@ const getMyListings = async (req, res) => {
         name: profile.name,
         photoUrl: profile.photoUrl,
         currentSkills: profile.currentSkills,
-        skillsToLearn: profile.skillsToLearn
+        skillsToLearn: profile.skillsToLearn,
+        socialLinks: profile.socialLinks,
+        showSocialLinks: profile.showSocialLinks,
       } : { name: 'You', photoUrl: '' }
     }));
 

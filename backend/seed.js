@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const User = require('./models/User');
 const Profile = require('./models/Profile');
 const Listing = require('./models/Listing');
+const Transaction = require('./models/Transaction');
 
 // Load env vars
 dotenv.config();
@@ -22,7 +23,7 @@ const users = [
         skillName: 'Advanced React Patterns',
         description: 'I will teach you how to build scalable React applications using advanced patterns like HOCs, Render Props, and custom Hooks.',
         method: 'CREDITS',
-        creditsPerHour: 2,
+        creditsPerHour: 1,
         availability: 'Weekends'
       }
     ]
@@ -91,6 +92,13 @@ const seedDB = async () => {
         name: u.name,
         currentSkills: u.skillsToTeach,
         skillsToLearn: u.skillsToLearn
+      });
+
+      await Transaction.create({
+        user: user._id,
+        type: 'PURCHASE',
+        amount: 100,
+        description: 'Welcome Bonus'
       });
 
       for (const list of u.listings) {

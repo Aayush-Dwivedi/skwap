@@ -34,6 +34,23 @@ const profileSchema = mongoose.Schema(
       type: Number,
       default: 0,
     },
+    themeBackground: {
+      type: String,
+      default: '/src/assets/bg-wallpaper.png',
+    },
+    isDynamicTheme: {
+      type: Boolean,
+      default: true,
+    },
+    colorMode: {
+      type: String,
+      enum: ['light', 'dark'],
+      default: 'dark',
+    },
+    showSocialLinks: {
+      type: Boolean,
+      default: true,
+    },
   },
   {
     timestamps: true,

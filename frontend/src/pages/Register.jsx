@@ -28,8 +28,22 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-skwap-bgPrimary bg-gradient-to-br from-skwap-bgPrimary to-skwap-light/20 flex items-center justify-center p-4">
-      <div className="bg-skwap-card/30 backdrop-blur-xl border border-skwap-card/50 p-8 rounded-3xl shadow-2xl w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Ambient orbs */}
+      <div className="orb-float absolute top-[-100px] right-[-100px] w-[400px] h-[400px] bg-skwap-accent rounded-full blur-[120px] opacity-20 pointer-events-none" />
+      <div className="orb-float-slow absolute bottom-[-150px] left-[-100px] w-[500px] h-[500px] bg-rose-900 rounded-full blur-[130px] opacity-25 pointer-events-none" />
+      <div className="orb-float-mid absolute top-1/3 left-1/2 w-[300px] h-[300px] bg-purple-900/30 rounded-full blur-[100px] opacity-15 pointer-events-none" />
+
+      <div
+        className="relative w-full max-w-md p-8 rounded-3xl shadow-2xl"
+        style={{
+          background: 'linear-gradient(160deg, rgba(55,32,44,0.80) 0%, rgba(24,12,18,0.92) 100%)',
+          backdropFilter: 'blur(40px) saturate(1.6)',
+          WebkitBackdropFilter: 'blur(40px) saturate(1.6)',
+          border: '1px solid rgba(255,255,255,0.13)',
+          boxShadow: '0 30px 70px rgba(0,0,0,0.60), inset 0 1.5px 0 rgba(255,255,255,0.13), inset 0 -1px 0 rgba(0,0,0,0.25)',
+        }}
+      >
         <div className="flex flex-col items-center mb-8">
           <div className="bg-skwap-buttonDark p-3 rounded-2xl mb-4 shadow-inner">
              {/* Logo placeholder */}
@@ -76,7 +90,7 @@ const Register = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="name@company.com" 
-                className="w-full bg-skwap-cardLight/10 border border-skwap-card/50 text-white rounded-xl px-4 py-3 pl-11 focus:outline-none focus:ring-2 focus:ring-skwap-buttonFocus placeholder-white/30 text-sm transition-all"
+                className="w-full text-white rounded-xl px-4 py-3 pl-11 focus:outline-none placeholder-white/30 text-sm transition-all glass-input"
               />
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                 <svg className="w-4 h-4 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
@@ -110,7 +124,7 @@ const Register = () => {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="••••••••" 
-                className="w-full bg-skwap-cardLight/10 border border-skwap-card/50 text-white rounded-xl px-4 py-3 pl-11 focus:outline-none focus:ring-2 focus:ring-skwap-buttonFocus placeholder-white/30 text-sm tracking-widest transition-all"
+                className="w-full text-white rounded-xl px-4 py-3 pl-11 focus:outline-none placeholder-white/30 text-sm tracking-widest transition-all glass-input"
               />
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                 <svg className="w-4 h-4 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
@@ -118,7 +132,7 @@ const Register = () => {
             </div>
           </div>
 
-          <button type="submit" className="w-full bg-skwap-card hover:bg-skwap-buttonFocus border border-skwap-card text-white font-medium py-3 rounded-xl transition-all shadow-lg shadow-black/10 mt-2">
+          <button type="submit" className="w-full glass-btn text-white font-semibold py-3 rounded-xl mt-2">
             Create Account
           </button>
         </form>

@@ -5,6 +5,51 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Skwap - Trade Your Talents</title>
+    <script>
+      (function() {
+        try {
+          const userInfo = localStorage.getItem('userInfo');
+          const savedWallpaper = localStorage.getItem('skwap-wallpaper');
+          const savedThemeString = localStorage.getItem('skwap-theme');
+          
+          // Default branding for visitors OR if no theme is found
+          let finalWallpaper = '/bg-wallpaper.png';
+          let theme = null;
+          
+          if (userInfo && savedWallpaper) {
+            finalWallpaper = savedWallpaper;
+            if (savedThemeString) {
+              theme = JSON.parse(savedThemeString);
+            }
+          }
+          
+          // Migrate stale paths
+          if (finalWallpaper.includes('/src/assets/')) {
+            finalWallpaper = '/bg-wallpaper.png';
+          }
+          
+          const root = document.documentElement;
+          const setProp = (name, val) => { if (val) root.style.setProperty(name, val); };
+          
+          // Apply variables to root immediately (even in <head>, root is available)
+          root.style.setProperty('--skwap-bg-image', 'url("' + finalWallpaper + '")');
+          
+          if (theme) {
+            setProp('--skwap-bg-primary', theme.bgPrimary);
+            setProp('--skwap-bg-secondary', theme.bgSecondary);
+            setProp('--skwap-sidebar', theme.sidebar);
+            setProp('--skwap-card', theme.card);
+            setProp('--skwap-accent', theme.accent);
+            setProp('--skwap-button-dark', theme.buttonDark);
+            setProp('--skwap-button-focus', theme.buttonFocus);
+            setProp('--skwap-text-secondary', theme.textSecondary);
+            setProp('--skwap-text-primary', theme.textPrimary);
+          }
+        } catch (e) {
+          console.warn('Theme initialization failed', e);
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

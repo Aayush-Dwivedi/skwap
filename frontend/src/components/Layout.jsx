@@ -28,10 +28,12 @@ const ScrollTrack = ({ targetId }) => {
   const [thumbHeight, setThumbHeight] = useState(30);
   const [thumbTop, setThumbTop] = useState(0);
   const [visible, setVisible] = useState(false);
-  const trackRef = useRef(null);
+  const [isScrolling, setIsScrolling] = useState(false);
+  const scrollTimeout = useRef(null);
   const isDragging = useRef(false);
   const dragStartY = useRef(0);
   const dragStartScroll = useRef(0);
+  const trackRef = useRef(null);
 
   const update = useCallback(() => {
     const el = document.getElementById(targetId);
@@ -41,6 +43,11 @@ const ScrollTrack = ({ targetId }) => {
     setVisible(scrollHeight > clientHeight);
     setThumbHeight(Math.max(ratio * 100, 8));
     setThumbTop(scrollHeight > clientHeight ? (scrollTop / (scrollHeight - clientHeight)) * (100 - Math.max(ratio * 100, 8)) : 0);
+    
+    // Handle scroll visibility
+    setIsScrolling(true);
+    if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
+    scrollTimeout.current = setTimeout(() => setIsScrolling(false), 1500);
   }, [targetId]);
 
   useEffect(() => {
@@ -83,7 +90,9 @@ const ScrollTrack = ({ targetId }) => {
   return (
     <div
       ref={trackRef}
-      className="w-[10px] flex-shrink-0 my-4 rounded-full bg-white/[0.04] border border-white/10 relative cursor-pointer select-none"
+      className={`w-[10px] flex-shrink-0 my-4 rounded-full bg-white/[0.04] border border-white/10 relative cursor-pointer select-none transition-opacity duration-500
+        ${(isScrolling || isDragging.current) ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}
+      `}
       onClick={(e) => {
         const el = document.getElementById(targetId);
         const track = trackRef.current;
@@ -95,8 +104,12 @@ const ScrollTrack = ({ targetId }) => {
       }}
     >
       <div
-        className="absolute left-[1px] right-[1px] rounded-full bg-gradient-to-b from-skwap-accent/60 to-skwap-accent/30 hover:from-skwap-accent/80 hover:to-skwap-accent/50 transition-colors cursor-grab active:cursor-grabbing"
-        style={{ top: `${thumbTop}%`, height: `${thumbHeight}%` }}
+        className="absolute left-[1px] right-[1px] rounded-full transition-colors cursor-grab active:cursor-grabbing border border-white/5"
+        style={{ 
+          top: `${thumbTop}%`, 
+          height: `${thumbHeight}%`,
+          background: `linear-gradient(to bottom, rgba(var(--skwap-accent, 164, 127, 139), 0.8), rgba(var(--skwap-accent, 164, 127, 139), 0.4))`
+        }}
         onMouseDown={onMouseDown}
       />
     </div>
@@ -137,16 +150,17 @@ const Layout = () => {
   }, [user, navigate]);
 
   return (
-    <div className="flex h-screen overflow-hidden bg-skwap-bgPrimary bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#4D3B43] via-[#35252A] to-[#1A1215] text-skwap-textPrimary font-sans relative">
-      {/* Decorative Background Orbs */}
-      <div className="fixed top-0 left-0 w-[500px] h-[500px] bg-skwap-accent rounded-full blur-[150px] opacity-20 pointer-events-none mix-blend-screen"></div>
-      <div className="fixed bottom-0 right-0 w-[600px] h-[600px] bg-rose-900 rounded-full blur-[150px] opacity-30 pointer-events-none mix-blend-screen"></div>
+    <div className="flex h-screen overflow-hidden text-skwap-textPrimary font-sans relative">
+      {/* Decorative Background Orbs — acting as localized highlights on the wallpaper */}
+      <div className="orb-float fixed top-0 left-0 w-[500px] h-[500px] bg-skwap-accent rounded-full blur-[150px] opacity-15 pointer-events-none mix-blend-screen" />
+      <div className="orb-float-slow fixed bottom-0 right-0 w-[600px] h-[600px] bg-rose-900 rounded-full blur-[150px] opacity-20 pointer-events-none mix-blend-screen" />
+      <div className="orb-float-mid fixed top-1/2 left-1/3 w-[350px] h-[350px] bg-purple-900/40 rounded-full blur-[130px] opacity-15 pointer-events-none mix-blend-screen" />
 
       {/* Sidebar receives collapsed state and toggle handler */}
       <Sidebar collapsed={collapsed} onToggle={() => setCollapsed(prev => !prev)} />
 
       {/* Main content area */}
-      <main className="flex-1 relative z-10 flex pt-6 pb-6 pr-6 gap-2">
+      <main className="flex-1 relative z-10 flex pt-6 pb-6 pr-6 gap-2 group">
         {/* Spacer that matches sidebar width — animating width on an empty div avoids layout reflow */}
         <div
           style={{
@@ -169,11 +183,11 @@ const Layout = () => {
           style={{
             scrollbarWidth: 'none',
             msOverflowStyle: 'none',
-            background: 'linear-gradient(160deg, rgba(34, 20, 26, 0.93) 0%, rgba(24, 14, 18, 0.96) 100%)',
-            backdropFilter: 'blur(16px) saturate(1.3)',
-            WebkitBackdropFilter: 'blur(16px) saturate(1.3)',
-            border: '1px solid rgba(255,255,255,0.10)',
-            boxShadow: '0 25px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.07), inset 0 -1px 0 rgba(0,0,0,0.25)',
+            background: `linear-gradient(160deg, rgba(var(--skwap-bg-secondary), var(--glass-card-opacity)) 0%, rgba(var(--skwap-bg-primary), var(--glass-card-opacity)) 100%)`,
+            backdropFilter: 'blur(var(--glass-blur)) saturate(1.6)',
+            WebkitBackdropFilter: 'blur(var(--glass-blur)) saturate(1.6)',
+            border: '1px solid rgba(var(--skwap-text-primary), 0.08)',
+            boxShadow: '0 25px 60px rgba(0,0,0,0.25), inset 0 1.5px 0 rgba(var(--skwap-text-primary), 0.08)',
           }}
         >
           <style>{`#main-scroll-box::-webkit-scrollbar { display: none; }`}</style>

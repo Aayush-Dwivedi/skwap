@@ -1,5 +1,5 @@
 import React from 'react';
-import { Clock, Zap, ChevronRight, User, BookOpen, GraduationCap, Calendar } from 'lucide-react';
+import { Clock, Zap, ChevronRight, User, BookOpen, GraduationCap, Calendar, Github, Linkedin, Twitter, ExternalLink } from 'lucide-react';
 
 const ListingCard = ({ listing, currentUserId, onBook, isExpanded = false, onToggle = () => {} }) => {
   const isOwn = listing.user?._id === currentUserId || listing.user === currentUserId;
@@ -15,13 +15,13 @@ const ListingCard = ({ listing, currentUserId, onBook, isExpanded = false, onTog
         ${isExpanded ? 'shadow-2xl scale-[1.01]' : 'hover:shadow-xl hover:-translate-y-0.5'}
       `}
       style={{
-        background: isExpanded
-          ? 'linear-gradient(135deg, rgba(80,55,65,0.75) 0%, rgba(55,35,45,0.85) 100%)'
-          : 'linear-gradient(135deg, rgba(60,38,48,0.70) 0%, rgba(42,26,33,0.80) 100%)',
-        border: isExpanded ? '1px solid rgba(255,255,255,0.18)' : '1px solid rgba(255,255,255,0.09)',
+        background: `linear-gradient(135deg, rgba(var(--skwap-card), var(--glass-card-opacity)) 0%, rgba(var(--skwap-bg-primary), var(--glass-card-opacity)) 100%)`,
+        backdropFilter: 'blur(var(--glass-blur)) saturate(1.5)',
+        WebkitBackdropFilter: 'blur(var(--glass-blur)) saturate(1.5)',
+        border: isExpanded ? '1px solid rgba(var(--skwap-text-primary), 0.18)' : '1px solid rgba(var(--skwap-text-primary), 0.10)',
         boxShadow: isExpanded
-          ? '0 20px 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.12), inset 0 -1px 0 rgba(0,0,0,0.2)'
-          : '0 4px 16px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.07)',
+          ? '0 24px 50px rgba(0,0,0,0.30), 0 0 30px rgba(var(--skwap-accent), 0.15), inset 0 1.5px 0 rgba(var(--skwap-text-primary), 0.15)'
+          : '0 6px 20px rgba(0,0,0,0.20), inset 0 1px 0 rgba(var(--skwap-text-primary), 0.09)',
       }}
       onClick={handleToggle}
     >
@@ -42,8 +42,8 @@ const ListingCard = ({ listing, currentUserId, onBook, isExpanded = false, onTog
               />
             </div>
             <div>
-              <p className="text-white font-bold text-xs tracking-tight">{listing.uploader?.name || 'User'}</p>
-              <p className="text-white/40 text-[9px] font-medium uppercase tracking-wider">Skwap Member</p>
+              <p className="text-skwap-textPrimary font-bold text-xs tracking-tight">{listing.uploader?.name || 'User'}</p>
+              <p className="text-skwap-textSecondary/40 text-[9px] font-medium uppercase tracking-wider">Skwap Member</p>
             </div>
           </div>
           <div className="flex items-center gap-1.5">
@@ -60,17 +60,25 @@ const ListingCard = ({ listing, currentUserId, onBook, isExpanded = false, onTog
 
         {/* Main Content */}
         <div className="mb-3">
-          <h3 className="text-white font-black text-base tracking-tight mb-1 group-hover:text-skwap-accent transition-colors leading-tight">
+          <h3 className="text-skwap-textPrimary font-black text-base tracking-tight mb-1 group-hover:text-skwap-accent transition-colors leading-tight">
             {listing.skillName}
           </h3>
-          <p className={`text-white/50 text-[11px] leading-relaxed transition-all duration-500 ${isExpanded ? 'line-clamp-none' : 'line-clamp-1'}`}>
+          <p className={`text-skwap-textSecondary/60 text-[11px] leading-relaxed transition-all duration-500 ${isExpanded ? 'line-clamp-none' : 'line-clamp-1'}`}>
             {listing.description}
           </p>
         </div>
 
         {/* Details Grid (Schedule & Skills) */}
         <div className="grid grid-cols-2 gap-2 mb-2">
-          <div className="bg-white/[0.06] border border-white/10 px-2.5 py-2 rounded-xl">
+          <div
+            style={{
+              background: 'rgba(255,255,255,0.05)',
+              backdropFilter: 'blur(10px)',
+              WebkitBackdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255,255,255,0.10)',
+            }}
+            className="px-2.5 py-2 rounded-xl"
+          >
             <div className="flex items-center gap-1.5 mb-1 text-skwap-accent">
               <Calendar size={10} strokeWidth={2.5} />
               <span className="text-[8px] font-black uppercase tracking-wider">Schedule</span>
@@ -84,18 +92,18 @@ const ListingCard = ({ listing, currentUserId, onBook, isExpanded = false, onTog
               <Zap size={10} strokeWidth={2.5} />
               <span className="text-[8px] font-black uppercase tracking-wider">Exchange</span>
             </div>
-            <p className="text-white/70 text-[10px] font-bold">
-              {listing.creditsPerHour > 0 ? `${listing.creditsPerHour} cr/hr` : 'Barter Only'}
+            <p className="text-skwap-textSecondary text-[10px] font-bold">
+              {listing.creditsPerHour > 0 ? '1 cr/hr' : 'Barter Only'}
             </p>
           </div>
         </div>
 
         {/* Skills Section (Unified Design) */}
-        <div className={`mt-2 space-y-2 transition-all duration-500 overflow-hidden ${isExpanded ? 'opacity-100 max-h-96' : 'opacity-100 max-h-10'}`}>
+        <div className={`mt-2 space-y-3 transition-all duration-500 overflow-hidden ${isExpanded ? 'opacity-100 max-h-96' : 'opacity-100 max-h-12'}`}>
           <div>
             <div className="flex items-center gap-1 mb-1 text-white/30">
               <BookOpen size={9} />
-              <span className="text-[8px] font-bold uppercase tracking-widest">Can Teach</span>
+              <span className="text-[8px] font-bold uppercase tracking-widest">Teaching Skill</span>
             </div>
             <div className="flex flex-wrap gap-1">
               {(listing.uploader?.currentSkills?.length > 0 ? listing.uploader.currentSkills : [listing.skillName]).slice(0, isExpanded ? 10 : 3).map((s, idx) => (
@@ -112,7 +120,7 @@ const ListingCard = ({ listing, currentUserId, onBook, isExpanded = false, onTog
           <div className={isExpanded ? 'block' : 'hidden'}>
             <div className="flex items-center gap-1 mb-1 text-white/30">
               <GraduationCap size={9} />
-              <span className="text-[8px] font-bold uppercase tracking-widest">Wants to Learn</span>
+              <span className="text-[8px] font-bold uppercase tracking-widest">Want to Learn</span>
             </div>
             <div className="flex flex-wrap gap-1">
               {(listing.barterSkills?.length > 0 ? listing.barterSkills : listing.uploader?.skillsToLearn || []).map((s, idx) => (
@@ -125,13 +133,42 @@ const ListingCard = ({ listing, currentUserId, onBook, isExpanded = false, onTog
               )}
             </div>
           </div>
+
+          {/* Social Links (New) */}
+          {isExpanded && listing.uploader?.showSocialLinks && listing.uploader?.socialLinks && (
+            <div className="pt-2 flex items-center gap-3 border-t border-white/5 mt-2">
+              <div className="text-[8px] font-bold uppercase tracking-widest text-white/20 mr-1">Socials</div>
+              <div className="flex items-center gap-2.5">
+                {listing.uploader.socialLinks.github && (
+                  <a href={listing.uploader.socialLinks.github} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-white/40 hover:text-skwap-accent transition-colors no-expand">
+                    <Github size={12} />
+                  </a>
+                )}
+                {listing.uploader.socialLinks.linkedin && (
+                  <a href={listing.uploader.socialLinks.linkedin} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-white/40 hover:text-skwap-accent transition-colors no-expand">
+                    <Linkedin size={12} />
+                  </a>
+                )}
+                {listing.uploader.socialLinks.twitter && (
+                  <a href={listing.uploader.socialLinks.twitter} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-white/40 hover:text-skwap-accent transition-colors no-expand">
+                    <Twitter size={12} />
+                  </a>
+                )}
+                {listing.uploader.socialLinks.portfolio && (
+                  <a href={listing.uploader.socialLinks.portfolio} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-white/40 hover:text-skwap-accent transition-colors no-expand">
+                    <ExternalLink size={12} />
+                  </a>
+                )}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Expanded Profile Detail */}
         {isExpanded && (
           <div className="mt-4 pt-4 border-t border-white/10 animate-in fade-in slide-in-from-bottom-2 duration-500">
             <div className="flex items-center justify-between mb-3">
-              <h4 className="text-white font-bold text-xs">Uploader Details</h4>
+              <h4 className="text-skwap-textPrimary font-bold text-xs">Uploader Details</h4>
               <div className="flex items-center gap-1 text-amber-400">
                 <Zap size={10} fill="currentColor" />
                 <span className="text-xs font-black">{listing.uploader?.rating || 'New'}</span>
