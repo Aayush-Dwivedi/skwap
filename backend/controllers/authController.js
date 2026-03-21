@@ -31,7 +31,7 @@ const registerUser = async (req, res) => {
       await createAndEmitNotification(req.io, {
         user: user._id,
         sender: user._id,
-        type: 'WALLET_UPDATE',
+        type: 'CREDITS_RECEIVED',
         content: `Welcome to Skwap! We've added 100 credits to your wallet to get you started.`,
       });
       res.status(201).json({
@@ -110,9 +110,69 @@ const updateUserProfile = async (req, res) => {
   }
 };
 
+const { OAuth2Client } = require('google-auth-library');
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+const googleLogin = async (req, res) => {
+  try {
+    const { tokenId } = req.body;
+
+    const ticket = await client.verifyIdToken({
+      idToken: tokenId,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const { email, sub: googleId, name, picture } = ticket.getPayload();
+
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      // Create new user if they don't exist
+      user = await User.create({
+        email,
+        googleId,
+        // photoUrl could be handled here too if we want to sync with Google profile
+      });
+
+      // Welcome Bonus
+      const Transaction = require('../models/Transaction');
+      await Transaction.create({
+        user: user._id,
+        type: 'PURCHASE',
+        amount: 100,
+        description: 'Welcome Bonus (Google Sign-in)'
+      });
+
+      await createAndEmitNotification(req.io, {
+        user: user._id,
+        sender: user._id,
+        type: 'WALLET_UPDATE',
+        content: `Welcome to Skwap! We've added 100 credits to your wallet for joining with Google.`,
+      });
+    } else {
+      // If user exists but doesn't have googleId, link it
+      if (!user.googleId) {
+        user.googleId = googleId;
+        await user.save();
+      }
+    }
+
+    res.json({
+      _id: user._id,
+      email: user.email,
+      token: generateToken(user._id),
+      isNew: !user.createdAt || (new Date() - new Date(user.createdAt) < 5000), // Helper for frontend redirection
+    });
+  } catch (error) {
+    console.error('Google Login Error:', error);
+    res.status(401).json({ message: 'Google authentication failed' });
+  }
+};
+
 module.exports = {
   registerUser,
   loginUser,
   getMe,
   updateUserProfile,
+  googleLogin,
 };

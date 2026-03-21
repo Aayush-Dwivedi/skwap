@@ -64,6 +64,21 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const googleLogin = async (tokenId) => {
+    try {
+      const { data } = await api.post('/auth/google', { tokenId });
+      localStorage.setItem('userInfo', JSON.stringify(data));
+      setUser(data);
+      await checkProfile(data);
+      return { success: true, isNew: data.isNew };
+    } catch (error) {
+      return { 
+        success: false, 
+        message: error.response?.data?.message || 'Google login failed' 
+      };
+    }
+  };
+
   const register = async (email, password) => {
     try {
       const { data } = await api.post('/auth/register', { email, password });
@@ -97,6 +112,7 @@ export const AuthProvider = ({ children }) => {
     setHasProfile,
     login,
     register,
+    googleLogin,
     logout,
     loading
   };

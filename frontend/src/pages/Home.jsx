@@ -35,9 +35,13 @@ const Home = () => {
   }, [tab]);
 
   const filteredListings = listings.filter(
-    listing =>
-      listing.skillName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      listing.description.toLowerCase().includes(searchQuery.toLowerCase())
+    listing => {
+      const q = searchQuery.toLowerCase();
+      const sName = (listing.skillName || '').toLowerCase();
+      const sDesc = (listing.description || '').toLowerCase();
+      const uName = (listing.uploader?.name || '').toLowerCase();
+      return sName.includes(q) || sDesc.includes(q) || uName.includes(q);
+    }
   );
 
   return (
@@ -208,9 +212,9 @@ const BookingModal = ({ listing, onClose }) => {
           {/* Listing meta pills */}
           <div className="flex gap-2 mt-4 flex-wrap">
             <span className="text-[11px] font-semibold px-2.5 py-1 bg-white/8 border border-white/10 rounded-full text-skwap-textSecondary/70 uppercase tracking-wider">{listing.method}</span>
-            {listing.creditsPerHour > 0 && (
-              <span className="text-[11px] font-semibold px-2.5 py-1 bg-amber-500/15 border border-amber-500/25 rounded-full text-amber-300 flex items-center gap-1">
-                <Zap size={10} /> 1 credit / hr
+            {(listing.method === 'CREDITS' || listing.method === 'BOTH') && (
+              <span className="text-[11px] font-semibold px-2.5 py-1 bg-skwap-accent/15 border border-skwap-accent/25 rounded-full text-skwap-accent flex items-center gap-1 uppercase tracking-wider">
+                Credits Negotiable
               </span>
             )}
           </div>
@@ -220,28 +224,28 @@ const BookingModal = ({ listing, onClose }) => {
         <form onSubmit={handleSubmit} className="p-6 space-y-5">
 
           {/* Booking Type Summary */}
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-skwap-textSecondary/40 text-xs uppercase font-bold tracking-widest">Type</span>
-              <span className={`text-[10px] font-black px-2 py-0.5 rounded-lg uppercase tracking-wider ${
-                (listing.method === 'BARTER' || (listing.method === 'BOTH' && matchedSkill)) ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+          <div className="bg-white/5 border border-white/10 rounded-2xl p-4 shadow-inner">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-skwap-textSecondary/40 text-[10px] uppercase font-black tracking-widest">Protocol Type</span>
+              <span className={`text-[10px] font-black px-2.5 py-1 rounded-lg uppercase tracking-wider ${
+                (listing.method === 'BARTER' || (listing.method === 'BOTH' && matchedSkill)) ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-skwap-accent/20 text-skwap-accent border border-skwap-accent/30'
               }`}>
-                {(listing.method === 'BARTER' || (listing.method === 'BOTH' && matchedSkill)) ? 'Barter Swap' : 'Credit Booking'}
+                {(listing.method === 'BARTER' || (listing.method === 'BOTH' && matchedSkill)) ? 'Direct Barter' : 'Credit Negotiation'}
               </span>
             </div>
             
             <div className="flex items-center justify-between">
-              <span className="text-skwap-textSecondary/40 text-xs uppercase font-bold tracking-widest">Cost</span>
+              <span className="text-skwap-textSecondary/40 text-[10px] uppercase font-black tracking-widest">Initial Cost</span>
               <div className="flex items-center gap-1.5">
                 {(listing.method === 'BARTER' || (listing.method === 'BOTH' && matchedSkill)) ? (
                   <>
                     <BookOpen size={12} className="text-emerald-400" />
-                    <span className="text-skwap-textPrimary text-sm font-bold">Offer #{matchedSkill || 'Matching Skill'}</span>
+                    <span className="text-skwap-textPrimary text-xs font-bold font-mono tracking-tight">Offer: {matchedSkill || 'Skill'}</span>
                   </>
                 ) : (
                   <>
-                    <Zap size={12} className="text-amber-400" />
-                    <span className="text-skwap-textPrimary text-sm font-bold">{duration} credits</span>
+                    <Zap size={12} className="text-skwap-accent animate-pulse" />
+                    <span className="text-skwap-accent text-xs font-black uppercase tracking-widest">TBD via Chat</span>
                   </>
                 )}
               </div>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { GoogleLogin } from '@react-oauth/google';
 import toast from 'react-hot-toast';
 
 const Register = () => {
@@ -8,7 +9,8 @@ const Register = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
-  const { register } = useAuth();
+  const [loading, setLoading] = useState(false);
+  const { register, googleLogin } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -22,6 +24,21 @@ const Register = () => {
     const res = await register(email, password);
     if (res.success) {
       navigate('/setup-profile'); // Redirect to dedicated profile setup after successful registration
+    } else {
+      setError(res.message);
+    }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    setLoading(true);
+    const res = await googleLogin(credentialResponse.credential);
+    setLoading(false);
+    if (res.success) {
+      if (res.isNew) {
+        navigate('/setup-profile');
+      } else {
+        navigate('/explore');
+      }
     } else {
       setError(res.message);
     }
@@ -54,19 +71,19 @@ const Register = () => {
         </div>
 
         {/* Google Sign-In */}
-        <button
-          onClick={() => toast('Google sign-in coming soon! Please use email & password for now.', { icon: '📧' })}
-          className="w-full flex items-center justify-center gap-3 bg-white/5 hover:bg-white/10 border border-white/15 hover:border-white/30 text-white text-sm font-medium py-3 rounded-xl transition-all mb-6"
-        >
-          <svg width="18" height="18" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
-            <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
-            <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
-            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
-            <path fill="none" d="M0 0h48v48H0z"/>
-          </svg>
-          Continue with Google
-        </button>
+        <div className="w-full mb-6 flex justify-center">
+          <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={() => {
+              setError('Google Login Failed');
+              toast.error('Google Login Failed');
+            }}
+            useOneTap
+            theme="filled_black"
+            shape="pill"
+            width="100%"
+          />
+        </div>
 
         <div className="my-5 flex items-center">
           <div className="flex-grow border-t border-skwap-card"></div>

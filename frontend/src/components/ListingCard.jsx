@@ -1,5 +1,5 @@
 import React from 'react';
-import { Clock, Zap, ChevronRight, User, BookOpen, GraduationCap, Calendar, Github, Linkedin, Twitter, ExternalLink } from 'lucide-react';
+import { Clock, Zap, ChevronRight, User, BookOpen, GraduationCap, Calendar, Github, Linkedin, Twitter, ExternalLink, Star } from 'lucide-react';
 
 const ListingCard = ({ listing, currentUserId, onBook, isExpanded = false, onToggle = () => {} }) => {
   const isOwn = listing.user?._id === currentUserId || listing.user === currentUserId;
@@ -28,12 +28,12 @@ const ListingCard = ({ listing, currentUserId, onBook, isExpanded = false, onTog
       {/* Background Glow */}
       <div className={`absolute top-0 right-0 w-32 h-32 bg-skwap-accent/10 rounded-full blur-3xl transition-opacity duration-500 ${isExpanded ? 'opacity-100' : 'opacity-40'}`}></div>
 
-      <div className="p-4 relative z-10">
+      <div className="p-5 relative z-10 flex flex-col h-full w-full">
         
-        {/* Top Header: Uploader Info & Badges */}
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl overflow-hidden border border-white/10 bg-white/5 flex-shrink-0">
+        {/* Header: Avatar, Name & Rating */}
+        <div className="flex items-center gap-3 mb-5">
+          <div className="relative flex-shrink-0">
+            <div className="w-12 h-12 rounded-xl overflow-hidden bg-white/5 border border-white/10 shadow-sm">
               <img 
                 src={listing.uploader?.photoUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${listing.uploader?.name}`} 
                 alt={listing.uploader?.name}
@@ -41,122 +41,115 @@ const ListingCard = ({ listing, currentUserId, onBook, isExpanded = false, onTog
                 onError={(e) => { e.target.src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${listing.uploader?.name}`; }}
               />
             </div>
-            <div>
-              <p className="text-skwap-textPrimary font-bold text-xs tracking-tight">{listing.uploader?.name || 'User'}</p>
-              <p className="text-skwap-textSecondary/40 text-[9px] font-medium uppercase tracking-wider">Skwap Member</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <span className="bg-white/8 backdrop-blur-md text-white/70 border border-white/10 text-[8px] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest">
-              {listing.method}
-            </span>
             {isOwn && (
-              <span className="bg-skwap-accent/20 text-skwap-accent border border-skwap-accent/30 text-[8px] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest">
-                Yours
+              <span className="absolute -bottom-2 right-1 transform translate-x-1/4 bg-skwap-textSecondary text-[#1a1a1a] text-[8px] font-black px-1.5 py-0.5 rounded-full uppercase shadow-md border border-white/20">
+                YOU
               </span>
             )}
           </div>
+          <div className="flex-1 min-w-0">
+             <h3 className="text-[15px] font-bold text-white leading-tight truncate">
+               {listing.uploader?.name || 'User'}
+             </h3>
+             <div className="flex items-center gap-1.5 mt-0.5">
+               <Star size={11} className="fill-amber-400 text-amber-400" />
+               <span className="text-[12px] font-semibold text-skwap-textSecondary">
+                 {listing.uploader?.rating > 0 ? listing.uploader.rating : 'New'}
+               </span>
+               {listing.uploader?.numReviews > 0 && (
+                 <span className="text-[11px] text-white/50 font-medium tracking-tight">
+                   ({listing.uploader.numReviews} reviews)
+                 </span>
+               )}
+             </div>
+          </div>
         </div>
 
-        {/* Main Content */}
-        <div className="mb-3">
-          <h3 className="text-skwap-textPrimary font-black text-base tracking-tight mb-1 group-hover:text-skwap-accent transition-colors leading-tight">
+        {/* Type & Title */}
+        <div className="mb-4">
+          <h4 className="text-[10px] font-bold uppercase tracking-widest text-skwap-textSecondary mb-1.5">
+            {listing.type === 'TEACH' ? 'TEACHING' : 'LEARNING'}
+          </h4>
+          <h2 className="text-xl font-bold text-skwap-textSecondary leading-snug transition-colors">
             {listing.skillName}
-          </h3>
-          <p className={`text-skwap-textSecondary/60 text-[11px] leading-relaxed transition-all duration-500 ${isExpanded ? 'line-clamp-none' : 'line-clamp-1'}`}>
-            {listing.description}
+          </h2>
+        </div>
+
+        {/* Looking For Block */}
+        <div className="bg-skwap-textSecondary/10 rounded-xl p-4 mb-5 border border-skwap-textSecondary/20">
+          <h4 className="text-[9px] font-black uppercase tracking-wider text-skwap-textSecondary mb-2">
+            LOOKING FOR
+          </h4>
+          <p className="text-[13px] text-white/90 font-medium leading-relaxed">
+            {(listing.barterSkills?.length > 0 ? listing.barterSkills : listing.uploader?.skillsToLearn || ['Flexible']).join(' or ')}
           </p>
         </div>
 
-        {/* Details Grid (Schedule & Skills) */}
-        <div className="grid grid-cols-2 gap-2 mb-2">
-          <div
-            style={{
-              background: 'rgba(255,255,255,0.05)',
-              backdropFilter: 'blur(10px)',
-              WebkitBackdropFilter: 'blur(10px)',
-              border: '1px solid rgba(255,255,255,0.10)',
-            }}
-            className="px-2.5 py-2 rounded-xl"
-          >
-            <div className="flex items-center gap-1.5 mb-1 text-skwap-accent">
-              <Calendar size={10} strokeWidth={2.5} />
-              <span className="text-[8px] font-black uppercase tracking-wider">Schedule</span>
-            </div>
-            <p className="text-white/70 text-[10px] font-medium line-clamp-1">
-              {listing.availability || 'Flexible'}
+        {/* --- EXPANDED FEATURES (Preserved) --- */}
+        <div className={`overflow-hidden transition-all duration-500 ${isExpanded ? 'max-h-[800px] opacity-100 mb-6' : 'max-h-0 opacity-0'}`}>
+          {/* Description */}
+          <div className="mb-4 px-1">
+            <h4 className="text-[9px] font-black uppercase tracking-wider text-white/50 mb-1.5">Description</h4>
+            <p className="text-[12.5px] text-white/80 leading-relaxed whitespace-pre-wrap">
+              {listing.description}
             </p>
           </div>
-          <div className="bg-white/[0.06] border border-white/10 px-2.5 py-2 rounded-xl">
-            <div className="flex items-center gap-1.5 mb-1 text-skwap-accent">
-              <Zap size={10} strokeWidth={2.5} />
-              <span className="text-[8px] font-black uppercase tracking-wider">Exchange</span>
-            </div>
-            <p className="text-skwap-textSecondary text-[10px] font-bold">
-              {listing.creditsPerHour > 0 ? '1 cr/hr' : 'Barter Only'}
-            </p>
-          </div>
-        </div>
 
-        {/* Skills Section (Unified Design) */}
-        <div className={`mt-2 space-y-3 transition-all duration-500 overflow-hidden ${isExpanded ? 'opacity-100 max-h-96' : 'opacity-100 max-h-12'}`}>
-          <div>
-            <div className="flex items-center gap-1 mb-1 text-white/30">
-              <BookOpen size={9} />
-              <span className="text-[8px] font-bold uppercase tracking-widest">Teaching Skill</span>
+          {/* Details Grid (Schedule & Exchange) */}
+          <div className="grid grid-cols-2 gap-2 mb-4">
+            <div className="bg-white/5 border border-white/5 px-3 py-2.5 rounded-xl">
+              <div className="flex items-center gap-1.5 mb-1 text-skwap-textSecondary">
+                <Calendar size={12} strokeWidth={2.5} />
+                <span className="text-[9px] font-black uppercase tracking-wider">Schedule</span>
+              </div>
+              <p className="text-white/80 text-[11px] font-semibold line-clamp-1">
+                {listing.availability || 'Flexible'}
+              </p>
             </div>
-            <div className="flex flex-wrap gap-1">
-              {(listing.uploader?.currentSkills?.length > 0 ? listing.uploader.currentSkills : [listing.skillName]).slice(0, isExpanded ? 10 : 3).map((s, idx) => (
-                <span key={idx} className="bg-white/10 border border-white/15 text-white/75 text-[8px] font-medium px-1.5 py-0.5 rounded-md whitespace-nowrap lowercase">
+            <div className="bg-white/5 border border-white/5 px-3 py-2.5 rounded-xl">
+              <div className="flex items-center gap-1.5 mb-1 text-skwap-textSecondary">
+                <Zap size={12} strokeWidth={2.5} />
+                <span className="text-[9px] font-black uppercase tracking-wider">Exchange</span>
+              </div>
+              <p className="text-white/80 text-[11px] font-semibold line-clamp-1">
+                {listing.method === 'BARTER' ? 'Barter Swap' : 'Credits Negotiable'}
+              </p>
+            </div>
+          </div>
+
+          {/* Additional Skills Tags */}
+          <div className="mb-4">
+            <div className="flex items-center gap-1 mb-2 text-white/50">
+              <BookOpen size={10} />
+              <span className="text-[9px] font-bold uppercase tracking-widest">Also Teaches</span>
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              {(listing.uploader?.currentSkills?.length > 0 ? listing.uploader.currentSkills : [listing.skillName]).map((s, idx) => (
+                <span key={idx} className="bg-white/5 border border-white/10 text-white/70 text-[10px] font-medium px-2 py-1 rounded-md lowercase">
                   #{s}
                 </span>
               ))}
-              {!isExpanded && listing.uploader?.currentSkills?.length > 3 && (
-                <span className="text-white/20 text-[8px] font-bold ml-0.5">+{listing.uploader.currentSkills.length - 3}</span>
-              )}
             </div>
           </div>
 
-          <div className={isExpanded ? 'block' : 'hidden'}>
-            <div className="flex items-center gap-1 mb-1 text-white/30">
-              <GraduationCap size={9} />
-              <span className="text-[8px] font-bold uppercase tracking-widest">Want to Learn</span>
-            </div>
-            <div className="flex flex-wrap gap-1">
-              {(listing.barterSkills?.length > 0 ? listing.barterSkills : listing.uploader?.skillsToLearn || []).map((s, idx) => (
-                <span key={idx} className="bg-skwap-accent/15 border border-skwap-accent/30 text-skwap-accent text-[8px] font-medium px-1.5 py-0.5 rounded-md whitespace-nowrap lowercase">
-                  #{s}
-                </span>
-              ))}
-              {(listing.barterSkills?.length === 0 && (!listing.uploader?.skillsToLearn || listing.uploader.skillsToLearn.length === 0)) && (
-                <span className="text-white/20 text-[8px] italic">Flexible</span>
-              )}
-            </div>
-          </div>
-
-          {/* Social Links (New) */}
-          {isExpanded && listing.uploader?.showSocialLinks && listing.uploader?.socialLinks && (
-            <div className="pt-2 flex items-center gap-3 border-t border-white/5 mt-2">
-              <div className="text-[8px] font-bold uppercase tracking-widest text-white/20 mr-1">Socials</div>
-              <div className="flex items-center gap-2.5">
+          {/* Social Links */}
+          {listing.uploader?.showSocialLinks && listing.uploader?.socialLinks && (
+            <div className="pt-3 flex items-center gap-3 border-t border-white/5">
+              <div className="text-[9px] font-bold uppercase tracking-widest text-white/40 mr-1">Socials</div>
+              <div className="flex items-center gap-3">
                 {listing.uploader.socialLinks.github && (
-                  <a href={listing.uploader.socialLinks.github} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-white/40 hover:text-skwap-accent transition-colors no-expand">
-                    <Github size={12} />
+                  <a href={listing.uploader.socialLinks.github} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-white/40 hover:text-skwap-textSecondary transition-colors no-expand">
+                    <Github size={15} />
                   </a>
                 )}
                 {listing.uploader.socialLinks.linkedin && (
-                  <a href={listing.uploader.socialLinks.linkedin} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-white/40 hover:text-skwap-accent transition-colors no-expand">
-                    <Linkedin size={12} />
+                  <a href={listing.uploader.socialLinks.linkedin} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-white/40 hover:text-skwap-textSecondary transition-colors no-expand">
+                    <Linkedin size={15} />
                   </a>
                 )}
                 {listing.uploader.socialLinks.twitter && (
-                  <a href={listing.uploader.socialLinks.twitter} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-white/40 hover:text-skwap-accent transition-colors no-expand">
-                    <Twitter size={12} />
-                  </a>
-                )}
-                {listing.uploader.socialLinks.portfolio && (
-                  <a href={listing.uploader.socialLinks.portfolio} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-white/40 hover:text-skwap-accent transition-colors no-expand">
-                    <ExternalLink size={12} />
+                  <a href={listing.uploader.socialLinks.twitter} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-white/40 hover:text-skwap-textSecondary transition-colors no-expand">
+                    <Twitter size={15} />
                   </a>
                 )}
               </div>
@@ -164,41 +157,41 @@ const ListingCard = ({ listing, currentUserId, onBook, isExpanded = false, onTog
           )}
         </div>
 
-        {/* Expanded Profile Detail */}
-        {isExpanded && (
-          <div className="mt-4 pt-4 border-t border-white/10 animate-in fade-in slide-in-from-bottom-2 duration-500">
-            <div className="flex items-center justify-between mb-3">
-              <h4 className="text-skwap-textPrimary font-bold text-xs">Uploader Details</h4>
-              <div className="flex items-center gap-1 text-amber-400">
-                <Zap size={10} fill="currentColor" />
-                <span className="text-xs font-black">{listing.uploader?.rating || 'New'}</span>
-              </div>
-            </div>
-            
-            {/* Action Section */}
-            {!isOwn && (
-              <button 
-                onClick={(e) => { e.stopPropagation(); onBook(listing); }}
-                className="no-expand w-full bg-skwap-buttonFocus hover:brightness-110 active:scale-95 text-white font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-skwap-accent/20 transition-all text-sm"
+        {/* Bottom Actions - Always Visible */}
+        <div className="mt-auto pt-2">
+          {/* Links Row */}
+          <div className="flex items-center justify-end mb-5 min-h-[40px]">
+            {(listing.portfolioLink || listing.uploader?.socialLinks?.portfolio) ? (
+              <a 
+                href={listing.portfolioLink || listing.uploader?.socialLinks?.portfolio} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                onClick={(e) => { e.stopPropagation(); }} 
+                className="text-[13.5px] font-bold text-skwap-textSecondary hover:text-skwap-textSecondary/80 no-expand px-1"
               >
-                <span>Book a Session</span>
-                <ChevronRight size={14} />
-              </button>
-            )}
-            {isOwn && (
-              <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-center">
-                <p className="text-white/40 text-xs font-medium italic">This is your listing</p>
-              </div>
+                View Portfolio
+              </a>
+            ) : (
+              <span className="text-[12px] font-medium text-white/40 italic px-1">
+                No portfolio available
+              </span>
             )}
           </div>
-        )}
 
-        {/* View Details Indicator (when collapsed) */}
-        {!isExpanded && (
-          <div className="mt-2 flex items-center justify-center">
-            <div className="w-6 h-0.5 rounded-full bg-white/5 group-hover:bg-skwap-accent/40 transition-colors"></div>
-          </div>
-        )}
+          {/* Action Button */}
+          {!isOwn ? (
+            <button 
+              onClick={(e) => { e.stopPropagation(); onBook(listing); }}
+              className="no-expand w-full bg-skwap-textSecondary hover:bg-skwap-textSecondary/90 text-[#1a1a1a] font-black py-4 rounded-xl transition-all text-[15px] tracking-wide shadow-md active:scale-[0.98] flex items-center justify-center gap-2"
+            >
+              Request Swap
+            </button>
+          ) : (
+            <div className="w-full bg-white/5 border border-white/10 text-white/40 text-center font-semibold py-4 rounded-xl text-[15px] tracking-wide">
+              Your Listing
+            </div>
+          )}
+        </div>
 
       </div>
     </div>

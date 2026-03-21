@@ -14,9 +14,16 @@ const userSchema = mongoose.Schema(
     },
     passwordHash: {
       type: String,
-      required: [true, 'Please add a password'],
+      required: function() {
+        return !this.googleId; // Only required if not social login
+      },
       minlength: [6, 'Password must be at least 6 characters long'],
       select: false,
+    },
+    googleId: {
+      type: String,
+      unique: true,
+      sparse: true,
     },
     credits: {
       type: Number,

@@ -48,12 +48,21 @@ const createReview = async (req, res) => {
       message,
     });
 
+    // Update session reviewed status
+    if (isLearner) {
+      session.learnerReviewed = true;
+    } else {
+      session.teacherReviewed = true;
+    }
+    await session.save();
+
     // Update reviewee's profile rating (simplified average)
     const profile = await Profile.findOne({ user: revieweeId });
     if (profile) {
       const allReviews = await Review.find({ reviewee: revieweeId });
       const avgRating = allReviews.reduce((acc, item) => item.rating + acc, 0) / allReviews.length;
       profile.rating = avgRating.toFixed(1);
+      profile.numReviews = allReviews.length;
       await profile.save();
     }
 

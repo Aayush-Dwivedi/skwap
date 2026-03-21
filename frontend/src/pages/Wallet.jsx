@@ -145,8 +145,8 @@ const Wallet = () => {
               <div key={tx._id} className="flex items-center justify-between p-4 rounded-2xl glass border-white/5 hover:bg-white/[0.05] transition-colors">
                 <div className="flex items-center gap-4">
                   <div className={`w-10 h-10 rounded-full glass flex items-center justify-center 
-                    ${tx.type === 'EARN' || tx.type === 'PURCHASE' ? 'text-emerald-400' : 'text-amber-400'}`}>
-                    {tx.type === 'EARN' || tx.type === 'PURCHASE' ? <ArrowDownLeft size={20} /> : <ArrowUpRight size={20} />}
+                    ${tx.type === 'EARN' || tx.type === 'PURCHASE' || tx.type === 'REFUND' ? 'text-emerald-400' : 'text-amber-400'}`}>
+                    {tx.type === 'EARN' || tx.type === 'PURCHASE' || tx.type === 'REFUND' ? <ArrowDownLeft size={20} /> : <ArrowUpRight size={20} />}
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-white">{tx.description}</p>
@@ -155,8 +155,8 @@ const Wallet = () => {
                     </p>
                   </div>
                 </div>
-                <p className={`text-lg font-bold ${tx.type === 'EARN' || tx.type === 'PURCHASE' ? 'text-emerald-400' : 'text-white/60'}`}>
-                  {tx.type === 'EARN' || tx.type === 'PURCHASE' ? '+' : '-'}{tx.amount}
+                <p className={`text-lg font-bold ${tx.type === 'EARN' || tx.type === 'PURCHASE' || tx.type === 'REFUND' ? 'text-emerald-400' : 'text-white/60'}`}>
+                  {tx.type === 'EARN' || tx.type === 'PURCHASE' || tx.type === 'REFUND' ? '+' : '-'}{tx.amount}
                 </p>
               </div>
             ))

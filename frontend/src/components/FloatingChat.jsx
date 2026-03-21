@@ -6,9 +6,10 @@ import api from '../services/api';
 import { 
   MessageSquare, X, Send, ChevronLeft, 
   Play, CheckCircle, Clock, Zap, 
-  User as UserIcon, MoreVertical 
+  User as UserIcon, MoreVertical, Star 
 } from 'lucide-react';
 import { format } from 'date-fns';
+import toast from 'react-hot-toast';
 
 const FloatingChat = () => {
   const { user } = useAuth();
@@ -21,6 +22,14 @@ const FloatingChat = () => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [cancelReason, setCancelReason] = useState('');
+  const [cancelling, setCancelling] = useState(false);
+  const [proposedCreditsInput, setProposedCreditsInput] = useState('');
+  const [negotiating, setNegotiating] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [hoverRating, setHoverRating] = useState(0);
+  const [submittingReview, setSubmittingReview] = useState(false);
   const messagesEndRef = useRef(null);
 
   // Auto-scroll to bottom
@@ -54,12 +63,6 @@ const FloatingChat = () => {
   useEffect(() => {
     if (!socket) return;
     
-    socket.on('session updated', (updatedSession) => {
-      if (activeSession?._id === updatedSession._id) {
-        setActiveSession(prev => ({ ...prev, ...updatedSession }));
-      }
-    });
-
     socket.on('message received', (msg) => {
       const msgSessionId = typeof msg.session === 'string' ? msg.session : msg.session?._id;
       if (activeSession?._id === msgSessionId) {
@@ -97,6 +100,43 @@ const FloatingChat = () => {
     }
   };
 
+  const handleProposeCredits = async () => {
+    if (!activeSession || !proposedCreditsInput) return;
+    
+    const credits = parseInt(proposedCreditsInput);
+    if (isNaN(credits) || credits <= 0) {
+      alert('Please enter a valid credit amount greater than 0');
+      return;
+    }
+
+    setNegotiating(true);
+    try {
+      const { data } = await api.put(`/sessions/${activeSession._id}/propose-credits`, {
+        credits: parseInt(proposedCreditsInput)
+      });
+      setActiveSession(data);
+      setProposedCreditsInput('');
+    } catch (err) {
+      console.error('Failed to propose credits', err);
+    } finally {
+      setNegotiating(false);
+    }
+  };
+
+  const handleAcceptCredits = async () => {
+    if (!activeSession) return;
+    setNegotiating(true);
+    try {
+      const { data } = await api.put(`/sessions/${activeSession._id}/accept-credits`);
+      setActiveSession(data);
+    } catch (err) {
+      console.error('Failed to accept credits', err);
+      alert(err.response?.data?.message || 'Failed to accept credits');
+    } finally {
+      setNegotiating(false);
+    }
+  };
+
   const handleComplete = async () => {
     if (!activeSession) return;
     try {
@@ -107,15 +147,63 @@ const FloatingChat = () => {
     }
   };
 
+  const handleCancel = async () => {
+    if (!activeSession || !cancelReason.trim()) return;
+    setCancelling(true);
+    try {
+      const { data } = await api.put(`/sessions/${activeSession._id}/cancel`, {
+        reason: cancelReason
+      });
+      setActiveSession(data);
+      setShowCancelModal(false);
+      setCancelReason('');
+    } catch (err) {
+      console.error('Failed to cancel session', err);
+      alert(err.response?.data?.message || 'Failed to cancel session');
+    } finally {
+      setCancelling(false);
+    }
+  };
+
+  const handleSubmitReview = async () => {
+    if (!activeSession || rating === 0) return;
+    setSubmittingReview(true);
+    try {
+      await api.post('/reviews', {
+        sessionId: activeSession._id,
+        rating,
+        message: 'Session synced successfully'
+      });
+      
+      const updatedSession = { ...activeSession };
+      const isLearner = activeSession.learner._id === user._id || activeSession.learner === user._id;
+      if (isLearner) updatedSession.learnerReviewed = true;
+      else updatedSession.teacherReviewed = true;
+      setActiveSession(updatedSession);
+      toast.success('Rating submitted successfully!');
+    } catch (err) {
+      console.error('Failed to submit review', err);
+      toast.error(err.response?.data?.message || 'Failed to submit review');
+    } finally {
+      setSubmittingReview(false);
+    }
+  };
+
   if (!user) return null;
 
   const otherUser = activeSession 
     ? (activeSession.learner._id === user._id ? activeSession.teacher : activeSession.learner)
     : null;
 
+  const isNegotiating = activeSession?.status === 'NEGOTIATING';
   const isPending = activeSession?.status === 'PENDING_START';
   const inProgress = activeSession?.status === 'IN_PROGRESS';
   const isCompleted = activeSession?.status === 'COMPLETED';
+  const isCancelled = activeSession?.status === 'CANCELLED';
+
+  // Negotiation data
+  const hasProposal = activeSession?.proposedCredits !== undefined && activeSession?.proposedCredits !== null;
+  const iProposed = activeSession?.proposer === user._id || activeSession?.proposer?._id === user._id;
 
   // Check if I have already started/completed
   const iStarted = activeSession 
@@ -123,6 +211,11 @@ const FloatingChat = () => {
     : false;
   const iCompleted = activeSession
     ? (activeSession.learner._id === user._id ? activeSession.learnerCompleted : activeSession.teacherCompleted)
+    : false;
+
+  const isLearner = activeSession?.learner?._id === user?._id || activeSession?.learner === user?._id;
+  const iReviewed = activeSession
+    ? (isLearner ? activeSession.learnerReviewed : activeSession.teacherReviewed)
     : false;
 
   return (
@@ -178,7 +271,93 @@ const FloatingChat = () => {
                   <div className="flex items-center justify-between mb-4">
                     <span className="text-[10px] font-black uppercase tracking-[0.25em] text-white/30">Protocol Control</span>
                     {inProgress && <span className="text-[9px] bg-emerald-500/20 text-emerald-400 px-2.5 py-0.5 rounded-full font-bold border border-emerald-500/20">Secured</span>}
+                    {isNegotiating && <span className="text-[9px] bg-amber-500/20 text-amber-400 px-2.5 py-0.5 rounded-full font-bold border border-amber-500/20 animate-pulse">Negotiating</span>}
                   </div>
+
+                  {isNegotiating && (
+                    <div className="space-y-4">
+                      {hasProposal ? (
+                        <div className="bg-white/10 p-4 rounded-2xl border border-white/20 shadow-lg">
+                          <div className="flex items-center justify-between mb-4 border-b border-white/10 pb-3">
+                            <span className="text-[10px] text-white/50 uppercase font-bold tracking-widest">Active Proposal</span>
+                            <span className="text-2xl font-black text-skwap-accent drop-shadow-[0_2px_10px_rgba(var(--skwap-accent),0.5)]">
+                              {activeSession.proposedCredits} <span className="text-[10px] opacity-50 ml-1">CR</span>
+                            </span>
+                          </div>
+                          
+                          {iProposed ? (
+                            <div className="space-y-3">
+                              <p className="text-[10px] text-skwap-accent text-center font-bold uppercase tracking-widest animate-pulse">Awaiting partner's decision...</p>
+                              <div className="flex gap-2 w-full">
+                                <input 
+                                  type="number" 
+                                  value={proposedCreditsInput}
+                                  onChange={(e) => setProposedCreditsInput(e.target.value)}
+                                  placeholder="Update..."
+                                  className="min-w-0 flex-1 bg-black/40 border border-white/20 rounded-xl px-3 py-3 text-sm text-white focus:outline-none focus:border-skwap-accent transition-all placeholder:text-white/20"
+                                />
+                                <button 
+                                  onClick={handleProposeCredits}
+                                  disabled={!proposedCreditsInput || negotiating}
+                                  className="bg-white/10 hover:bg-white/20 text-white px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all disabled:opacity-30 border border-white/10 flex-shrink-0"
+                                >
+                                  Edit
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="space-y-3">
+                              <button 
+                                onClick={handleAcceptCredits}
+                                disabled={negotiating}
+                                className="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-white rounded-xl text-[13px] font-black uppercase tracking-[0.2em] transition-all shadow-[0_10px_30px_rgba(16,185,129,0.3)]"
+                              >
+                                {negotiating ? 'Finalizing...' : 'ACCEPT PROPOSAL'}
+                              </button>
+                              <div className="flex gap-2 w-full">
+                                <input 
+                                  type="number" 
+                                  value={proposedCreditsInput}
+                                  onChange={(e) => setProposedCreditsInput(e.target.value)}
+                                  placeholder="Counter..."
+                                  className="min-w-0 flex-1 bg-black/40 border border-white/20 rounded-xl px-3 py-3 text-sm text-white focus:outline-none focus:border-skwap-accent transition-all placeholder:text-white/20"
+                                />
+                                <button 
+                                  onClick={handleProposeCredits}
+                                  disabled={!proposedCreditsInput || negotiating}
+                                  className="bg-white/10 hover:bg-white/20 text-white px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all disabled:opacity-30 border border-white/10 flex-shrink-0"
+                                >
+                                  Counter
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="bg-black/30 rounded-2xl p-5 border border-white/10 shadow-inner overflow-hidden">
+                          <p className="text-[11px] text-white/50 text-center leading-relaxed mb-4 font-semibold italic">
+                             Decide on a credit amount to finalize the booking.
+                          </p>
+                          <div className="flex gap-2 w-full">
+                            <input 
+                              type="number" 
+                              value={proposedCreditsInput}
+                              onChange={(e) => setProposedCreditsInput(e.target.value)}
+                              placeholder="Pitch credits..."
+                              className="min-w-0 flex-1 bg-black/40 border border-white/20 rounded-xl px-4 py-4 text-sm text-white focus:outline-none focus:border-skwap-accent transition-all placeholder:text-white/20"
+                            />
+                            <button 
+                              onClick={handleProposeCredits}
+                              disabled={!proposedCreditsInput || negotiating}
+                              className="bg-skwap-accent hover:brightness-110 text-skwap-bgSecondary px-7 py-4 rounded-xl text-[12px] font-black uppercase tracking-[0.1em] transition-all disabled:opacity-30 shadow-[0_10px_25px_rgba(var(--skwap-accent),0.4)] flex-shrink-0"
+                            >
+                              PITCH
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
 
                   {isPending && (
                     <button 
@@ -211,9 +390,63 @@ const FloatingChat = () => {
                   )}
 
                   {isCompleted && (
-                    <div className="text-center py-2 bg-emerald-500/10 rounded-2xl border border-emerald-500/10">
-                      <p className="text-emerald-400 font-black text-xs flex items-center justify-center gap-2">
-                        <CheckCircle size={14} className="fill-current shadow-lg" /> SESSION SYNCED
+                    <div className="bg-white/5 rounded-2xl border border-white/10 p-5 mt-4 group">
+                      <div className="text-center mb-4">
+                        <p className="text-emerald-400 font-black text-[11px] flex items-center justify-center gap-2 tracking-widest uppercase mb-1 drop-shadow-[0_2px_10px_rgba(52,211,153,0.3)]">
+                          <CheckCircle size={14} className="fill-current" /> SESSION SYNCED
+                        </p>
+                        <p className="text-white/40 text-[9px] font-bold uppercase tracking-widest">
+                          {iReviewed ? 'Review Submitted' : 'Rate your experience'}
+                        </p>
+                      </div>
+
+                      {!iReviewed ? (
+                        <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                          <div className="flex justify-center gap-1.5">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <button
+                                key={star}
+                                type="button"
+                                onClick={() => setRating(star)}
+                                onMouseEnter={() => setHoverRating(star)}
+                                onMouseLeave={() => setHoverRating(0)}
+                                className="p-1 transition-all hover:scale-110 active:scale-95"
+                              >
+                                <Star
+                                  size={24}
+                                  className={`${
+                                    (hoverRating || rating) >= star
+                                      ? 'fill-amber-400 text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.5)]'
+                                      : 'text-white/20 hover:text-white/40'
+                                  } transition-all duration-300`}
+                                />
+                              </button>
+                            ))}
+                          </div>
+                          
+                          <button
+                            onClick={handleSubmitReview}
+                            disabled={rating === 0 || submittingReview}
+                            className="w-full py-3 bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-amber-950 text-[11px] font-black uppercase tracking-[0.2em] rounded-xl shadow-[0_10px_20px_rgba(245,158,11,0.2)] transition-all active:scale-95 disabled:opacity-50 disabled:grayscale flex justify-center items-center"
+                          >
+                            {submittingReview ? 'Submitting...' : 'Submit Rating'}
+                          </button>
+                        </div>
+                      ) : (
+                         <div className="flex justify-center mt-2">
+                           <div className="px-3 py-1 bg-white/5 rounded-full border border-white/10 flex items-center gap-2">
+                             <Star size={12} className="fill-amber-400 text-amber-400" />
+                             <span className="text-[10px] font-bold text-white/60">Thank you for rating!</span>
+                           </div>
+                         </div>
+                      )}
+                    </div>
+                  )}
+
+                  {isCancelled && (
+                    <div className="text-center py-2 bg-rose-500/10 rounded-2xl border border-rose-500/10">
+                      <p className="text-rose-400 font-black text-xs flex items-center justify-center gap-2 uppercase tracking-widest">
+                        <X size={14} className="stroke-[3px]" /> Session Cancelled
                       </p>
                     </div>
                   )}
@@ -222,6 +455,16 @@ const FloatingChat = () => {
                     <p className="mt-3 text-[10px] text-white/40 text-center font-medium leading-relaxed px-4">
                       Protocol initiated. Waiting for the other Skwap member to authorize...
                     </p>
+                  )}
+
+                  {isPending && !iStarted && (
+                    <button 
+                      onClick={() => setShowCancelModal(true)}
+                      className="w-full mt-5 py-4 rounded-2xl text-[12px] font-black uppercase tracking-[0.25em] text-white bg-rose-500 hover:bg-rose-400 border border-rose-400 shadow-[0_12px_40px_rgba(244,63,94,0.4)] transition-all active:scale-95 flex items-center justify-center gap-3 group"
+                    >
+                      <X size={16} className="stroke-[4px] group-hover:rotate-90 transition-transform duration-300" />
+                      CANCEL SESSION
+                    </button>
                   )}
                 </div>
 
@@ -293,7 +536,7 @@ const FloatingChat = () => {
           </div>
 
           {/* Footer Input */}
-          {activeSession && !isCompleted && (
+          {activeSession && !isCompleted && !isCancelled && (
             <div className="p-6 bg-white/[0.04] border-t border-white/10">
               <form onSubmit={handleSend} className="relative">
                 <input 
@@ -311,6 +554,42 @@ const FloatingChat = () => {
                   <Send size={18} className="fill-current" />
                 </button>
               </form>
+            </div>
+          )}
+
+          {/* Cancellation Overlay */}
+          {showCancelModal && (
+            <div className="absolute inset-0 z-50 flex items-center justify-center p-6 animate-in fade-in zoom-in duration-300">
+              <div className="absolute inset-0 bg-skwap-bgSecondary/80 backdrop-blur-md" onClick={() => setShowCancelModal(false)}></div>
+              <div className="relative w-full bg-skwap-bgSecondary border border-white/10 rounded-[2.5rem] p-8 shadow-2xl">
+                <h4 className="text-xl font-black text-white mb-2 tracking-tight">Cancel Session?</h4>
+                <p className="text-white/40 text-xs font-bold uppercase tracking-widest mb-6 leading-relaxed">
+                  Credits will be refunded to the learner immediately.
+                </p>
+                
+                <textarea 
+                  value={cancelReason}
+                  onChange={(e) => setCancelReason(e.target.value)}
+                  placeholder="Reason for cancellation..."
+                  className="w-full h-32 bg-white/5 border border-white/10 rounded-2xl p-4 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-skwap-accent/50 transition-all resize-none mb-6"
+                />
+                
+                <div className="flex flex-col gap-3">
+                  <button 
+                    onClick={handleCancel}
+                    disabled={!cancelReason.trim() || cancelling}
+                    className="w-full py-4 bg-rose-500 text-white text-xs font-black uppercase tracking-[0.2em] rounded-2xl shadow-xl shadow-rose-500/20 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:scale-100"
+                  >
+                    {cancelling ? 'Terminating...' : 'Confirm Cancellation'}
+                  </button>
+                  <button 
+                    onClick={() => setShowCancelModal(false)}
+                    className="w-full py-3 text-[11px] font-black uppercase tracking-widest text-white/40 hover:text-white transition-colors"
+                  >
+                    Keep Session
+                  </button>
+                </div>
+              </div>
             </div>
           )}
         </div>

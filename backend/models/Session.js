@@ -19,9 +19,18 @@ const sessionSchema = mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['PENDING_START', 'IN_PROGRESS', 'COMPLETED', 'DISPUTED'],
+      enum: ['NEGOTIATING', 'PENDING_START', 'IN_PROGRESS', 'COMPLETED', 'DISPUTED', 'CANCELLED'],
       default: 'PENDING_START',
     },
+    scheduledAt: { type: Date },
+    meetingStatus: {
+      type: String,
+      enum: ['WAITING', 'ACTIVE', 'ENDED'],
+      default: 'WAITING',
+    },
+    proposedCredits: { type: Number },
+    proposer: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    finalCredits: { type: Number },
     startTime: { type: Date },
     learnerStarted: {
       type: Boolean,
@@ -36,6 +45,14 @@ const sessionSchema = mongoose.Schema(
       default: false,
     },
     teacherCompleted: {
+      type: Boolean,
+      default: false,
+    },
+    learnerReviewed: {
+      type: Boolean,
+      default: false,
+    },
+    teacherReviewed: {
       type: Boolean,
       default: false,
     },

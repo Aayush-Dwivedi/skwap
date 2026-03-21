@@ -21,6 +21,12 @@ const SetupProfile = () => {
   const handlePhotoChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
+    
+    // Check file size (10MB limit)
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error('File too large. Max size is 10MB.');
+      return;
+    }
 
     const uploadData = new FormData();
     uploadData.append('image', file);
@@ -32,10 +38,8 @@ const SetupProfile = () => {
           'Content-Type': 'multipart/form-data',
         },
       });
-      // Backend returns url like "/uploads/image-123.jpg"
-      // We prepend the base API URL if needed, but since we serve statically at /uploads
-      // and frontend is on 5173, backend on 5000, we need the full URL
-      const fullUrl = `http://localhost:5000${data.url}`;
+      // Backend now returns full Cloudinary URL or absolute path
+      const fullUrl = data.url.startsWith('http') ? data.url : `http://localhost:5000${data.url}`;
       setFormData({ ...formData, photoUrl: fullUrl });
       toast.success('Photo uploaded!');
     } catch (err) {

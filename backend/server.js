@@ -3,6 +3,14 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./config/db');
 const path = require('path');
+const fs = require('fs');
+
+// Log errors to a file since terminal output is hard to read
+const logFile = path.join(__dirname, 'error.log');
+const logError = (msg) => {
+  const timestamp = new Date().toISOString();
+  fs.appendFileSync(logFile, `[${timestamp}] ${msg}\n`);
+};
 
 // Load env vars
 dotenv.config();
@@ -64,6 +72,7 @@ io.on('connection', (socket) => {
 
   socket.on('join chat', (room) => {
     socket.join(room);
+    console.log(`User joined chat room: ${room}`);
   });
 
   socket.on('new message', async (newMessageReceived) => {
@@ -83,13 +92,40 @@ io.on('connection', (socket) => {
     const senderId = newMessageReceived.sender._id || newMessageReceived.sender;
 
     if (learnerId === senderId.toString()) {
+      console.log(`Emitting message to teacher room: ${teacherId}`);
       socket.to(teacherId).emit('message received', newMessageReceived);
     } else {
+      console.log(`Emitting message to learner room: ${learnerId}`);
       socket.to(learnerId).emit('message received', newMessageReceived);
     }
     
     // REMOVED redundant broadcast to specific chat room to avoid duplication
     // Personal room broadcast above handles it correctly.
+  });
+
+  // WebRTC Video Meeting Signaling
+  socket.on('join-meeting', ({ sessionId, userId }) => {
+    socket.join(`meeting_${sessionId}`);
+    console.log(`User ${userId} joined meeting ${sessionId}`);
+    socket.to(`meeting_${sessionId}`).emit('user-joined-meeting', { userId, socketId: socket.id });
+  });
+
+  socket.on('webrtc-offer', ({ offer, sessionId, toSocketId, fromUserId }) => {
+    socket.to(toSocketId).emit('webrtc-offer', { offer, fromSocketId: socket.id, fromUserId });
+  });
+
+  socket.on('webrtc-answer', ({ answer, toSocketId, fromUserId }) => {
+    socket.to(toSocketId).emit('webrtc-answer', { answer, fromSocketId: socket.id, fromUserId });
+  });
+
+  socket.on('webrtc-ice-candidate', ({ candidate, toSocketId }) => {
+    socket.to(toSocketId).emit('webrtc-ice-candidate', { candidate, fromSocketId: socket.id });
+  });
+  
+  socket.on('leave-meeting', ({ sessionId, userId }) => {
+    socket.leave(`meeting_${sessionId}`);
+    console.log(`User ${userId} left meeting ${sessionId}`);
+    socket.to(`meeting_${sessionId}`).emit('user-left-meeting', { userId, socketId: socket.id });
   });
 
   socket.on('disconnect', () => {
@@ -99,6 +135,15 @@ io.on('connection', (socket) => {
 
 const PORT = process.env.PORT || 5000;
 
+process.on('uncaughtException', (err) => {
+  logError(`Uncaught Exception: ${err.message}\n${err.stack}`);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  logError(`Unhandled Rejection at: ${promise}, reason: ${reason}`);
+});
+
 server.listen(PORT, () => {
   console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
+  logError('Server started/restarted');
 });

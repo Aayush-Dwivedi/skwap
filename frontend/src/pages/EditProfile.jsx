@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 import toast from 'react-hot-toast';
-import { User, Image as ImageIcon, Briefcase, GraduationCap, Github, Linkedin, ExternalLink, Twitter, LogOut, Palette, Sliders, Check } from 'lucide-react';
+import { User, Image as ImageIcon, Briefcase, GraduationCap, Github, Linkedin, ExternalLink, Twitter, LogOut, Palette, Sliders, Check, Star } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 
 const EditProfile = () => {
@@ -14,6 +14,8 @@ const EditProfile = () => {
   const [uploading, setUploading] = useState(false);
   const [bgUploadInProgress, setBgUploadInProgress] = useState(false);
   const { background, changeBackground, isDynamic, toggleDynamic } = useTheme();
+  const [isDirty, setIsDirty] = useState(false);
+  const [initialData, setInitialData] = useState(null);
   
   const [formData, setFormData] = useState({
     name: '',
@@ -36,8 +38,7 @@ const EditProfile = () => {
     const fetchProfile = async () => {
       try {
         const { data } = await api.get('/profile/me');
-        setFormData(prev => ({
-          ...prev,
+        const initial = {
           name: data.name || '',
           photoUrl: data.photoUrl || '',
           currentSkills: data.currentSkills?.join(', ') || '',
@@ -47,8 +48,14 @@ const EditProfile = () => {
           twitter: data.socialLinks?.twitter || '',
           portfolio: data.socialLinks?.portfolio || '',
           email: user?.email || '',
-          showSocialLinks: data.showSocialLinks !== false
-        }));
+          showSocialLinks: data.showSocialLinks !== false,
+          themeBackground: background,
+          isDynamicTheme: isDynamic,
+          rating: data.rating || 0,
+          numReviews: data.numReviews || 0
+        };
+        setFormData(prev => ({ ...prev, ...initial }));
+        setInitialData(initial);
       } catch (error) {
         console.log('No profile found, starting fresh');
         setFormData(prev => ({ ...prev, email: user?.email || '' }));
@@ -62,9 +69,34 @@ const EditProfile = () => {
     }
   }, [user]);
 
+  // Track changes to detect "dirty" state
+  useEffect(() => {
+    if (!initialData) return;
+    
+    const hasChanged = 
+      formData.name !== initialData.name ||
+      formData.photoUrl !== initialData.photoUrl ||
+      formData.currentSkills !== initialData.currentSkills ||
+      formData.skillsToLearn !== initialData.skillsToLearn ||
+      formData.github !== initialData.github ||
+      formData.linkedin !== initialData.linkedin ||
+      formData.twitter !== initialData.twitter ||
+      formData.portfolio !== initialData.portfolio ||
+      formData.showSocialLinks !== initialData.showSocialLinks ||
+      background !== initialData.themeBackground ||
+      isDynamic !== initialData.isDynamicTheme;
+
+    setIsDirty(hasChanged);
+  }, [formData, background, isDynamic, initialData]);
+
   const handlePhotoChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
+    
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error('File too large. Max size is 10MB.');
+      return;
+    }
 
     const uploadData = new FormData();
     uploadData.append('image', file);
@@ -76,7 +108,7 @@ const EditProfile = () => {
           'Content-Type': 'multipart/form-data',
         },
       });
-      const fullUrl = `http://localhost:5000${data.url}`;
+      const fullUrl = data.url.startsWith('http') ? data.url : `http://localhost:5000${data.url}`;
       setFormData({ ...formData, photoUrl: fullUrl });
     } catch (err) {
       console.error(err);
@@ -89,6 +121,11 @@ const EditProfile = () => {
   const handleBackgroundChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
+    
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error('File too large. Max size is 10MB.');
+      return;
+    }
 
     const uploadData = new FormData();
     uploadData.append('image', file);
@@ -100,7 +137,7 @@ const EditProfile = () => {
           'Content-Type': 'multipart/form-data',
         },
       });
-      const fullUrl = `http://localhost:5000${data.url}`;
+      const fullUrl = data.url.startsWith('http') ? data.url : `http://localhost:5000${data.url}`;
       changeBackground(fullUrl);
       toast.success('Background updated!');
     } catch (err) {
@@ -153,6 +190,12 @@ const EditProfile = () => {
       }
 
       toast.success('Settings updated successfully!');
+      setIsDirty(false);
+      setInitialData({
+        ...formData,
+        themeBackground: background,
+        isDynamicTheme: isDynamic
+      });
       navigate('/');
     } catch (error) {
       console.error('Save failed:', error);
@@ -166,9 +209,25 @@ const EditProfile = () => {
 
   return (
     <div className="max-w-3xl mx-auto pb-12">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white mb-2">Your Profile</h1>
-        <p className="text-skwap-textSecondary">Complete your profile to start bartering skills with the community.</p>
+      <div className="mb-8 flex justify-between items-start">
+        <div>
+          <h1 className="text-3xl font-bold text-white mb-2">Your Profile</h1>
+          <p className="text-skwap-textSecondary">Complete your profile to start bartering skills with the community.</p>
+        </div>
+        {initialData && initialData.numReviews > 0 && (
+          <div className="flex flex-col items-end animate-in fade-in slide-in-from-right-4 duration-700">
+            <div className="flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 px-4 py-2 rounded-2xl shadow-[0_10px_30px_rgba(245,158,11,0.15)]">
+              <Star className="fill-amber-400 text-amber-400 drop-shadow-[0_0_12px_rgba(251,191,36,0.8)]" size={24} />
+              <div className="flex flex-col">
+                <span className="text-xl font-black text-white leading-none">{initialData.rating}</span>
+                <span className="text-[9px] text-amber-400/80 font-black uppercase tracking-widest mt-0.5">Community Rating</span>
+              </div>
+            </div>
+            <p className="text-[10px] text-white/40 uppercase font-black tracking-widest mt-2 mr-2">
+              Based on {initialData.numReviews} review{initialData.numReviews !== 1 ? 's' : ''}
+            </p>
+          </div>
+        )}
       </div>
 
       <div className="glass-card rounded-[2.5rem] p-8 shadow-2xl relative overflow-hidden">
@@ -190,7 +249,7 @@ const EditProfile = () => {
                 <button 
                   type="button"
                   onClick={toggleDynamic}
-                  className={`w-12 h-6 rounded-full transition-all relative ${isDynamic ? 'bg-skwap-accent' : 'bg-white/20'}`}
+                  className={`w-12 h-6 rounded-full transition-all relative ${isDynamic ? 'bg-skwap-buttonFocus shadow-[0_0_8px_rgba(0,0,0,0.4)]' : 'bg-white/10'}`}
                 >
                   <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${isDynamic ? 'left-7' : 'left-1'}`}></div>
                 </button>
@@ -204,7 +263,7 @@ const EditProfile = () => {
                 <button 
                   type="button"
                   onClick={() => setFormData({ ...formData, showSocialLinks: !formData.showSocialLinks })}
-                  className={`w-12 h-6 rounded-full transition-all relative ${formData.showSocialLinks ? 'bg-skwap-accent' : 'bg-white/20'}`}
+                  className={`w-12 h-6 rounded-full transition-all relative ${formData.showSocialLinks ? 'bg-skwap-buttonFocus shadow-[0_0_8px_rgba(0,0,0,0.4)]' : 'bg-white/10'}`}
                 >
                   <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${formData.showSocialLinks ? 'left-7' : 'left-1'}`}></div>
                 </button>
@@ -218,10 +277,10 @@ const EditProfile = () => {
                   </div>
                   
                   <div className="grid grid-cols-2 gap-3 flex-grow w-full">
-                    <label className="cursor-pointer">
-                      <div className="w-full h-[48px] glass hover:bg-white/10 border border-white/20 border-dashed text-white rounded-xl flex items-center justify-center transition-all">
-                        <span className="text-[11px] font-medium text-skwap-textSecondary px-2 text-center">
-                          {bgUploadInProgress ? 'Processing...' : 'Upload New Wallpaper'}
+                    <label className="cursor-pointer group flex-grow">
+                      <div className="w-full h-[48px] glass-btn rounded-2xl border border-white/15 flex items-center justify-center transition-all group-hover:scale-[1.02] active:scale-95">
+                        <span className="text-[11px] font-black uppercase tracking-widest text-white">
+                          {bgUploadInProgress ? 'Processing...' : 'Upload Wallpaper'}
                         </span>
                       </div>
                       <input 
@@ -236,9 +295,9 @@ const EditProfile = () => {
                     <button 
                       type="button"
                       onClick={() => changeBackground('/bg-wallpaper.png')}
-                      className="w-full h-[48px] glass-btn text-[11px] font-semibold text-white rounded-xl shadow-md flex items-center justify-center px-4 transition-all"
+                      className="w-full h-[48px] bg-white/5 hover:bg-white/10 border border-white/10 text-[11px] font-black uppercase tracking-widest text-white/60 hover:text-white rounded-2xl flex items-center justify-center px-4 transition-all"
                     >
-                      Reset to Default
+                      Reset Default
                     </button>
                   </div>
                 </div>
@@ -418,13 +477,44 @@ const EditProfile = () => {
             <button type="button" onClick={() => navigate(-1)} className="px-6 py-2.5 rounded-xl text-sm font-medium text-skwap-textSecondary hover:text-white transition-colors">
               Cancel
             </button>
-            <button type="submit" disabled={saving} className="px-8 py-2.5 glass-btn text-white text-sm font-bold rounded-xl shadow-lg transition-all disabled:opacity-50">
+            <button type="submit" disabled={saving} className="px-10 py-3 glass-btn text-white text-xs font-black uppercase tracking-[0.2em] rounded-2xl shadow-[0_15px_40px_rgba(var(--skwap-accent-rgb),0.3)] transition-all hover:scale-105 active:scale-95 disabled:opacity-50">
               {saving ? 'Saving...' : 'Save Profile'}
             </button>
           </div>
 
         </form>
       </div>
+
+      {/* Unsaved Changes Banner - Floating at the Top */}
+      {isDirty && (
+        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[1000] animate-in fade-in slide-in-from-top-12 duration-500 w-full max-w-xl px-4">
+          <div className="flex items-center justify-between gap-4 px-6 py-4 bg-skwap-bgSecondary/95 backdrop-blur-3xl border border-skwap-accent/30 rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.5)] ring-1 ring-white/10">
+            <div className="flex items-center gap-3">
+              <div className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse shadow-[0_0_15px_rgba(244,63,94,0.6)]"></div>
+              <p className="text-white text-[11px] font-black uppercase tracking-[0.2em] whitespace-nowrap">Unsaved Edits</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <button 
+                onClick={() => {
+                  setFormData({...formData, ...initialData});
+                  changeBackground(initialData.themeBackground);
+                  if (isDynamic !== initialData.isDynamicTheme) toggleDynamic();
+                }}
+                className="px-4 py-2 text-[10px] font-black uppercase tracking-widest text-white/40 hover:text-white transition-colors"
+              >
+                Discard
+              </button>
+              <button 
+                onClick={handleSubmit}
+                disabled={saving}
+                className="px-8 py-2.5 bg-skwap-accent text-skwap-bgSecondary text-[10px] font-black uppercase tracking-widest rounded-full hover:scale-105 active:scale-95 transition-all shadow-lg shadow-skwap-accent/30"
+              >
+                {saving ? 'Saving...' : 'Save Now'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

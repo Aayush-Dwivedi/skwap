@@ -1,48 +1,34 @@
 const express = require('express');
 const multer = require('multer');
-const path = require('path');
 const { protect } = require('../middlewares/authMiddleware');
+const { storage } = require('../config/cloudinary');
 
 const router = express.Router();
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/');
-  },
-  filename: (req, file, cb) => {
-    cb(
-      null,
-      `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`
-    );
-  },
-});
-
-const checkFileType = (file, cb) => {
-  const filetypes = /jpg|jpeg|png/;
-  const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-  const mimetype = filetypes.test(file.mimetype);
-
-  if (extname && mimetype) {
-    return cb(null, true);
-  } else {
-    cb('Images only!');
-  }
-};
-
-const upload = multer({
+const upload = multer({ 
   storage,
-  fileFilter: function (req, file, cb) {
-    checkFileType(file, cb);
-  },
+  limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit
 });
 
-router.post('/', protect, upload.single('image'), (req, res) => {
-  if (!req.file) {
-    return res.status(400).send({ message: 'No file uploaded' });
-  }
-  res.send({
-    message: 'Image uploaded',
-    url: `/${req.file.path.replace(/\\/g, '/')}`,
+router.post('/', protect, (req, res, next) => {
+  upload.single('image')(req, res, (err) => {
+    if (err) {
+      console.error('Multer/Cloudinary Error:', err);
+      // Try to log to a file if possible
+      try {
+        require('fs').appendFileSync('error.log', `[${new Date().toISOString()}] Upload Error: ${err.message}\n`);
+      } catch (e) {}
+      return res.status(400).send({ message: err.message || 'Upload failed' });
+    }
+    if (!req.file) {
+      return res.status(400).send({ message: 'No file uploaded' });
+    }
+    
+    console.log('Image uploaded to cloud:', req.file.path);
+    res.send({
+      message: 'Image uploaded to cloud',
+      url: req.file.path, 
+    });
   });
 });
 

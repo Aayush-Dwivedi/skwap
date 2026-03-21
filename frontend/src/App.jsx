@@ -5,6 +5,7 @@ import { SocketProvider } from './contexts/SocketContext';
 import { ChatProvider } from './contexts/ChatContext';
 import Layout from './components/Layout';
 import FloatingChat from './components/FloatingChat';
+import GlobalNotifications from './components/GlobalNotifications';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -18,6 +19,7 @@ import SetupProfile from './pages/SetupProfile';
 import Notifications from './pages/Notifications';
 import Wallet from './pages/Wallet';
 import ContactAdmin from './pages/ContactAdmin';
+import MeetingRoom from './pages/MeetingRoom';
 import { Toaster } from 'react-hot-toast';
 
 // Protected Route Wrapper
@@ -95,6 +97,7 @@ function App() {
                   <Route path="/wallet" element={<Wallet />} />
                   <Route path="/sessions" element={<MySessions />} />
                   <Route path="/contact-admin" element={<ContactAdmin />} />
+                  <Route path="/meeting/:sessionId" element={<MeetingRoom />} />
                   <Route path="/chat/:id" element={<Navigate to="/explore" replace />} />
                 </Route>
                 
@@ -103,6 +106,7 @@ function App() {
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
               
+              <GlobalNotifications />
               <FloatingChat />
             </ThemeProvider>
           </ChatProvider>

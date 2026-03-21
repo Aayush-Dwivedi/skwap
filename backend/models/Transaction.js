@@ -9,7 +9,7 @@ const transactionSchema = mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ['PURCHASE', 'EARN', 'SPEND'],
+      enum: ['PURCHASE', 'EARN', 'SPEND', 'REFUND'],
       required: true,
     },
     amount: {

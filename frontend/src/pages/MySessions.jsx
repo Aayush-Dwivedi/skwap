@@ -1,16 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
-import { Calendar, MessageCircle, CheckCircle2, XCircle, Clock } from 'lucide-react';
+import { Calendar, MessageCircle, CheckCircle2, XCircle, Clock, Video } from 'lucide-react';
 import { useChat } from '../contexts/ChatContext';
+import { useSocket } from '../contexts/SocketContext';
 
 const MySessions = () => {
   const { user } = useAuth();
   const { openSession } = useChat();
+  const { socket } = useSocket();
   const [sessions, setSessions] = useState([]);
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [scheduleDates, setScheduleDates] = useState({});
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [showReminder, setShowReminder] = useState(location.state?.showCompletionReminder || false);
 
   const fetchData = async () => {
     setLoading(true);
@@ -33,6 +39,34 @@ const MySessions = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    if (!socket) return;
+    
+    // Listen for live updates so user doesn't need to refresh!
+    socket.on('session updated', () => {
+      fetchData();
+    });
+    
+    socket.on('session created', () => {
+      fetchData();
+    });
+
+    return () => {
+      socket.off('session updated');
+      socket.off('session created');
+    };
+  }, [socket]);
+
+  // Auto-hide the completion reminder if there are no IN_PROGRESS sessions
+  useEffect(() => {
+    if (showReminder && sessions.length > 0) {
+      const hasInProgress = sessions.some(s => s.status === 'IN_PROGRESS');
+      if (!hasInProgress) {
+        setShowReminder(false);
+      }
+    }
+  }, [sessions, showReminder]);
+
   const handleRequestUpdate = async (id, status) => {
     try {
       await api.put(`/requests/${id}/status`, { status });
@@ -43,8 +77,37 @@ const MySessions = () => {
     }
   };
 
+  const handleScheduleSession = async (id) => {
+    const date = scheduleDates[id];
+    if (!date) return alert('Please select a date and time');
+    try {
+      await api.put(`/sessions/${id}/schedule`, { scheduledAt: date });
+      alert('Session scheduled successfully!');
+      fetchData();
+    } catch (error) {
+      console.error(error);
+      alert(error.response?.data?.message || 'Action failed');
+    }
+  };
+
+  const canJoinMeeting = (scheduledAt) => {
+    if (!scheduledAt) return false;
+    const now = new Date();
+    const meetingTime = new Date(scheduledAt);
+    const diffMs = meetingTime - now;
+    // Allow joining 15 mins prior
+    return diffMs <= 15 * 60 * 1000;
+  };
+
   return (
-    <div className="max-w-5xl mx-auto pb-12">
+    <div className="max-w-5xl mx-auto pb-12 relative pt-6">
+      {showReminder && (
+        <div className="fixed top-8 left-1/2 -translate-x-1/2 z-[100] bg-emerald-600 text-white px-6 py-4 rounded-full shadow-[0_15px_40px_rgba(5,150,105,0.4)] flex items-center gap-3 animate-bounce border border-emerald-400">
+          <CheckCircle2 size={22} className="shrink-0" />
+          <span className="font-bold text-sm tracking-wide">Please remember to mark the session as "Completed" in the Chat Box!</span>
+          <button onClick={() => setShowReminder(false)} className="bg-black/20 hover:bg-black/40 p-1 rounded-full transition-colors ml-2 shrink-0"><XCircle size={18} /></button>
+        </div>
+      )}
       <div className="mb-10">
         <h1 className="text-3xl font-bold text-white mb-2">My Sessions & Requests</h1>
         <p className="text-skwap-textSecondary">Manage your incoming requests and ongoing skill exchanges.</p>
@@ -87,7 +150,11 @@ const MySessions = () => {
                           {session.learner._id === user?._id ? `Learning from ${session.teacher.name}` : `Teaching ${session.learner.name}`}
                         </h3>
                         <p className="text-skwap-textSecondary text-xs">
-                          {session.request.type === 'BARTER' ? `Barter: ${session.request.offeredSkill}` : `${session.request.credits} Credits`}
+                          {session.request.type === 'BARTER' 
+                            ? `Barter: ${session.request.offeredSkill}` 
+                            : session.status === 'NEGOTIATING' 
+                              ? 'Negotiating Credits...' 
+                              : `${session.finalCredits || session.request.credits} Credits (Finalized)`}
                         </p>
                       </div>
                     </div>
@@ -95,19 +162,78 @@ const MySessions = () => {
                     <span className={`px-3 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase ${
                       session.status === 'IN_PROGRESS' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 
                       session.status === 'COMPLETED' ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30' :
-                      'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                      session.status === 'NEGOTIATING' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30 animate-pulse' :
+                      'bg-white/5 text-white/40 border border-white/10'
                     }`}>
                       {session.status.replace('_', ' ')}
                     </span>
                   </div>
 
-                  <div className="flex gap-3">
-                    <button 
-                      onClick={() => openSession(session)}
-                      className="px-6 py-2.5 glass-btn text-white text-sm font-bold rounded-xl transition-all shadow-md flex items-center gap-2"
-                    >
-                      <MessageCircle size={16} /> Open Chat
-                    </button>
+                  <div className="flex flex-col gap-3">
+                    <div className="flex gap-3">
+                      <button 
+                        onClick={() => openSession(session)}
+                        className="px-6 py-2.5 glass-btn text-white text-sm font-bold rounded-xl transition-all shadow-md flex items-center gap-2"
+                      >
+                        <MessageCircle size={16} /> Open Chat
+                      </button>
+
+                      {session.status === 'PENDING_START' && session.scheduledAt && (
+                        <button 
+                          onClick={() => navigate(`/meeting/${session._id}`)}
+                          disabled={!canJoinMeeting(session.scheduledAt)}
+                          className={`px-6 py-2.5 text-sm font-black rounded-xl transition-all shadow-md flex items-center gap-2 ${canJoinMeeting(session.scheduledAt) ? 'bg-skwap-accent hover:bg-skwap-primary text-[#1A1625]' : 'bg-gray-500/50 text-white cursor-not-allowed border border-gray-500/30'}`}
+                        >
+                          <Video size={16} /> Join Meeting
+                        </button>
+                      )}
+                      
+                      {session.status === 'IN_PROGRESS' && (
+                        <button 
+                          onClick={() => navigate(`/meeting/${session._id}`)}
+                          className="px-6 py-2.5 bg-skwap-accent hover:bg-skwap-primary text-[#1A1625] text-sm font-black rounded-xl transition-all shadow-md flex items-center gap-2"
+                        >
+                          <Video size={16} /> Return to Meeting
+                        </button>
+                      )}
+                    </div>
+                    
+                    {session.status === 'PENDING_START' && !session.scheduledAt && (
+                      session.teacher._id === user?._id ? (
+                        <div className="mt-2 p-4 rounded-xl border border-white/10 bg-white/5 flex flex-wrap items-center gap-3">
+                          <span className="text-white text-sm font-bold">Schedule Session:</span>
+                          <input 
+                            type="datetime-local" 
+                            value={scheduleDates[session._id] || ''}
+                            onChange={(e) => setScheduleDates({ ...scheduleDates, [session._id]: e.target.value })}
+                            className="px-3 py-2 rounded-lg bg-black/40 border border-white/20 text-white text-sm focus:outline-none focus:border-skwap-accent"
+                          />
+                          <button 
+                            onClick={() => handleScheduleSession(session._id)}
+                            className="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-white text-sm font-bold rounded-lg transition-colors"
+                          >
+                            Schedule
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="mt-2 text-sm text-skwap-textSecondary flex items-center gap-2">
+                          <Clock className="text-skwap-accent" size={14} />
+                          Waiting for {session.teacher.name} to schedule the session...
+                        </div>
+                      )
+                    )}
+                    
+                    {session.status === 'PENDING_START' && session.scheduledAt && (
+                      <div className="mt-1 flex flex-col gap-1">
+                        <div className="text-xs text-skwap-textSecondary flex items-center gap-1">
+                          <Clock size={12} className="text-skwap-accent" />
+                          Scheduled for: <span className="text-white font-medium">{new Date(session.scheduledAt).toLocaleString()}</span>
+                        </div>
+                        <div className="text-xs text-amber-400 font-medium flex items-center gap-1 mt-1 bg-amber-500/10 w-fit px-2 py-1 rounded">
+                          ⚠️ Please make sure to press "Start Session" in your chat before joining!
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               ))

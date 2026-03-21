@@ -159,43 +159,20 @@ const updateRequestStatus = async (req, res) => {
 
     const updatedRequest = await request.save();
 
-    // If Accepted, create a Session and handle credits if applicable
+    // If Accepted, create a Session
     if (status === 'ACCEPTED') {
       // 1. Create the session
+      // If it's a credit booking, it starts in NEGOTIATING status
+      const sessionStatus = request.type === 'CREDITS' ? 'NEGOTIATING' : 'PENDING_START';
+
       const newSession = await Session.create({
         request: request._id,
         learner: request.learner._id,
         teacher: request.teacher._id,
-        status: 'PENDING_START'
+        status: sessionStatus
       });
 
-      // 2. If it was a credit booking, deduct credits from learner (ESCROW SIMULATION)
-      // In a real app, you might hold them in escrow. Here we'll just deduct upon acceptance.
-      if (request.type === 'CREDITS' && request.credits > 0) {
-        const learner = await User.findById(request.learner._id);
-        learner.credits -= request.credits;
-        await learner.save();
-
-        // Log Transaction (Spend)
-        await Transaction.create({
-          user: request.learner._id,
-          type: 'SPEND',
-          amount: request.credits,
-          description: `Booked session for ${request.requestedSkill}`,
-          relatedRequest: request._id,
-          relatedSession: newSession._id
-        });
-
-        // 🔔 Notify Learner about credit deduction
-        await createAndEmitNotification(req.io, {
-          user: request.learner._id,
-          sender: request.teacher._id,
-          type: 'WALLET_UPDATE',
-          content: `${request.credits} credit${request.credits > 1 ? 's' : ''} deducted for booking session: ${request.requestedSkill}`,
-          relatedId: newSession._id
-        });
-      }
-
+      // 2. Credits are NO LONGER deducted here. They will be negotiated in chat.
       // 3. Notify Learner (Link to SESSION for chat access)
       const sessionWithData = await Session.findById(newSession._id)
         .populate('learner', 'email')

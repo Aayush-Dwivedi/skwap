@@ -2,8 +2,6 @@ import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import { useAuth } from '../contexts/AuthContext';
-import { io } from 'socket.io-client';
-import toast from 'react-hot-toast';
 
 /* ── Page Transition Wrapper ── */
 const AnimatedPage = ({ children, locationKey }) => (
@@ -121,33 +119,6 @@ const Layout = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
-
-  useEffect(() => {
-    if (!user) return;
-
-    const socket = io('http://localhost:5000');
-    socket.emit('setup', user);
-
-    socket.on('notification', (data) => {
-      toast(
-        (t) => (
-          <div className="flex flex-col gap-2 cursor-pointer" onClick={() => {
-            toast.dismiss(t.id);
-            navigate('/sessions');
-          }}>
-            <span className="font-bold text-skwap-accent text-sm">Update Received! ✨</span>
-            <span className="text-sm font-medium">{data.message || 'Your session request was accepted!'}</span>
-            <span className="text-[10px] text-skwap-textSecondary mt-1 uppercase tracking-wider">Click to view sessions</span>
-          </div>
-        ),
-        { duration: 6000 }
-      );
-    });
-
-    return () => {
-      socket.disconnect();
-    };
-  }, [user, navigate]);
 
   return (
     <div className="flex h-screen overflow-hidden text-skwap-textPrimary font-sans relative">

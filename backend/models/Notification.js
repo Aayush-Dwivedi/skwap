@@ -13,7 +13,7 @@ const notificationSchema = mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ['NEW_REQUEST', 'REQUEST_ACCEPTED', 'REQUEST_DECLINED', 'SESSION_STARTED', 'SESSION_COMPLETED', 'NEW_MESSAGE', 'CREDITS_RECEIVED'],
+      enum: ['NEW_REQUEST', 'REQUEST_ACCEPTED', 'REQUEST_DECLINED', 'SESSION_STARTED', 'SESSION_COMPLETED', 'NEW_MESSAGE', 'CREDITS_RECEIVED', 'WALLET_UPDATE', 'SESSION_CANCELLED', 'SESSION_SCHEDULED'],
       required: true,
     },
     content: {

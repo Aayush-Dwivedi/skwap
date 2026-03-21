@@ -172,7 +172,7 @@ const Sidebar = ({ collapsed, onToggle }) => {
                   </span>
                   {/* Badge — only when expanded and has unread */}
                   {isNotif && unreadCount > 0 && !collapsed && (
-                    <span className="ml-auto mr-3 bg-skwap-accent text-white text-[10px] font-bold w-[20px] h-[20px] flex items-center justify-center rounded-full shadow-sm leading-none">
+                    <span className="ml-auto mr-3 bg-rose-500 text-white text-[10px] font-bold w-[20px] h-[20px] flex items-center justify-center rounded-full shadow-[0_0_12px_rgba(244,63,94,0.4)] leading-none animate-in zoom-in duration-300">
                       {unreadCount > 99 ? '99+' : unreadCount}
                     </span>
                   )}

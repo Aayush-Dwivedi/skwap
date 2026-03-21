@@ -65,6 +65,7 @@ const getListings = async (req, res) => {
         currentSkills: p.currentSkills,
         skillsToLearn: p.skillsToLearn,
         rating: p.rating,
+        numReviews: p.numReviews,
         socialLinks: p.socialLinks,
         showSocialLinks: p.showSocialLinks,
       };
@@ -101,6 +102,8 @@ const getMyListings = async (req, res) => {
         photoUrl: profile.photoUrl,
         currentSkills: profile.currentSkills,
         skillsToLearn: profile.skillsToLearn,
+        rating: profile.rating,
+        numReviews: profile.numReviews,
         socialLinks: profile.socialLinks,
         showSocialLinks: profile.showSocialLinks,
       } : { name: 'You', photoUrl: '' }
