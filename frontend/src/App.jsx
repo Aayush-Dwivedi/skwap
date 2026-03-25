@@ -65,7 +65,7 @@ function App() {
                 toastOptions={{
                   className: 'glass-card text-white border-white/10',
                   style: {
-                    background: 'rgba(var(--skwap-card), 0.8)',
+                    background: 'rgba(var(--st-card), 0.8)',
                     backdropFilter: 'blur(10px)',
                   },
                 }}

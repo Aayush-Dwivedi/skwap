@@ -39,7 +39,8 @@ const SetupProfile = () => {
         },
       });
       // Backend now returns full Cloudinary URL or absolute path
-      const fullUrl = data.url.startsWith('http') ? data.url : `http://localhost:5000${data.url}`;
+      const apiBase = import.meta.env.VITE_API_BASE_URL ? import.meta.env.VITE_API_BASE_URL.replace('/api', '') : 'http://localhost:5000';
+      const fullUrl = data.url.startsWith('http') ? data.url : `${apiBase}${data.url}`;
       setFormData({ ...formData, photoUrl: fullUrl });
       toast.success('Photo uploaded!');
     } catch (err) {
@@ -64,7 +65,7 @@ const SetupProfile = () => {
         currentSkills: formData.currentSkills.split(',').map(s => s.trim()).filter(s => s),
         skillsToLearn: formData.skillsToLearn.split(',').map(s => s.trim()).filter(s => s),
       });
-      toast.success('Profile created successfully! Welcome to Skwap.');
+      toast.success('Profile created successfully! Welcome to Skill Trade.');
       setProfile(updatedProfile); // Sync to global sidebar instantly
       setHasProfile(true); // Release the guard
       navigate('/explore'); // Explicitly move to dashboard
@@ -79,10 +80,10 @@ const SetupProfile = () => {
   return (
     <div className="min-h-screen bg-transparent flex items-center justify-center p-4">
       <div className="glass-strong p-10 rounded-[3rem] shadow-2xl w-full max-w-2xl relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-skwap-accent/10 rounded-full blur-[100px] -mr-16 -mt-16 pointer-events-none"></div>
+        <div className="absolute top-0 right-0 w-64 h-64 bg-st-accent/10 rounded-full blur-[100px] -mr-16 -mt-16 pointer-events-none"></div>
         <div className="text-center mb-10">
-          <h2 className="text-4xl font-extrabold text-skwap-textPrimary mb-3">Complete Your Profile</h2>
-          <p className="text-skwap-textSecondary text-lg">Just a few more details to get you started in the community.</p>
+          <h2 className="text-4xl font-extrabold text-st-textPrimary mb-3">Complete Your Profile</h2>
+          <p className="text-st-textSecondary text-lg">Just a few more details to get you started in the community.</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-8">
@@ -90,8 +91,8 @@ const SetupProfile = () => {
             {/* Basic Info */}
             <div className="space-y-6">
               <div>
-                <label className="flex items-center gap-2 text-skwap-textSecondary text-sm font-bold mb-3">
-                  <User size={18} className="text-skwap-accent" /> Full Name
+                <label className="flex items-center gap-2 text-st-textSecondary text-sm font-bold mb-3">
+                  <User size={18} className="text-st-accent" /> Full Name
                 </label>
                 <input 
                   type="text" 
@@ -104,8 +105,8 @@ const SetupProfile = () => {
                 />
               </div>
               <div>
-                <label className="flex items-center gap-2 text-skwap-textSecondary text-sm font-bold mb-3">
-                  <ImageIcon size={18} className="text-skwap-accent" /> Profile Photo
+                <label className="flex items-center gap-2 text-st-textSecondary text-sm font-bold mb-3">
+                  <ImageIcon size={18} className="text-st-accent" /> Profile Photo
                 </label>
                 <div className="flex items-center gap-4">
                   <div className="w-20 h-20 rounded-2xl glass border border-white/10 overflow-hidden flex items-center justify-center flex-shrink-0 shadow-inner">
@@ -119,10 +120,10 @@ const SetupProfile = () => {
                   </div>
                   <label className="flex-grow cursor-pointer box-border">
                     <div className="w-full glass hover:bg-white/10 border border-white/20 border-dashed text-white rounded-2xl px-5 py-4 text-center transition-all">
-                      <span className="text-xs font-bold text-skwap-accent block mb-1">
+                      <span className="text-xs font-bold text-st-accent block mb-1">
                         {uploading ? 'Uploading...' : 'Click to upload photo'}
                       </span>
-                      <span className="text-[10px] text-skwap-textSecondary font-bold">JPG or PNG, max 5MB</span>
+                      <span className="text-[10px] text-st-textSecondary font-bold">JPG or PNG, max 5MB</span>
                     </div>
                     <input 
                       type="file" 
@@ -139,8 +140,8 @@ const SetupProfile = () => {
             {/* Skills */}
             <div className="space-y-6">
               <div>
-                <label className="flex items-center gap-2 text-skwap-textSecondary text-sm font-bold mb-3">
-                  <Briefcase size={18} className="text-skwap-accent" /> Skills You Can Teach
+                <label className="flex items-center gap-2 text-st-textSecondary text-sm font-bold mb-3">
+                  <Briefcase size={18} className="text-st-accent" /> Skills You Can Teach
                 </label>
                 <textarea 
                   name="currentSkills"
@@ -153,8 +154,8 @@ const SetupProfile = () => {
                 ></textarea>
               </div>
               <div>
-                <label className="flex items-center gap-2 text-skwap-textSecondary text-sm font-bold mb-3">
-                  <GraduationCap size={18} className="text-skwap-accent" /> Skills You Want to Learn
+                <label className="flex items-center gap-2 text-st-textSecondary text-sm font-bold mb-3">
+                  <GraduationCap size={18} className="text-st-accent" /> Skills You Want to Learn
                 </label>
                 <textarea 
                   name="skillsToLearn"

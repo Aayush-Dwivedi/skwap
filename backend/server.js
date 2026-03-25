@@ -58,7 +58,7 @@ app.use('/api/upload', require('./routes/uploadRoutes'));
 app.use('/api/contact', require('./routes/contactRoutes'));
 
 app.get('/', (req, res) => {
-  res.send('Skwap API is running...');
+  res.send('Skill Trade API is running...');
 });
 
 // Socket.io logic

@@ -15,18 +15,18 @@ const ListingCard = ({ listing, currentUserId, onBook, isExpanded = false, onTog
         ${isExpanded ? 'shadow-2xl scale-[1.01]' : 'hover:shadow-xl hover:-translate-y-0.5'}
       `}
       style={{
-        background: `linear-gradient(135deg, rgba(var(--skwap-card), var(--glass-card-opacity)) 0%, rgba(var(--skwap-bg-primary), var(--glass-card-opacity)) 100%)`,
+        background: `linear-gradient(135deg, rgba(var(--st-card), var(--glass-card-opacity)) 0%, rgba(var(--st-bg-primary), var(--glass-card-opacity)) 100%)`,
         backdropFilter: 'blur(var(--glass-blur)) saturate(1.5)',
         WebkitBackdropFilter: 'blur(var(--glass-blur)) saturate(1.5)',
-        border: isExpanded ? '1px solid rgba(var(--skwap-text-primary), 0.18)' : '1px solid rgba(var(--skwap-text-primary), 0.10)',
+        border: isExpanded ? '1px solid rgba(var(--st-text-primary), 0.18)' : '1px solid rgba(var(--st-text-primary), 0.10)',
         boxShadow: isExpanded
-          ? '0 24px 50px rgba(0,0,0,0.30), 0 0 30px rgba(var(--skwap-accent), 0.15), inset 0 1.5px 0 rgba(var(--skwap-text-primary), 0.15)'
-          : '0 6px 20px rgba(0,0,0,0.20), inset 0 1px 0 rgba(var(--skwap-text-primary), 0.09)',
+          ? '0 24px 50px rgba(0,0,0,0.30), 0 0 30px rgba(var(--st-accent), 0.15), inset 0 1.5px 0 rgba(var(--st-text-primary), 0.15)'
+          : '0 6px 20px rgba(0,0,0,0.20), inset 0 1px 0 rgba(var(--st-text-primary), 0.09)',
       }}
       onClick={handleToggle}
     >
       {/* Background Glow */}
-      <div className={`absolute top-0 right-0 w-32 h-32 bg-skwap-accent/10 rounded-full blur-3xl transition-opacity duration-500 ${isExpanded ? 'opacity-100' : 'opacity-40'}`}></div>
+      <div className={`absolute top-0 right-0 w-32 h-32 bg-st-accent/10 rounded-full blur-3xl transition-opacity duration-500 ${isExpanded ? 'opacity-100' : 'opacity-40'}`}></div>
 
       <div className="p-5 relative z-10 flex flex-col h-full w-full">
         
@@ -42,7 +42,7 @@ const ListingCard = ({ listing, currentUserId, onBook, isExpanded = false, onTog
               />
             </div>
             {isOwn && (
-              <span className="absolute -bottom-2 right-1 transform translate-x-1/4 bg-skwap-textSecondary text-[#1a1a1a] text-[8px] font-black px-1.5 py-0.5 rounded-full uppercase shadow-md border border-white/20">
+              <span className="absolute -bottom-2 right-1 transform translate-x-1/4 bg-st-textSecondary text-[#1a1a1a] text-[8px] font-black px-1.5 py-0.5 rounded-full uppercase shadow-md border border-white/20">
                 YOU
               </span>
             )}
@@ -53,7 +53,7 @@ const ListingCard = ({ listing, currentUserId, onBook, isExpanded = false, onTog
              </h3>
              <div className="flex items-center gap-1.5 mt-0.5">
                <Star size={11} className="fill-amber-400 text-amber-400" />
-               <span className="text-[12px] font-semibold text-skwap-textSecondary">
+               <span className="text-[12px] font-semibold text-st-textSecondary">
                  {listing.uploader?.rating > 0 ? listing.uploader.rating : 'New'}
                </span>
                {listing.uploader?.numReviews > 0 && (
@@ -67,17 +67,17 @@ const ListingCard = ({ listing, currentUserId, onBook, isExpanded = false, onTog
 
         {/* Type & Title */}
         <div className="mb-4">
-          <h4 className="text-[10px] font-bold uppercase tracking-widest text-skwap-textSecondary mb-1.5">
+          <h4 className="text-[10px] font-bold uppercase tracking-widest text-st-textSecondary mb-1.5">
             {listing.type === 'TEACH' ? 'TEACHING' : 'LEARNING'}
           </h4>
-          <h2 className="text-xl font-bold text-skwap-textSecondary leading-snug transition-colors">
+          <h2 className="text-xl font-bold text-st-textSecondary leading-snug transition-colors">
             {listing.skillName}
           </h2>
         </div>
 
         {/* Looking For Block */}
-        <div className="bg-skwap-textSecondary/10 rounded-xl p-4 mb-5 border border-skwap-textSecondary/20">
-          <h4 className="text-[9px] font-black uppercase tracking-wider text-skwap-textSecondary mb-2">
+        <div className="bg-st-textSecondary/10 rounded-xl p-4 mb-5 border border-st-textSecondary/20">
+          <h4 className="text-[9px] font-black uppercase tracking-wider text-st-textSecondary mb-2">
             LOOKING FOR
           </h4>
           <p className="text-[13px] text-white/90 font-medium leading-relaxed">
@@ -98,7 +98,7 @@ const ListingCard = ({ listing, currentUserId, onBook, isExpanded = false, onTog
           {/* Details Grid (Schedule & Exchange) */}
           <div className="grid grid-cols-2 gap-2 mb-4">
             <div className="bg-white/5 border border-white/5 px-3 py-2.5 rounded-xl">
-              <div className="flex items-center gap-1.5 mb-1 text-skwap-textSecondary">
+              <div className="flex items-center gap-1.5 mb-1 text-st-textSecondary">
                 <Calendar size={12} strokeWidth={2.5} />
                 <span className="text-[9px] font-black uppercase tracking-wider">Schedule</span>
               </div>
@@ -107,7 +107,7 @@ const ListingCard = ({ listing, currentUserId, onBook, isExpanded = false, onTog
               </p>
             </div>
             <div className="bg-white/5 border border-white/5 px-3 py-2.5 rounded-xl">
-              <div className="flex items-center gap-1.5 mb-1 text-skwap-textSecondary">
+              <div className="flex items-center gap-1.5 mb-1 text-st-textSecondary">
                 <Zap size={12} strokeWidth={2.5} />
                 <span className="text-[9px] font-black uppercase tracking-wider">Exchange</span>
               </div>
@@ -138,17 +138,17 @@ const ListingCard = ({ listing, currentUserId, onBook, isExpanded = false, onTog
               <div className="text-[9px] font-bold uppercase tracking-widest text-white/40 mr-1">Socials</div>
               <div className="flex items-center gap-3">
                 {listing.uploader.socialLinks.github && (
-                  <a href={listing.uploader.socialLinks.github} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-white/40 hover:text-skwap-textSecondary transition-colors no-expand">
+                  <a href={listing.uploader.socialLinks.github} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-white/40 hover:text-st-textSecondary transition-colors no-expand">
                     <Github size={15} />
                   </a>
                 )}
                 {listing.uploader.socialLinks.linkedin && (
-                  <a href={listing.uploader.socialLinks.linkedin} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-white/40 hover:text-skwap-textSecondary transition-colors no-expand">
+                  <a href={listing.uploader.socialLinks.linkedin} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-white/40 hover:text-st-textSecondary transition-colors no-expand">
                     <Linkedin size={15} />
                   </a>
                 )}
                 {listing.uploader.socialLinks.twitter && (
-                  <a href={listing.uploader.socialLinks.twitter} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-white/40 hover:text-skwap-textSecondary transition-colors no-expand">
+                  <a href={listing.uploader.socialLinks.twitter} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-white/40 hover:text-st-textSecondary transition-colors no-expand">
                     <Twitter size={15} />
                   </a>
                 )}
@@ -167,7 +167,7 @@ const ListingCard = ({ listing, currentUserId, onBook, isExpanded = false, onTog
                 target="_blank" 
                 rel="noopener noreferrer" 
                 onClick={(e) => { e.stopPropagation(); }} 
-                className="text-[13.5px] font-bold text-skwap-textSecondary hover:text-skwap-textSecondary/80 no-expand px-1"
+                className="text-[13.5px] font-bold text-st-textSecondary hover:text-st-textSecondary/80 no-expand px-1"
               >
                 View Portfolio
               </a>
@@ -182,7 +182,7 @@ const ListingCard = ({ listing, currentUserId, onBook, isExpanded = false, onTog
           {!isOwn ? (
             <button 
               onClick={(e) => { e.stopPropagation(); onBook(listing); }}
-              className="no-expand w-full bg-skwap-textSecondary hover:bg-skwap-textSecondary/90 text-[#1a1a1a] font-black py-4 rounded-xl transition-all text-[15px] tracking-wide shadow-md active:scale-[0.98] flex items-center justify-center gap-2"
+              className="no-expand w-full bg-st-textSecondary hover:bg-st-textSecondary/90 text-[#1a1a1a] font-black py-4 rounded-xl transition-all text-[15px] tracking-wide shadow-md active:scale-[0.98] flex items-center justify-center gap-2"
             >
               Request Swap
             </button>

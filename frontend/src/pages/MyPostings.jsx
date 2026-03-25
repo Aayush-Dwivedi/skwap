@@ -37,7 +37,7 @@ const MyPostings = () => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="text-3xl font-bold text-white tracking-tight mb-2">My Postings</h1>
-          <p className="text-skwap-textSecondary text-sm">
+          <p className="text-st-textSecondary text-sm">
             Manage your teaching and learning requests.
           </p>
         </div>
@@ -54,7 +54,7 @@ const MyPostings = () => {
       {loading ? (
         <div className="text-white">Loading your postings...</div>
       ) : listings.length === 0 ? (
-        <div className="text-skwap-textSecondary text-center py-20 glass rounded-3xl border-dashed border-white/20">
+        <div className="text-st-textSecondary text-center py-20 glass rounded-3xl border-dashed border-white/20">
           You haven't posted any skills to teach or learn yet!
         </div>
       ) : (
@@ -91,7 +91,7 @@ const PreviewModal = ({ listing, onClose }) => {
           <X size={20} />
         </button>
         <h3 className="text-xl font-bold text-white mb-2">Listing Preview</h3>
-        <p className="text-skwap-textSecondary text-sm mb-6">This is how others see your skill card.</p>
+        <p className="text-st-textSecondary text-sm mb-6">This is how others see your skill card.</p>
         
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-3 p-4 bg-white/5 rounded-2xl border border-white/10">
@@ -102,7 +102,7 @@ const PreviewModal = ({ listing, onClose }) => {
             </div>
           </div>
           <div className="flex items-center gap-3 p-4 bg-white/5 rounded-2xl border border-white/10">
-            <Clock className="text-skwap-accent" size={20} />
+            <Clock className="text-st-accent" size={20} />
             <div>
               <p className="text-white font-bold text-sm">{listing.availability || 'Flexible Schedule'}</p>
               <p className="text-white/40 text-[10px] uppercase">Availability</p>

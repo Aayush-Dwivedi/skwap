@@ -388,8 +388,8 @@ const MeetingRoom = () => {
     return (
       <div className="h-[calc(100vh-2rem)] lg:h-[calc(100vh-4rem)] w-full bg-black/95 rounded-[2.5rem] flex items-center justify-center p-4 relative overflow-hidden border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
         {/* Background Effects */}
-        <div className="absolute inset-0 bg-skwap-deep pointer-events-none opacity-40" />
-        <div className="absolute top-0 -left-1/4 w-[50vw] h-[50vw] bg-skwap-accent rounded-full opacity-[0.03] blur-[120px] mix-blend-screen pointer-events-none" />
+        <div className="absolute inset-0 bg-st-deep pointer-events-none opacity-40" />
+        <div className="absolute top-0 -left-1/4 w-[50vw] h-[50vw] bg-st-accent rounded-full opacity-[0.03] blur-[120px] mix-blend-screen pointer-events-none" />
         
         <div className="w-full max-w-4xl bg-[#1A1625]/80 backdrop-blur-2xl border border-white/10 rounded-[2rem] p-6 lg:p-10 shadow-2xl z-10 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
           
@@ -404,7 +404,7 @@ const MeetingRoom = () => {
             />
             
             {!isVideoEnabled && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center text-white/50 bg-skwap-deep/50">
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-white/50 bg-st-deep/50">
                 <div className="w-16 h-16 rounded-full bg-red-500/20 flex items-center justify-center mb-4">
                   <VideoOff size={32} className="text-red-400" />
                 </div>
@@ -432,19 +432,19 @@ const MeetingRoom = () => {
           {/* Info Side */}
           <div className="flex flex-col text-center lg:text-left items-center lg:items-start">
             <h1 className="text-3xl lg:text-4xl font-black text-white mb-2 tracking-tight drop-shadow-md">Ready to join?</h1>
-            <p className="text-skwap-textSecondary mb-8 text-sm font-medium">
-              Session: <span className="text-skwap-accent font-bold px-2 py-1 bg-skwap-accent/10 rounded-md block mt-2 mx-auto lg:mx-0 w-max">{session?.request?.requestedSkill || 'Skill Swap'}</span>
+            <p className="text-st-textSecondary mb-8 text-sm font-medium">
+              Session: <span className="text-st-accent font-bold px-2 py-1 bg-st-accent/10 rounded-md block mt-2 mx-auto lg:mx-0 w-max">{session?.request?.requestedSkill || 'Skill Swap'}</span>
             </p>
 
             <button 
               onClick={handleJoinMeeting}
-              className="w-full sm:w-auto py-4 px-10 bg-skwap-accent hover:bg-skwap-primary text-[#1A1625] font-black rounded-2xl shadow-[0_0_30px_rgba(56,189,248,0.3)] transition-all hover:-translate-y-1 text-lg flex items-center justify-center gap-2"
+              className="w-full sm:w-auto py-4 px-10 bg-st-accent hover:bg-st-primary text-[#1A1625] font-black rounded-2xl shadow-[0_0_30px_rgba(56,189,248,0.3)] transition-all hover:-translate-y-1 text-lg flex items-center justify-center gap-2"
             >
               <Users size={20} /> Join Meeting Now
             </button>
             <button 
               onClick={() => navigate('/sessions')}
-              className="mt-6 py-2 px-6 text-skwap-textSecondary hover:text-white transition-colors text-sm font-semibold rounded-full hover:bg-white/5"
+              className="mt-6 py-2 px-6 text-st-textSecondary hover:text-white transition-colors text-sm font-semibold rounded-full hover:bg-white/5"
             >
               Cancel and Return
             </button>
@@ -458,9 +458,9 @@ const MeetingRoom = () => {
   return (
     <div className="h-[calc(100vh-2rem)] lg:h-[calc(100vh-4rem)] w-full bg-black/95 rounded-[2.5rem] flex flex-col p-2 sm:p-4 overflow-hidden relative border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
       {/* Background Effect */}
-      <div className="absolute inset-0 bg-skwap-deep pointer-events-none opacity-40" />
-      <div className="absolute top-0 -right-1/4 w-[50vw] h-[50vw] bg-skwap-accent rounded-full opacity-[0.03] blur-[120px] mix-blend-screen pointer-events-none" />
-      <div className="absolute bottom-0 -left-1/4 w-[40vw] h-[40vw] bg-skwap-secondary rounded-full opacity-[0.03] blur-[100px] mix-blend-screen pointer-events-none" />
+      <div className="absolute inset-0 bg-st-deep pointer-events-none opacity-40" />
+      <div className="absolute top-0 -right-1/4 w-[50vw] h-[50vw] bg-st-accent rounded-full opacity-[0.03] blur-[120px] mix-blend-screen pointer-events-none" />
+      <div className="absolute bottom-0 -left-1/4 w-[40vw] h-[40vw] bg-st-secondary rounded-full opacity-[0.03] blur-[100px] mix-blend-screen pointer-events-none" />
 
       <div className="flex-1 flex flex-col lg:flex-row gap-4 relative z-10 w-full h-full">
         {/* Main Video Area */}
@@ -472,7 +472,7 @@ const MeetingRoom = () => {
                 <h2 className="text-white font-bold text-lg drop-shadow-md">
                   {session?.request?.requestedSkill || 'Skill Swap Meeting'}
                 </h2>
-                <span className="text-xs text-skwap-textSecondary flex items-center gap-2 font-medium">
+                <span className="text-xs text-st-textSecondary flex items-center gap-2 font-medium">
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_#10b981]"></span>
                   In Progress
                 </span>
@@ -488,14 +488,14 @@ const MeetingRoom = () => {
                 className="w-full h-full object-cover rounded-3xl"
               />
             ) : (
-              <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center bg-gradient-to-br from-black to-skwap-deep/50">
+              <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center bg-gradient-to-br from-black to-st-deep/50">
                 <div className="w-24 h-24 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-6 shadow-[0_0_50px_rgba(255,255,255,0.05)]">
                   <span className="animate-pulse flex items-center justify-center w-full h-full">
                     <Users size={36} className="text-white/40" />
                   </span>
                 </div>
                 <h3 className="text-3xl font-bold text-white mb-3 tracking-tight drop-shadow-lg">Waiting for others to join...</h3>
-                <p className="text-skwap-textSecondary/80 max-w-md mx-auto leading-relaxed font-medium">
+                <p className="text-st-textSecondary/80 max-w-md mx-auto leading-relaxed font-medium">
                   Your partner has been notified. The meeting will start automatically when they connect.
                 </p>
               </div>
@@ -541,7 +541,7 @@ const MeetingRoom = () => {
 
               <button 
                 onClick={toggleScreenShare}
-                className={`p-3 sm:p-4 rounded-full flex items-center justify-center transition-all duration-300 ${isScreenSharing ? 'bg-skwap-accent/20 border border-skwap-accent text-skwap-accent shadow-[0_0_15px_rgba(56,189,248,0.2)]' : 'bg-white/10 hover:bg-white/20 hover:scale-110 text-white shadow-lg'}`}
+                className={`p-3 sm:p-4 rounded-full flex items-center justify-center transition-all duration-300 ${isScreenSharing ? 'bg-st-accent/20 border border-st-accent text-st-accent shadow-[0_0_15px_rgba(56,189,248,0.2)]' : 'bg-white/10 hover:bg-white/20 hover:scale-110 text-white shadow-lg'}`}
                 title="Share Screen"
               >
                 <MonitorUp size={22} strokeWidth={2.5} />

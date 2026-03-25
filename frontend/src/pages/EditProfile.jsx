@@ -108,7 +108,8 @@ const EditProfile = () => {
           'Content-Type': 'multipart/form-data',
         },
       });
-      const fullUrl = data.url.startsWith('http') ? data.url : `http://localhost:5000${data.url}`;
+      const apiBase = import.meta.env.VITE_API_BASE_URL ? import.meta.env.VITE_API_BASE_URL.replace('/api', '') : 'http://localhost:5000';
+      const fullUrl = data.url.startsWith('http') ? data.url : `${apiBase}${data.url}`;
       setFormData({ ...formData, photoUrl: fullUrl });
     } catch (err) {
       console.error(err);
@@ -137,7 +138,8 @@ const EditProfile = () => {
           'Content-Type': 'multipart/form-data',
         },
       });
-      const fullUrl = data.url.startsWith('http') ? data.url : `http://localhost:5000${data.url}`;
+      const apiBase = import.meta.env.VITE_API_BASE_URL ? import.meta.env.VITE_API_BASE_URL.replace('/api', '') : 'http://localhost:5000';
+      const fullUrl = data.url.startsWith('http') ? data.url : `${apiBase}${data.url}`;
       changeBackground(fullUrl);
       toast.success('Background updated!');
     } catch (err) {
@@ -212,7 +214,7 @@ const EditProfile = () => {
       <div className="mb-8 flex justify-between items-start">
         <div>
           <h1 className="text-3xl font-bold text-white mb-2">Your Profile</h1>
-          <p className="text-skwap-textSecondary">Complete your profile to start bartering skills with the community.</p>
+          <p className="text-st-textSecondary">Complete your profile to start bartering skills with the community.</p>
         </div>
         {initialData && initialData.numReviews > 0 && (
           <div className="flex flex-col items-end animate-in fade-in slide-in-from-right-4 duration-700">
@@ -231,25 +233,25 @@ const EditProfile = () => {
       </div>
 
       <div className="glass-card rounded-[2.5rem] p-8 shadow-2xl relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-skwap-accent/10 rounded-full blur-[100px] -mr-16 -mt-16 pointer-events-none"></div>
+        <div className="absolute top-0 right-0 w-64 h-64 bg-st-accent/10 rounded-full blur-[100px] -mr-16 -mt-16 pointer-events-none"></div>
 
         <form onSubmit={handleSubmit} className="space-y-8 relative z-10">
           
           {/* Theme Customization */}
           <div>
-            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2 border-b border-skwap-card pb-2">
-              <Palette size={18} className="text-skwap-accent" /> Theme & Background
+            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2 border-b border-st-card pb-2">
+              <Palette size={18} className="text-st-accent" /> Theme & Background
             </h3>
             <div className="space-y-6">
               <div className="flex items-center justify-between p-4 glass rounded-2xl border border-white/10">
                 <div>
                   <h4 className="text-sm font-medium text-white">Dynamic AI Theme</h4>
-                  <p className="text-xs text-skwap-textSecondary mt-1">Automatically adapt UI colors to match your background</p>
+                  <p className="text-xs text-st-textSecondary mt-1">Automatically adapt UI colors to match your background</p>
                 </div>
                 <button 
                   type="button"
                   onClick={toggleDynamic}
-                  className={`w-12 h-6 rounded-full transition-all relative ${isDynamic ? 'bg-skwap-buttonFocus shadow-[0_0_8px_rgba(0,0,0,0.4)]' : 'bg-white/10'}`}
+                  className={`w-12 h-6 rounded-full transition-all relative ${isDynamic ? 'bg-st-buttonFocus shadow-[0_0_8px_rgba(0,0,0,0.4)]' : 'bg-white/10'}`}
                 >
                   <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${isDynamic ? 'left-7' : 'left-1'}`}></div>
                 </button>
@@ -258,19 +260,19 @@ const EditProfile = () => {
               <div className="flex items-center justify-between p-4 glass rounded-2xl border border-white/10">
                 <div>
                   <h4 className="text-sm font-medium text-white">Show Social Links</h4>
-                  <p className="text-xs text-skwap-textSecondary mt-1">Display your social connections on your skill cards</p>
+                  <p className="text-xs text-st-textSecondary mt-1">Display your social connections on your skill cards</p>
                 </div>
                 <button 
                   type="button"
                   onClick={() => setFormData({ ...formData, showSocialLinks: !formData.showSocialLinks })}
-                  className={`w-12 h-6 rounded-full transition-all relative ${formData.showSocialLinks ? 'bg-skwap-buttonFocus shadow-[0_0_8px_rgba(0,0,0,0.4)]' : 'bg-white/10'}`}
+                  className={`w-12 h-6 rounded-full transition-all relative ${formData.showSocialLinks ? 'bg-st-buttonFocus shadow-[0_0_8px_rgba(0,0,0,0.4)]' : 'bg-white/10'}`}
                 >
                   <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${formData.showSocialLinks ? 'left-7' : 'left-1'}`}></div>
                 </button>
               </div>
 
               <div>
-                <label className="block text-skwap-textSecondary text-xs font-medium mb-2 ml-1">Custom Wallpaper</label>
+                <label className="block text-st-textSecondary text-xs font-medium mb-2 ml-1">Custom Wallpaper</label>
                 <div className="flex flex-col sm:flex-row items-center gap-4">
                   <div className="w-24 h-16 rounded-xl glass border border-white/10 overflow-hidden flex items-center justify-center flex-shrink-0 shadow-lg">
                     <img src={background} alt="Background Preview" className="w-full h-full object-cover" />
@@ -307,12 +309,12 @@ const EditProfile = () => {
 
           {/* Basic Info */}
           <div>
-            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2 border-b border-skwap-card pb-2">
-              <User size={18} className="text-skwap-accent" /> Basic Information
+            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2 border-b border-st-card pb-2">
+              <User size={18} className="text-st-accent" /> Basic Information
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-skwap-textSecondary text-xs font-medium mb-1.5 ml-1">Full Name</label>
+                <label className="block text-st-textSecondary text-xs font-medium mb-1.5 ml-1">Full Name</label>
                 <input 
                   type="text" 
                   name="name"
@@ -324,7 +326,7 @@ const EditProfile = () => {
                 />
               </div>
               <div>
-                <label className="block text-skwap-textSecondary text-xs font-medium mb-1.5 ml-1">Profile Photo</label>
+                <label className="block text-st-textSecondary text-xs font-medium mb-1.5 ml-1">Profile Photo</label>
                 <div className="flex items-center gap-4">
                     <div className="w-14 h-14 rounded-xl glass border border-white/10 overflow-hidden flex items-center justify-center flex-shrink-0">
                       {formData.photoUrl ? (
@@ -335,7 +337,7 @@ const EditProfile = () => {
                     </div>
                     <label className="flex-grow cursor-pointer">
                       <div className="w-full glass hover:bg-white/10 border border-white/20 border-dashed text-white rounded-xl px-4 py-2.5 text-center transition-all">
-                        <span className="text-[11px] font-medium text-skwap-textSecondary">
+                        <span className="text-[11px] font-medium text-st-textSecondary">
                           {uploading ? 'Uploading...' : 'Click to change photo'}
                         </span>
                       </div>
@@ -354,13 +356,13 @@ const EditProfile = () => {
 
           {/* Skills */}
           <div>
-            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2 border-b border-skwap-card pb-2">
-              <Briefcase size={18} className="text-skwap-accent" /> Skill Exchange
+            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2 border-b border-st-card pb-2">
+              <Briefcase size={18} className="text-st-accent" /> Skill Exchange
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-skwap-textSecondary text-xs font-medium mb-1.5 ml-1">
-                  Skills You Can Teach <span className="text-skwap-accent/60">(comma-separated)</span>
+                <label className="block text-st-textSecondary text-xs font-medium mb-1.5 ml-1">
+                  Skills You Can Teach <span className="text-st-accent/60">(comma-separated)</span>
                 </label>
                 <textarea 
                   name="currentSkills"
@@ -372,8 +374,8 @@ const EditProfile = () => {
                 ></textarea>
               </div>
               <div>
-                <label className="block text-skwap-textSecondary text-xs font-medium mb-1.5 ml-1">
-                  Skills You Want to Learn <span className="text-skwap-accent/60">(comma-separated)</span>
+                <label className="block text-st-textSecondary text-xs font-medium mb-1.5 ml-1">
+                  Skills You Want to Learn <span className="text-st-accent/60">(comma-separated)</span>
                 </label>
                 <textarea 
                   name="skillsToLearn"
@@ -388,8 +390,8 @@ const EditProfile = () => {
           </div>
           {/* Social Links */}
           <div>
-            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2 border-b border-skwap-card pb-2">
-              <ExternalLink size={18} className="text-skwap-accent" /> Connect Online
+            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2 border-b border-st-card pb-2">
+              <ExternalLink size={18} className="text-st-accent" /> Connect Online
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="relative">
@@ -429,13 +431,13 @@ const EditProfile = () => {
 
           {/* Account Security */}
           <div>
-            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2 border-b border-skwap-card pb-2">
-              <LogOut size={18} className="rotate-180 text-skwap-accent" /> Account Security
+            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2 border-b border-st-card pb-2">
+              <LogOut size={18} className="rotate-180 text-st-accent" /> Account Security
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-skwap-textSecondary text-xs font-medium mb-1.5 ml-1 flex items-center gap-1.5">
-                  Email Address <span className="text-[10px] text-skwap-accent italic">(Read-only)</span>
+                <label className="block text-st-textSecondary text-xs font-medium mb-1.5 ml-1 flex items-center gap-1.5">
+                  Email Address <span className="text-[10px] text-st-accent italic">(Read-only)</span>
                 </label>
                 <input 
                   type="email" 
@@ -444,10 +446,10 @@ const EditProfile = () => {
                   className="w-full glass border border-white/5 text-white/40 rounded-xl px-4 py-3 text-sm cursor-not-allowed opacity-50"
                 />
               </div>
-              <div className="md:col-span-1 border-l border-skwap-card pl-0 md:pl-6">
+              <div className="md:col-span-1 border-l border-st-card pl-0 md:pl-6">
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-skwap-textSecondary text-xs font-medium mb-1.5 ml-1">New Password</label>
+                    <label className="block text-st-textSecondary text-xs font-medium mb-1.5 ml-1">New Password</label>
                     <input 
                       type="password" 
                       name="password"
@@ -458,7 +460,7 @@ const EditProfile = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-skwap-textSecondary text-xs font-medium mb-1.5 ml-1">Confirm New Password</label>
+                    <label className="block text-st-textSecondary text-xs font-medium mb-1.5 ml-1">Confirm New Password</label>
                     <input 
                       type="password" 
                       name="confirmPassword"
@@ -473,11 +475,11 @@ const EditProfile = () => {
             </div>
           </div>
 
-          <div className="pt-4 flex justify-end gap-3 border-t border-skwap-card mt-8">
-            <button type="button" onClick={() => navigate(-1)} className="px-6 py-2.5 rounded-xl text-sm font-medium text-skwap-textSecondary hover:text-white transition-colors">
+          <div className="pt-4 flex justify-end gap-3 border-t border-st-card mt-8">
+            <button type="button" onClick={() => navigate(-1)} className="px-6 py-2.5 rounded-xl text-sm font-medium text-st-textSecondary hover:text-white transition-colors">
               Cancel
             </button>
-            <button type="submit" disabled={saving} className="px-10 py-3 glass-btn text-white text-xs font-black uppercase tracking-[0.2em] rounded-2xl shadow-[0_15px_40px_rgba(var(--skwap-accent-rgb),0.3)] transition-all hover:scale-105 active:scale-95 disabled:opacity-50">
+            <button type="submit" disabled={saving} className="px-10 py-3 glass-btn text-white text-xs font-black uppercase tracking-[0.2em] rounded-2xl shadow-[0_15px_40px_rgba(var(--st-accent-rgb),0.3)] transition-all hover:scale-105 active:scale-95 disabled:opacity-50">
               {saving ? 'Saving...' : 'Save Profile'}
             </button>
           </div>
@@ -488,7 +490,7 @@ const EditProfile = () => {
       {/* Unsaved Changes Banner - Floating at the Top */}
       {isDirty && (
         <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[1000] animate-in fade-in slide-in-from-top-12 duration-500 w-full max-w-xl px-4">
-          <div className="flex items-center justify-between gap-4 px-6 py-4 bg-skwap-bgSecondary/95 backdrop-blur-3xl border border-skwap-accent/30 rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.5)] ring-1 ring-white/10">
+          <div className="flex items-center justify-between gap-4 px-6 py-4 bg-st-bgSecondary/95 backdrop-blur-3xl border border-st-accent/30 rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.5)] ring-1 ring-white/10">
             <div className="flex items-center gap-3">
               <div className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse shadow-[0_0_15px_rgba(244,63,94,0.6)]"></div>
               <p className="text-white text-[11px] font-black uppercase tracking-[0.2em] whitespace-nowrap">Unsaved Edits</p>
@@ -507,7 +509,7 @@ const EditProfile = () => {
               <button 
                 onClick={handleSubmit}
                 disabled={saving}
-                className="px-8 py-2.5 bg-skwap-accent text-skwap-bgSecondary text-[10px] font-black uppercase tracking-widest rounded-full hover:scale-105 active:scale-95 transition-all shadow-lg shadow-skwap-accent/30"
+                className="px-8 py-2.5 bg-st-accent text-st-bgSecondary text-[10px] font-black uppercase tracking-widest rounded-full hover:scale-105 active:scale-95 transition-all shadow-lg shadow-st-accent/30"
               >
                 {saving ? 'Saving...' : 'Save Now'}
               </button>

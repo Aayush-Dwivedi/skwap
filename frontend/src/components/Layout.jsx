@@ -106,7 +106,7 @@ const ScrollTrack = ({ targetId }) => {
         style={{ 
           top: `${thumbTop}%`, 
           height: `${thumbHeight}%`,
-          background: `linear-gradient(to bottom, rgba(var(--skwap-accent, 164, 127, 139), 0.8), rgba(var(--skwap-accent, 164, 127, 139), 0.4))`
+          background: `linear-gradient(to bottom, rgba(var(--st-accent, 164, 127, 139), 0.8), rgba(var(--st-accent, 164, 127, 139), 0.4))`
         }}
         onMouseDown={onMouseDown}
       />
@@ -121,9 +121,9 @@ const Layout = () => {
   const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <div className="flex h-screen overflow-hidden text-skwap-textPrimary font-sans relative">
+    <div className="flex h-screen overflow-hidden text-st-textPrimary font-sans relative">
       {/* Decorative Background Orbs — acting as localized highlights on the wallpaper */}
-      <div className="orb-float fixed top-0 left-0 w-[500px] h-[500px] bg-skwap-accent rounded-full blur-[150px] opacity-15 pointer-events-none mix-blend-screen" />
+      <div className="orb-float fixed top-0 left-0 w-[500px] h-[500px] bg-st-accent rounded-full blur-[150px] opacity-15 pointer-events-none mix-blend-screen" />
       <div className="orb-float-slow fixed bottom-0 right-0 w-[600px] h-[600px] bg-rose-900 rounded-full blur-[150px] opacity-20 pointer-events-none mix-blend-screen" />
       <div className="orb-float-mid fixed top-1/2 left-1/3 w-[350px] h-[350px] bg-purple-900/40 rounded-full blur-[130px] opacity-15 pointer-events-none mix-blend-screen" />
 
@@ -154,11 +154,11 @@ const Layout = () => {
           style={{
             scrollbarWidth: 'none',
             msOverflowStyle: 'none',
-            background: `linear-gradient(160deg, rgba(var(--skwap-bg-secondary), var(--glass-card-opacity)) 0%, rgba(var(--skwap-bg-primary), var(--glass-card-opacity)) 100%)`,
+            background: `linear-gradient(160deg, rgba(var(--st-bg-secondary), var(--glass-card-opacity)) 0%, rgba(var(--st-bg-primary), var(--glass-card-opacity)) 100%)`,
             backdropFilter: 'blur(var(--glass-blur)) saturate(1.6)',
             WebkitBackdropFilter: 'blur(var(--glass-blur)) saturate(1.6)',
-            border: '1px solid rgba(var(--skwap-text-primary), 0.08)',
-            boxShadow: '0 25px 60px rgba(0,0,0,0.25), inset 0 1.5px 0 rgba(var(--skwap-text-primary), 0.08)',
+            border: '1px solid rgba(var(--st-text-primary), 0.08)',
+            boxShadow: '0 25px 60px rgba(0,0,0,0.25), inset 0 1.5px 0 rgba(var(--st-text-primary), 0.08)',
           }}
         >
           <style>{`#main-scroll-box::-webkit-scrollbar { display: none; }`}</style>

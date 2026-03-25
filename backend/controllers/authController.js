@@ -32,7 +32,7 @@ const registerUser = async (req, res) => {
         user: user._id,
         sender: user._id,
         type: 'CREDITS_RECEIVED',
-        content: `Welcome to Skwap! We've added 100 credits to your wallet to get you started.`,
+        content: `Welcome to Skill Trade! We've added 100 credits to your wallet to get you started.`,
       });
       res.status(201).json({
         _id: user._id,
@@ -147,7 +147,7 @@ const googleLogin = async (req, res) => {
         user: user._id,
         sender: user._id,
         type: 'WALLET_UPDATE',
-        content: `Welcome to Skwap! We've added 100 credits to your wallet for joining with Google.`,
+        content: `Welcome to Skill Trade! We've added 100 credits to your wallet for joining with Google.`,
       });
     } else {
       // If user exists but doesn't have googleId, link it

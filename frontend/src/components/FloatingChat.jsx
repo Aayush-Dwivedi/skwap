@@ -236,7 +236,7 @@ const FloatingChat = () => {
                 <button onClick={() => setActiveSession(null)} className="p-2 hover:bg-white/10 rounded-full transition-colors text-white">
                   <ChevronLeft size={20} />
                 </button>
-                <div className="w-10 h-10 rounded-full overflow-hidden bg-white/10 ring-2 ring-skwap-accent/30">
+                <div className="w-10 h-10 rounded-full overflow-hidden bg-white/10 ring-2 ring-st-accent/30">
                   <img 
                     src={otherUser?.photoUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${otherUser?.name}`} 
                     alt="avatar" 
@@ -280,21 +280,21 @@ const FloatingChat = () => {
                         <div className="bg-white/10 p-4 rounded-2xl border border-white/20 shadow-lg">
                           <div className="flex items-center justify-between mb-4 border-b border-white/10 pb-3">
                             <span className="text-[10px] text-white/50 uppercase font-bold tracking-widest">Active Proposal</span>
-                            <span className="text-2xl font-black text-skwap-accent drop-shadow-[0_2px_10px_rgba(var(--skwap-accent),0.5)]">
+                            <span className="text-2xl font-black text-st-accent drop-shadow-[0_2px_10px_rgba(var(--st-accent),0.5)]">
                               {activeSession.proposedCredits} <span className="text-[10px] opacity-50 ml-1">CR</span>
                             </span>
                           </div>
                           
                           {iProposed ? (
                             <div className="space-y-3">
-                              <p className="text-[10px] text-skwap-accent text-center font-bold uppercase tracking-widest animate-pulse">Awaiting partner's decision...</p>
+                              <p className="text-[10px] text-st-accent text-center font-bold uppercase tracking-widest animate-pulse">Awaiting partner's decision...</p>
                               <div className="flex gap-2 w-full">
                                 <input 
                                   type="number" 
                                   value={proposedCreditsInput}
                                   onChange={(e) => setProposedCreditsInput(e.target.value)}
                                   placeholder="Update..."
-                                  className="min-w-0 flex-1 bg-black/40 border border-white/20 rounded-xl px-3 py-3 text-sm text-white focus:outline-none focus:border-skwap-accent transition-all placeholder:text-white/20"
+                                  className="min-w-0 flex-1 bg-black/40 border border-white/20 rounded-xl px-3 py-3 text-sm text-white focus:outline-none focus:border-st-accent transition-all placeholder:text-white/20"
                                 />
                                 <button 
                                   onClick={handleProposeCredits}
@@ -320,7 +320,7 @@ const FloatingChat = () => {
                                   value={proposedCreditsInput}
                                   onChange={(e) => setProposedCreditsInput(e.target.value)}
                                   placeholder="Counter..."
-                                  className="min-w-0 flex-1 bg-black/40 border border-white/20 rounded-xl px-3 py-3 text-sm text-white focus:outline-none focus:border-skwap-accent transition-all placeholder:text-white/20"
+                                  className="min-w-0 flex-1 bg-black/40 border border-white/20 rounded-xl px-3 py-3 text-sm text-white focus:outline-none focus:border-st-accent transition-all placeholder:text-white/20"
                                 />
                                 <button 
                                   onClick={handleProposeCredits}
@@ -344,12 +344,12 @@ const FloatingChat = () => {
                               value={proposedCreditsInput}
                               onChange={(e) => setProposedCreditsInput(e.target.value)}
                               placeholder="Pitch credits..."
-                              className="min-w-0 flex-1 bg-black/40 border border-white/20 rounded-xl px-4 py-4 text-sm text-white focus:outline-none focus:border-skwap-accent transition-all placeholder:text-white/20"
+                              className="min-w-0 flex-1 bg-black/40 border border-white/20 rounded-xl px-4 py-4 text-sm text-white focus:outline-none focus:border-st-accent transition-all placeholder:text-white/20"
                             />
                             <button 
                               onClick={handleProposeCredits}
                               disabled={!proposedCreditsInput || negotiating}
-                              className="bg-skwap-accent hover:brightness-110 text-skwap-bgSecondary px-7 py-4 rounded-xl text-[12px] font-black uppercase tracking-[0.1em] transition-all disabled:opacity-30 shadow-[0_10px_25px_rgba(var(--skwap-accent),0.4)] flex-shrink-0"
+                              className="bg-st-accent hover:brightness-110 text-st-bgSecondary px-7 py-4 rounded-xl text-[12px] font-black uppercase tracking-[0.1em] transition-all disabled:opacity-30 shadow-[0_10px_25px_rgba(var(--st-accent),0.4)] flex-shrink-0"
                             >
                               PITCH
                             </button>
@@ -381,7 +381,7 @@ const FloatingChat = () => {
                       className={`w-full py-3.5 rounded-2xl text-[13px] font-black flex items-center justify-center gap-2.5 transition-all ${
                         iCompleted 
                           ? 'bg-white/5 text-white/30 border border-white/5 cursor-default opacity-50'
-                          : 'bg-skwap-accent hover:brightness-110 text-skwap-bgSecondary shadow-xl shadow-skwap-accent/30 active:scale-95'
+                          : 'bg-st-accent hover:brightness-110 text-st-bgSecondary shadow-xl shadow-st-accent/30 active:scale-95'
                       }`}
                     >
                       {iCompleted ? <Clock size={16} /> : <CheckCircle size={16} className="fill-current" />}
@@ -453,7 +453,7 @@ const FloatingChat = () => {
 
                   {isPending && iStarted && (
                     <p className="mt-3 text-[10px] text-white/40 text-center font-medium leading-relaxed px-4">
-                      Protocol initiated. Waiting for the other Skwap member to authorize...
+                      Protocol initiated. Waiting for the other Skill Trade member to authorize...
                     </p>
                   )}
 
@@ -469,7 +469,7 @@ const FloatingChat = () => {
                 </div>
 
                 {loading ? (
-                  <div className="flex justify-center py-20 opacity-20"><Zap size={40} className="animate-spin text-skwap-accent" /></div>
+                  <div className="flex justify-center py-20 opacity-20"><Zap size={40} className="animate-spin text-st-accent" /></div>
                 ) : messages.length === 0 ? (
                   <div className="text-center py-16 opacity-30 text-xs font-bold uppercase tracking-[0.2em]">Zero Transmissions</div>
                 ) : (
@@ -479,11 +479,11 @@ const FloatingChat = () => {
                       <div key={m._id} className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}>
                         <div className={`max-w-[85%] p-4 rounded-3xl text-[14px] shadow-sm leading-relaxed ${
                           isMine 
-                            ? 'bg-skwap-accent text-skwap-bgSecondary rounded-br-[4px] font-semibold' 
+                            ? 'bg-st-accent text-st-bgSecondary rounded-br-[4px] font-semibold' 
                             : 'bg-white/10 text-white rounded-bl-[4px] border border-white/10'
                         }`}>
                           {m.text}
-                          <p className={`text-[9px] mt-2 text-right ${isMine ? 'text-skwap-bgSecondary/60' : 'text-white/40'} font-black`}>
+                          <p className={`text-[9px] mt-2 text-right ${isMine ? 'text-st-bgSecondary/60' : 'text-white/40'} font-black`}>
                             {format(new Date(m.createdAt), 'p')}
                           </p>
                         </div>
@@ -510,20 +510,20 @@ const FloatingChat = () => {
                         onClick={() => setActiveSession(s)}
                         className="w-full p-5 rounded-[28px] bg-white/[0.02] hover:bg-white/[0.06] flex items-center gap-4 transition-all border border-white/5 hover:border-white/10 active:scale-[0.97] group"
                       >
-                        <div className="w-12 h-12 rounded-full overflow-hidden bg-white/5 relative ring-2 ring-transparent group-hover:ring-skwap-accent/40 transition-all duration-300">
+                        <div className="w-12 h-12 rounded-full overflow-hidden bg-white/5 relative ring-2 ring-transparent group-hover:ring-st-accent/40 transition-all duration-300">
                           <img 
                             src={partner.photoUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${partner.name}`} 
                             alt="avatar" 
                             className="w-full h-full object-cover"
                           />
                           {unread > 0 && (
-                            <span className="absolute -top-1 -right-1 w-5 h-5 bg-skwap-accent text-skwap-bgSecondary rounded-full border-[3px] border-skwap-bgPrimary flex items-center justify-center text-[10px] font-black shadow-lg">
+                            <span className="absolute -top-1 -right-1 w-5 h-5 bg-st-accent text-st-bgSecondary rounded-full border-[3px] border-st-bgPrimary flex items-center justify-center text-[10px] font-black shadow-lg">
                               {unread}
                             </span>
                           )}
                         </div>
                         <div className="flex-1 text-left">
-                          <h5 className="text-[13px] font-bold text-white group-hover:text-skwap-accent transition-colors">{partner.name}</h5>
+                          <h5 className="text-[13px] font-bold text-white group-hover:text-st-accent transition-colors">{partner.name}</h5>
                           <p className="text-[11px] text-white/40 font-medium line-clamp-1">{s.status.replace('_', ' ')}</p>
                         </div>
                         <div className="text-[10px] text-white/20 font-black uppercase tracking-tight">{format(new Date(s.updatedAt), 'MMM d')}</div>
@@ -544,12 +544,12 @@ const FloatingChat = () => {
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
                   placeholder="Type a message..."
-                  className="w-full bg-white/[0.06] border border-white/10 rounded-2xl py-4 pl-5 pr-14 text-sm focus:outline-none focus:border-skwap-accent/50 focus:bg-white/[0.1] transition-all text-white placeholder:text-white/30"
+                  className="w-full bg-white/[0.06] border border-white/10 rounded-2xl py-4 pl-5 pr-14 text-sm focus:outline-none focus:border-st-accent/50 focus:bg-white/[0.1] transition-all text-white placeholder:text-white/30"
                 />
                 <button 
                   type="submit"
                   disabled={!newMessage.trim()}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl bg-skwap-accent text-skwap-bgSecondary flex items-center justify-center hover:scale-105 active:scale-95 transition-all disabled:opacity-30 disabled:grayscale shadow-xl shadow-skwap-accent/20"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl bg-st-accent text-st-bgSecondary flex items-center justify-center hover:scale-105 active:scale-95 transition-all disabled:opacity-30 disabled:grayscale shadow-xl shadow-st-accent/20"
                 >
                   <Send size={18} className="fill-current" />
                 </button>
@@ -560,8 +560,8 @@ const FloatingChat = () => {
           {/* Cancellation Overlay */}
           {showCancelModal && (
             <div className="absolute inset-0 z-50 flex items-center justify-center p-6 animate-in fade-in zoom-in duration-300">
-              <div className="absolute inset-0 bg-skwap-bgSecondary/80 backdrop-blur-md" onClick={() => setShowCancelModal(false)}></div>
-              <div className="relative w-full bg-skwap-bgSecondary border border-white/10 rounded-[2.5rem] p-8 shadow-2xl">
+              <div className="absolute inset-0 bg-st-bgSecondary/80 backdrop-blur-md" onClick={() => setShowCancelModal(false)}></div>
+              <div className="relative w-full bg-st-bgSecondary border border-white/10 rounded-[2.5rem] p-8 shadow-2xl">
                 <h4 className="text-xl font-black text-white mb-2 tracking-tight">Cancel Session?</h4>
                 <p className="text-white/40 text-xs font-bold uppercase tracking-widest mb-6 leading-relaxed">
                   Credits will be refunded to the learner immediately.
@@ -571,7 +571,7 @@ const FloatingChat = () => {
                   value={cancelReason}
                   onChange={(e) => setCancelReason(e.target.value)}
                   placeholder="Reason for cancellation..."
-                  className="w-full h-32 bg-white/5 border border-white/10 rounded-2xl p-4 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-skwap-accent/50 transition-all resize-none mb-6"
+                  className="w-full h-32 bg-white/5 border border-white/10 rounded-2xl p-4 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-st-accent/50 transition-all resize-none mb-6"
                 />
                 
                 <div className="flex flex-col gap-3">
@@ -599,25 +599,25 @@ const FloatingChat = () => {
       <button 
         onClick={toggleChat}
         className={`w-16 h-16 rounded-full flex items-center justify-center shadow-[0_20px_50px_rgba(0,0,0,0.5)] transition-all duration-500 relative
-          ${isOpen ? 'bg-white/10 rotate-180 scale-90' : 'bg-skwap-accent hover:scale-110 active:scale-95'}
+          ${isOpen ? 'bg-white/10 rotate-180 scale-90' : 'bg-st-accent hover:scale-110 active:scale-95'}
         `}
       >
         {isOpen ? (
           <X size={28} className="text-white" />
         ) : (
-          <MessageSquare size={28} className="text-skwap-bgSecondary fill-current/10" />
+          <MessageSquare size={28} className="text-st-bgSecondary fill-current/10" />
         )}
         
         {/* Total Unread Badge */}
         {!isOpen && Object.values(unreadCounts).reduce((a, b) => a + b, 0) > 0 && (
-          <span className="absolute -top-1.5 -right-1.5 w-7 h-7 bg-rose-500 text-white rounded-full border-[4px] border-skwap-bgPrimary flex items-center justify-center text-[11px] font-black shadow-2xl animate-bounce">
+          <span className="absolute -top-1.5 -right-1.5 w-7 h-7 bg-rose-500 text-white rounded-full border-[4px] border-st-bgPrimary flex items-center justify-center text-[11px] font-black shadow-2xl animate-bounce">
             {Object.values(unreadCounts).reduce((a, b) => a + b, 0)}
           </span>
         )}
 
       </button>
 
-      <span className={`absolute right-[70px] bottom-5 px-4 py-2 rounded-2xl bg-skwap-bgSecondary/90 text-white text-[11px] font-black tracking-widest uppercase whitespace-nowrap transition-all duration-300 pointer-events-none shadow-2xl border border-white/10 border-l-4 border-l-skwap-accent backdrop-blur-md
+      <span className={`absolute right-[70px] bottom-5 px-4 py-2 rounded-2xl bg-st-bgSecondary/90 text-white text-[11px] font-black tracking-widest uppercase whitespace-nowrap transition-all duration-300 pointer-events-none shadow-2xl border border-white/10 border-l-4 border-l-st-accent backdrop-blur-md
         ${isOpen ? 'opacity-0' : 'opacity-0 group-hover:opacity-100'}
       `}>
         chat with session member
@@ -647,10 +647,10 @@ const FloatingChat = () => {
           border-radius: 10px;
         }
         .custom-scrollbar:hover::-webkit-scrollbar-thumb {
-          background: rgba(var(--skwap-accent), 0.25);
+          background: rgba(var(--st-accent), 0.25);
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: rgba(var(--skwap-accent), 0.5);
+          background: rgba(var(--st-accent), 0.5);
         }
       `}</style>
     </div>

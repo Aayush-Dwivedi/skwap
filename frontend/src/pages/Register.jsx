@@ -47,7 +47,7 @@ const Register = () => {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
       {/* Ambient orbs */}
-      <div className="orb-float absolute top-[-100px] right-[-100px] w-[400px] h-[400px] bg-skwap-accent rounded-full blur-[120px] opacity-20 pointer-events-none" />
+      <div className="orb-float absolute top-[-100px] right-[-100px] w-[400px] h-[400px] bg-st-accent rounded-full blur-[120px] opacity-20 pointer-events-none" />
       <div className="orb-float-slow absolute bottom-[-150px] left-[-100px] w-[500px] h-[500px] bg-rose-900 rounded-full blur-[130px] opacity-25 pointer-events-none" />
       <div className="orb-float-mid absolute top-1/3 left-1/2 w-[300px] h-[300px] bg-purple-900/30 rounded-full blur-[100px] opacity-15 pointer-events-none" />
 
@@ -62,12 +62,12 @@ const Register = () => {
         }}
       >
         <div className="flex flex-col items-center mb-8">
-          <div className="bg-skwap-buttonDark p-3 rounded-2xl mb-4 shadow-inner">
+          <div className="bg-st-buttonDark p-3 rounded-2xl mb-4 shadow-inner">
              {/* Logo placeholder */}
-             <div className="w-8 h-8 rounded bg-white text-skwap-buttonDark flex items-center justify-center font-bold">S</div>
+             <div className="w-8 h-8 rounded bg-white text-st-buttonDark flex items-center justify-center font-bold">S</div>
           </div>
           <h2 className="text-3xl font-bold text-white mb-2">Create Account</h2>
-          <p className="text-skwap-textSecondary text-sm">Join the Skwap community</p>
+          <p className="text-st-textSecondary text-sm">Join the Skill Trade community</p>
         </div>
 
         {/* Google Sign-In */}
@@ -86,9 +86,9 @@ const Register = () => {
         </div>
 
         <div className="my-5 flex items-center">
-          <div className="flex-grow border-t border-skwap-card"></div>
-          <span className="px-3 text-skwap-textSecondary text-xs font-bold uppercase tracking-wider">OR</span>
-          <div className="flex-grow border-t border-skwap-card"></div>
+          <div className="flex-grow border-t border-st-card"></div>
+          <span className="px-3 text-st-textSecondary text-xs font-bold uppercase tracking-wider">OR</span>
+          <div className="flex-grow border-t border-st-card"></div>
         </div>
 
         {error && (
@@ -99,7 +99,7 @@ const Register = () => {
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-skwap-textSecondary text-xs font-medium mb-1.5 ml-1">Email Address</label>
+            <label className="block text-st-textSecondary text-xs font-medium mb-1.5 ml-1">Email Address</label>
             <div className="relative">
               <input 
                 type="email" 
@@ -116,7 +116,7 @@ const Register = () => {
           </div>
 
           <div>
-            <label className="block text-skwap-textSecondary text-xs font-medium mb-1.5 ml-1">Password</label>
+            <label className="block text-st-textSecondary text-xs font-medium mb-1.5 ml-1">Password</label>
             <div className="relative">
               <input 
                 type="password" 
@@ -124,7 +124,7 @@ const Register = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••" 
-                className="w-full bg-skwap-cardLight/10 border border-skwap-card/50 text-white rounded-xl px-4 py-3 pl-11 focus:outline-none focus:ring-2 focus:ring-skwap-buttonFocus placeholder-white/30 text-sm tracking-widest transition-all"
+                className="w-full bg-st-cardLight/10 border border-st-card/50 text-white rounded-xl px-4 py-3 pl-11 focus:outline-none focus:ring-2 focus:ring-st-buttonFocus placeholder-white/30 text-sm tracking-widest transition-all"
               />
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                 <svg className="w-4 h-4 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
@@ -133,7 +133,7 @@ const Register = () => {
           </div>
 
           <div>
-            <label className="block text-skwap-textSecondary text-xs font-medium mb-1.5 ml-1">Confirm Password</label>
+            <label className="block text-st-textSecondary text-xs font-medium mb-1.5 ml-1">Confirm Password</label>
             <div className="relative">
               <input 
                 type="password" 
@@ -154,8 +154,8 @@ const Register = () => {
           </button>
         </form>
 
-        <p className="text-center text-sm text-skwap-textSecondary pt-6">
-          Already have an account? <Link to="/login" className="text-skwap-accent hover:text-white font-medium transition-colors">Sign in</Link>
+        <p className="text-center text-sm text-st-textSecondary pt-6">
+          Already have an account? <Link to="/login" className="text-st-accent hover:text-white font-medium transition-colors">Sign in</Link>
         </p>
       </div>
     </div>

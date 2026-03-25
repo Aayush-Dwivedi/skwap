@@ -633,17 +633,17 @@ const scheduleSession = async (req, res) => {
         const formattedDate = new Date(scheduledAt).toLocaleString();
         
         const mailOptionsLearner = {
-          from: `"Skwap Support" <${process.env.EMAIL_USER}>`,
+          from: `"Skill Trade Support" <${process.env.EMAIL_USER}>`,
           to: updatedSession.learner.email,
-          subject: 'Your Skwap Meeting is Scheduled!',
-          text: `Hi ${lProf?.name || 'User'},\n\nYour session with ${tProf?.name || 'your partner'} for "${updatedSession.request.requestedSkill || 'Skill Swap'}" has been scheduled for ${formattedDate}.\n\nPlease ensure you log in on time to join the meeting.\n\nBest,\nThe Skwap Team`,
+          subject: 'Your Skill Trade Meeting is Scheduled!',
+          text: `Hi ${lProf?.name || 'User'},\n\nYour session with ${tProf?.name || 'your partner'} for "${updatedSession.request.requestedSkill || 'Skill Trade'}" has been scheduled for ${formattedDate}.\n\nPlease ensure you log in on time to join the meeting.\n\nBest,\nThe Skill Trade Team`,
         };
 
         const mailOptionsTeacher = {
-          from: `"Skwap Support" <${process.env.EMAIL_USER}>`,
+          from: `"Skill Trade Support" <${process.env.EMAIL_USER}>`,
           to: updatedSession.teacher.email,
-          subject: 'Your Skwap Meeting is Scheduled!',
-          text: `Hi ${tProf?.name || 'User'},\n\nYou have successfully scheduled your session with ${lProf?.name || 'your partner'} for "${updatedSession.request.requestedSkill || 'Skill Swap'}" at ${formattedDate}.\n\nPlease ensure you log in on time to join the meeting.\n\nBest,\nThe Skwap Team`,
+          subject: 'Your Skill Trade Meeting is Scheduled!',
+          text: `Hi ${tProf?.name || 'User'},\n\nYou have successfully scheduled your session with ${lProf?.name || 'your partner'} for "${updatedSession.request.requestedSkill || 'Skill Trade'}" at ${formattedDate}.\n\nPlease ensure you log in on time to join the meeting.\n\nBest,\nThe Skill Trade Team`,
         };
 
         await Promise.all([

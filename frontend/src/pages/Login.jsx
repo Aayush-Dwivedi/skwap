@@ -44,7 +44,7 @@ const Login = () => {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
       {/* Ambient orbs — localized highlights */}
-      <div className="orb-float absolute top-[-100px] left-[-100px] w-[400px] h-[400px] bg-skwap-accent rounded-full blur-[120px] opacity-20 pointer-events-none" />
+      <div className="orb-float absolute top-[-100px] left-[-100px] w-[400px] h-[400px] bg-st-accent rounded-full blur-[120px] opacity-20 pointer-events-none" />
       <div className="orb-float-slow absolute bottom-[-150px] right-[-100px] w-[500px] h-[500px] bg-rose-900 rounded-full blur-[130px] opacity-25 pointer-events-none" />
       <div className="orb-float-mid absolute top-1/2 left-1/2 w-[300px] h-[300px] bg-purple-900/30 rounded-full blur-[100px] opacity-15 pointer-events-none" />
 
@@ -59,11 +59,11 @@ const Login = () => {
         }}
       >
         <div className="flex flex-col items-center mb-8">
-          <div className="bg-skwap-buttonDark p-3 rounded-2xl mb-4 shadow-inner">
-             <div className="w-8 h-8 rounded bg-white text-skwap-buttonDark flex items-center justify-center font-bold text-lg">S</div>
+          <div className="bg-st-buttonDark p-3 rounded-2xl mb-4 shadow-inner">
+             <div className="w-8 h-8 rounded bg-white text-st-buttonDark flex items-center justify-center font-bold text-lg">S</div>
           </div>
           <h2 className="text-3xl font-bold text-white mb-2">Welcome Back</h2>
-          <p className="text-skwap-textSecondary text-sm">Log in to your Skwap account</p>
+          <p className="text-st-textSecondary text-sm">Log in to your Skill Trade account</p>
         </div>
 
         {/* Google Sign-In */}
@@ -82,9 +82,9 @@ const Login = () => {
         </div>
 
         <div className="my-5 flex items-center">
-          <div className="flex-grow border-t border-skwap-card"></div>
-          <span className="px-3 text-skwap-textSecondary text-xs font-bold uppercase tracking-wider">OR</span>
-          <div className="flex-grow border-t border-skwap-card"></div>
+          <div className="flex-grow border-t border-st-card"></div>
+          <span className="px-3 text-st-textSecondary text-xs font-bold uppercase tracking-wider">OR</span>
+          <div className="flex-grow border-t border-st-card"></div>
         </div>
 
         {error && (
@@ -95,7 +95,7 @@ const Login = () => {
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-skwap-textSecondary text-xs font-medium mb-1.5 ml-1">Email Address</label>
+            <label className="block text-st-textSecondary text-xs font-medium mb-1.5 ml-1">Email Address</label>
             <div className="relative">
               <input
                 type="email"
@@ -113,8 +113,8 @@ const Login = () => {
 
           <div>
             <div className="flex justify-between items-center mb-1.5 ml-1">
-              <label className="block text-skwap-textSecondary text-xs font-medium">Password</label>
-              <button type="button" className="text-skwap-accent text-xs font-medium hover:text-white transition-colors">Forgot password?</button>
+              <label className="block text-st-textSecondary text-xs font-medium">Password</label>
+              <button type="button" className="text-st-accent text-xs font-medium hover:text-white transition-colors">Forgot password?</button>
             </div>
             <div className="relative">
               <input
@@ -148,8 +148,8 @@ const Login = () => {
           </button>
         </form>
 
-        <p className="text-center text-sm text-skwap-textSecondary pt-6">
-          Don't have an account? <Link to="/register" className="text-skwap-accent hover:text-white font-medium transition-colors">Register instead</Link>
+        <p className="text-center text-sm text-st-textSecondary pt-6">
+          Don't have an account? <Link to="/register" className="text-st-accent hover:text-white font-medium transition-colors">Register instead</Link>
         </p>
       </div>
     </div>

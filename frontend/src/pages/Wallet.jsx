@@ -31,11 +31,45 @@ const Wallet = () => {
   const handlePurchase = async (amount) => {
     setIsPurchasing(true);
     try {
-      await api.post('/credits/purchase', { amount });
-      await fetchData();
-      toast.success(`Successfully added ${amount} credits!`);
+      // 1. Create Order
+      const { data: order } = await api.post('/credits/create-razorpay-order', { amount });
+
+      // 2. Initialize Razorpay
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_SUbD2NsvRlT7j6', // Public Key ID
+        amount: order.amount,
+        currency: order.currency,
+        name: 'Skill Trade',
+        description: `Purchase ${amount} Credits`,
+        order_id: order.id,
+        handler: async function (response) {
+          try {
+            // 3. Verify Payment
+            await api.post('/credits/verify-razorpay-payment', {
+              ...response,
+              amount
+            });
+            await fetchData();
+            toast.success(`Successfully added ${amount} credits!`);
+          } catch (verifyError) {
+            toast.error(verifyError.response?.data?.message || 'Payment verification failed');
+          }
+        },
+        prefill: {
+          name: 'Skill Trade User',
+        },
+        theme: {
+          color: '#3b82f6' // Skill Trade blue accent
+        }
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.on('payment.failed', function (response) {
+        toast.error(response.error.description || 'Payment Failed');
+      });
+      rzp.open();
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Purchase failed');
+      toast.error(error.response?.data?.message || 'Failed to initiate purchase');
     } finally {
       setIsPurchasing(false);
     }
@@ -52,24 +86,24 @@ const Wallet = () => {
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-white tracking-tight mb-2 flex items-center gap-3">
-          <WalletIcon className="text-skwap-accent" />
+          <WalletIcon className="text-st-accent" />
           Cred Wallet
         </h1>
-        <p className="text-skwap-textSecondary">Manage your Skwap credits and fuel your learning journey.</p>
+        <p className="text-st-textSecondary">Manage your Skill Trade credits and fuel your learning journey.</p>
       </div>
 
       {/* Balance Card */}
       <div className="relative overflow-hidden glass-strong rounded-[2.5rem] p-8 md:p-12 shadow-2xl group transition-all duration-500 hover:bg-white/[0.05]">
-        <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-skwap-accent rounded-full blur-[100px] opacity-10 group-hover:opacity-20 transition-opacity"></div>
+        <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-st-accent rounded-full blur-[100px] opacity-10 group-hover:opacity-20 transition-opacity"></div>
         
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 relative z-10">
           <div>
-            <p className="text-skwap-textSecondary text-sm font-medium mb-1 uppercase tracking-widest">Available Balance</p>
+            <p className="text-st-textSecondary text-sm font-medium mb-1 uppercase tracking-widest">Available Balance</p>
             <div className="flex items-baseline gap-2">
               <span className="text-6xl md:text-7xl font-black text-white tracking-tighter tabular-nums">
                 {loading ? '...' : balance}
               </span>
-              <span className="text-xl font-bold text-skwap-accent">CREDITS</span>
+              <span className="text-xl font-bold text-st-accent">CREDITS</span>
             </div>
           </div>
           
@@ -93,10 +127,10 @@ const Wallet = () => {
           {purchaseOptions.map((option) => (
             <div 
               key={option.amount}
-              className={`relative overflow-hidden glass-card ${option.popular ? 'border-skwap-accent/50 shadow-[0_0_20px_rgba(var(--skwap-accent),0.1)]' : ''} rounded-3xl p-6 transition-all duration-300 hover:scale-[1.03] flex flex-col justify-between h-[240px] group`}
+              className={`relative overflow-hidden glass-card ${option.popular ? 'border-st-accent/50 shadow-[0_0_20px_rgba(var(--st-accent),0.1)]' : ''} rounded-3xl p-6 transition-all duration-300 hover:scale-[1.03] flex flex-col justify-between h-[240px] group`}
             >
               {option.popular && (
-                <div className="absolute top-4 right-4 bg-skwap-accent text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest animate-pulse">
+                <div className="absolute top-4 right-4 bg-st-accent text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest animate-pulse">
                   Most Popular
                 </div>
               )}
@@ -106,7 +140,7 @@ const Wallet = () => {
                   <WalletIcon size={24} />
                 </div>
                 <h3 className="text-2xl font-bold text-white mb-1">{option.amount} Credits</h3>
-                <p className="text-skwap-textSecondary text-sm">Best for {option.amount > 500 ? 'pro learners' : 'getting started'}.</p>
+                <p className="text-st-textSecondary text-sm">Best for {option.amount > 500 ? 'pro learners' : 'getting started'}.</p>
               </div>
 
               <button 
@@ -127,7 +161,7 @@ const Wallet = () => {
 
       {/* Recent Activity */}
       <div className="bg-white/[0.02] border border-white/5 rounded-[2rem] p-8">
-        <div className="flex items-center gap-2 text-skwap-textSecondary mb-6 font-semibold">
+        <div className="flex items-center gap-2 text-st-textSecondary mb-6 font-semibold">
           <History size={18} />
           <span>Recent Activity</span>
         </div>
@@ -150,7 +184,7 @@ const Wallet = () => {
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-white">{tx.description}</p>
-                    <p className="text-xs text-skwap-textSecondary">
+                    <p className="text-xs text-st-textSecondary">
                       {new Date(tx.createdAt).toLocaleDateString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                     </p>
                   </div>

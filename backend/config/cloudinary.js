@@ -13,7 +13,7 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: 'skwap_uploads',
+    folder: 'Skill Trade_uploads',
     allowed_formats: ['jpg', 'jpeg', 'png'],
     // Removed transformation during upload to speed up response.
     // Cloudinary supports on-the-fly resizing via URL.

@@ -1,7 +1,7 @@
 {
-  "name": "skwap-backend",
+  "name": "skill-trade-backend",
   "version": "1.0.0",
-  "description": "Backend for Skwap Skill Barter Platform",
+  "description": "Backend for Skill Trade Skill Barter Platform",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

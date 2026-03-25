@@ -23,22 +23,22 @@
 
 :root {
   /* Dynamic Theme Variables (RGB format) - Fallbacks provided */
-  --skwap-bg-primary: 77, 59, 67;      /* #4D3B43 */
-  --skwap-bg-secondary: 53, 37, 42;    /* #35252A */
-  --skwap-sidebar: 88, 71, 77;         /* #58474D */
-  --skwap-card: 96, 76, 83;            /* #604C53 */
+  --st-bg-primary: 77, 59, 67;      /* #4D3B43 */
+  --st-bg-secondary: 53, 37, 42;    /* #35252A */
+  --st-sidebar: 88, 71, 77;         /* #58474D */
+  --st-card: 96, 76, 83;            /* #604C53 */
   
   /* These will be overridden dynamically by ThemeContext based on wallpaper */
-  --skwap-accent: 164, 127, 139;       /* #A47F8B */
-  --skwap-button-dark: 74, 59, 64;     /* #4A3B40 */
-  --skwap-button-focus: 109, 86, 93;   /* #6D565D */
-  --skwap-text-secondary: 215, 205, 210; /* #D7CDD2 */
+  --st-accent: 164, 127, 139;       /* #A47F8B */
+  --st-button-dark: 74, 59, 64;     /* #4A3B40 */
+  --st-button-focus: 109, 86, 93;   /* #6D565D */
+  --st-text-secondary: 215, 205, 210; /* #D7CDD2 */
   
-  --skwap-text-primary: 255, 255, 255;
-  --skwap-btn-text: 255, 255, 255;
+  --st-text-primary: 255, 255, 255;
+  --st-btn-text: 255, 255, 255;
   
   /* Background wallpaper variable for zero-flash loads */
-  --skwap-bg-image: url("/bg-wallpaper.png");
+  --st-bg-image: url("/bg-wallpaper.png");
   
   /* Transparency levels */
   --glass-card-opacity: 0.22;
@@ -52,74 +52,74 @@
 /* ── Glassmorphism Utility Classes ── */
 @layer components {
   .glass {
-    background: rgba(var(--skwap-text-primary), 0.05);
+    background: rgba(var(--st-text-primary), 0.05);
     backdrop-filter: blur(16px) saturate(1.4);
     -webkit-backdrop-filter: blur(16px) saturate(1.4);
-    border: 1px solid rgba(var(--skwap-text-primary), 0.10);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15), inset 0 1px 0 rgba(var(--skwap-text-primary), 0.08);
+    border: 1px solid rgba(var(--st-text-primary), 0.10);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15), inset 0 1px 0 rgba(var(--st-text-primary), 0.08);
   }
 
   .glass-card {
-    background: linear-gradient(135deg, rgba(var(--skwap-card), var(--glass-card-opacity)) 0%, rgba(var(--skwap-bg-primary), 0.2) 100%);
+    background: linear-gradient(135deg, rgba(var(--st-card), var(--glass-card-opacity)) 0%, rgba(var(--st-bg-primary), 0.2) 100%);
     backdrop-filter: blur(var(--glass-blur)) saturate(1.5);
     -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.5);
-    border: 1px solid rgba(var(--skwap-text-primary), 0.12);
+    border: 1px solid rgba(var(--st-text-primary), 0.12);
     box-shadow:
       0 8px 32px rgba(0,0,0,0.25),
-      inset 0 1px 0 rgba(var(--skwap-text-primary), 0.12),
+      inset 0 1px 0 rgba(var(--st-text-primary), 0.12),
       inset 0 -1px 0 rgba(0,0,0,0.10);
   }
 
   .glass-strong {
-    background: linear-gradient(160deg, rgba(var(--skwap-bg-secondary), var(--glass-strong-opacity)) 0%, rgba(var(--skwap-bg-primary), 0.85) 100%);
+    background: linear-gradient(160deg, rgba(var(--st-bg-secondary), var(--glass-strong-opacity)) 0%, rgba(var(--st-bg-primary), 0.85) 100%);
     backdrop-filter: blur(40px) saturate(1.6);
     -webkit-backdrop-filter: blur(40px) saturate(1.6);
-    border: 1px solid rgba(var(--skwap-text-primary), 0.10);
+    border: 1px solid rgba(var(--st-text-primary), 0.10);
     box-shadow:
       0 25px 60px rgba(0,0,0,0.4),
-      inset 0 1px 0 rgba(var(--skwap-text-primary), 0.10),
+      inset 0 1px 0 rgba(var(--st-text-primary), 0.10),
       inset 0 -1px 0 rgba(0,0,0,0.20),
-      0 0 0 0.5px rgba(var(--skwap-text-primary), 0.04);
+      0 0 0 0.5px rgba(var(--st-text-primary), 0.04);
   }
 
   .glass-input {
-    background: rgba(var(--skwap-text-primary), 0.04);
+    background: rgba(var(--st-text-primary), 0.04);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(var(--skwap-text-primary), 0.10);
+    border: 1px solid rgba(var(--st-text-primary), 0.10);
     transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
-    color: rgb(var(--skwap-text-primary));
+    color: rgb(var(--st-text-primary));
   }
   
   .glass-input:focus {
-    background: rgba(var(--skwap-text-primary), 0.07);
-    border-color: rgba(var(--skwap-accent), 0.6);
-    box-shadow: 0 0 0 3px rgba(var(--skwap-accent), 0.15), inset 0 1px 0 rgba(var(--skwap-text-primary), 0.06);
+    background: rgba(var(--st-text-primary), 0.07);
+    border-color: rgba(var(--st-accent), 0.6);
+    box-shadow: 0 0 0 3px rgba(var(--st-accent), 0.15), inset 0 1px 0 rgba(var(--st-text-primary), 0.06);
     outline: none;
   }
 
   .glass-btn {
-    background: linear-gradient(135deg, rgba(var(--skwap-button-focus), 0.90) 0%, rgba(var(--skwap-button-dark), 0.95) 100%);
+    background: linear-gradient(135deg, rgba(var(--st-button-focus), 0.90) 0%, rgba(var(--st-button-dark), 0.95) 100%);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border: 1px solid rgba(255,255,255,0.15);
     box-shadow: 0 4px 16px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.15);
     transition: all 0.2s ease;
-    color: rgb(var(--skwap-btn-text));
+    color: rgb(var(--st-btn-text));
   }
   
   .glass-btn:hover {
-    background: linear-gradient(135deg, rgba(var(--skwap-accent), 0.45) 0%, rgba(var(--skwap-button-dark), 0.98) 100%);
-    box-shadow: 0 6px 24px rgba(0,0,0,0.35), 0 0 20px rgba(var(--skwap-accent), 0.25), inset 0 1px 0 rgba(255,255,255,0.20);
+    background: linear-gradient(135deg, rgba(var(--st-accent), 0.45) 0%, rgba(var(--st-button-dark), 0.98) 100%);
+    box-shadow: 0 6px 24px rgba(0,0,0,0.35), 0 0 20px rgba(var(--st-accent), 0.25), inset 0 1px 0 rgba(255,255,255,0.20);
     transform: translateY(-1px);
   }
 }
 
 @layer base {
   body {
-    background-color: rgb(var(--skwap-bg-primary));
-    background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.6)), var(--skwap-bg-image);
-    color: rgb(var(--skwap-text-primary));
+    background-color: rgb(var(--st-bg-primary));
+    background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.6)), var(--st-bg-image);
+    color: rgb(var(--st-text-primary));
     @apply antialiased min-h-screen m-0 relative;
     background-attachment: fixed;
     background-size: cover;
@@ -144,7 +144,7 @@
 }
 
 *:hover {
-  scrollbar-color: rgba(var(--skwap-accent), 0.3) transparent;
+  scrollbar-color: rgba(var(--st-accent), 0.3) transparent;
 }
 
 ::-webkit-scrollbar {
@@ -167,12 +167,12 @@
 *:hover::-webkit-scrollbar-thumb,
 html:hover::-webkit-scrollbar-thumb,
 body:hover::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, rgba(var(--skwap-accent), 0.2), rgba(var(--skwap-accent), 0.1));
+  background: linear-gradient(180deg, rgba(var(--st-accent), 0.2), rgba(var(--st-accent), 0.1));
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, rgba(var(--skwap-accent), 0.4), rgba(var(--skwap-accent), 0.2)) !important;
+  background: linear-gradient(180deg, rgba(var(--st-accent), 0.4), rgba(var(--st-accent), 0.2)) !important;
 }
 
 ::-webkit-scrollbar-corner {

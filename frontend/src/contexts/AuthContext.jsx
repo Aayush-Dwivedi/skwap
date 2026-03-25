@@ -97,8 +97,8 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem('userInfo');
-    localStorage.removeItem('skwap-wallpaper');
-    localStorage.removeItem('skwap-theme');
+    localStorage.removeItem('skill-trade-wallpaper');
+    localStorage.removeItem('skill-trade-theme');
     setUser(null);
     setProfile(null);
     setHasProfile(false);

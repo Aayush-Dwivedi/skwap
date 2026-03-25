@@ -22,11 +22,11 @@ export const ThemeProvider = ({ children }) => {
   const { user, profile } = useAuth();
   const [background, setBackground] = useState(() => {
     try {
-      const saved = localStorage.getItem('skwap-wallpaper');
+      const saved = localStorage.getItem('st-wallpaper');
       // Migrate stale paths
       if (saved && saved.includes('/src/assets/')) {
         const migrated = '/bg-wallpaper.png';
-        localStorage.setItem('skwap-wallpaper', migrated);
+        localStorage.setItem('st-wallpaper', migrated);
         return migrated;
       }
       return saved || '/bg-wallpaper.png';
@@ -54,7 +54,7 @@ export const ThemeProvider = ({ children }) => {
 
   useEffect(() => {
     if (!user) {
-      // Landing, Login, and Register always use the default Skwap branding.
+      // Landing, Login, and Register always use the default Skill Trade branding.
       // We explicitly bypass the saved theme for visitors to maintain brand consistency.
       updateVariablesForBg(DEFAULT_COLORS, '/bg-wallpaper.png', false);
       return;
@@ -194,21 +194,21 @@ export const ThemeProvider = ({ children }) => {
     const root = document.documentElement;
     const colors = { ...DEFAULT_COLORS, ...theme };
     
-    root.style.setProperty('--skwap-bg-primary', colors.bgPrimary);
-    root.style.setProperty('--skwap-bg-secondary', colors.bgSecondary);
-    root.style.setProperty('--skwap-sidebar', colors.sidebar);
-    root.style.setProperty('--skwap-card', colors.card);
-    root.style.setProperty('--skwap-accent', colors.accent);
-    root.style.setProperty('--skwap-button-dark', colors.buttonDark);
-    root.style.setProperty('--skwap-button-focus', colors.buttonFocus);
-    root.style.setProperty('--skwap-text-secondary', colors.textSecondary);
-    root.style.setProperty('--skwap-text-primary', colors.textPrimary);
-    root.style.setProperty('--skwap-bg-image', `url("${bg}")`);
+    root.style.setProperty('--st-bg-primary', colors.bgPrimary);
+    root.style.setProperty('--st-bg-secondary', colors.bgSecondary);
+    root.style.setProperty('--st-sidebar', colors.sidebar);
+    root.style.setProperty('--st-card', colors.card);
+    root.style.setProperty('--st-accent', colors.accent);
+    root.style.setProperty('--st-button-dark', colors.buttonDark);
+    root.style.setProperty('--st-button-focus', colors.buttonFocus);
+    root.style.setProperty('--st-text-secondary', colors.textSecondary);
+    root.style.setProperty('--st-text-primary', colors.textPrimary);
+    root.style.setProperty('--st-bg-image', `url("${bg}")`);
     
     if (persist) {
       try {
-        localStorage.setItem('skwap-wallpaper', bg);
-        localStorage.setItem('skwap-theme', JSON.stringify(colors));
+        localStorage.setItem('st-wallpaper', bg);
+        localStorage.setItem('st-theme', JSON.stringify(colors));
       } catch (e) {}
     }
   };

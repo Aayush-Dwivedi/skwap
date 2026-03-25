@@ -110,7 +110,7 @@ const MySessions = () => {
       )}
       <div className="mb-10">
         <h1 className="text-3xl font-bold text-white mb-2">My Sessions & Requests</h1>
-        <p className="text-skwap-textSecondary">Manage your incoming requests and ongoing skill exchanges.</p>
+        <p className="text-st-textSecondary">Manage your incoming requests and ongoing skill exchanges.</p>
       </div>
 
       {loading ? (
@@ -121,16 +121,16 @@ const MySessions = () => {
           {/* Main Sessions Feed */}
           <div className="xl:col-span-2 space-y-6">
             <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-              <Calendar className="text-skwap-accent" /> Active Sessions
+              <Calendar className="text-st-accent" /> Active Sessions
             </h2>
 
             {sessions.length === 0 ? (
-              <div className="glass border-dashed border-white/20 rounded-[2rem] p-10 text-center text-skwap-textSecondary">
+              <div className="glass border-dashed border-white/20 rounded-[2rem] p-10 text-center text-st-textSecondary">
                 You don't have any active sessions yet. Get out there and start swapping!
               </div>
             ) : (
               sessions.map(session => (
-                <div key={session._id} className="glass-card rounded-[2.5rem] p-6 shadow-xl hover:border-skwap-accent/50 transition-colors">
+                <div key={session._id} className="glass-card rounded-[2.5rem] p-6 shadow-xl hover:border-st-accent/50 transition-colors">
                   <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 rounded-full overflow-hidden bg-white/10 border border-white/10">
@@ -149,7 +149,7 @@ const MySessions = () => {
                         <h3 className="text-white font-bold text-lg">
                           {session.learner._id === user?._id ? `Learning from ${session.teacher.name}` : `Teaching ${session.learner.name}`}
                         </h3>
-                        <p className="text-skwap-textSecondary text-xs">
+                        <p className="text-st-textSecondary text-xs">
                           {session.request.type === 'BARTER' 
                             ? `Barter: ${session.request.offeredSkill}` 
                             : session.status === 'NEGOTIATING' 
@@ -182,7 +182,7 @@ const MySessions = () => {
                         <button 
                           onClick={() => navigate(`/meeting/${session._id}`)}
                           disabled={!canJoinMeeting(session.scheduledAt)}
-                          className={`px-6 py-2.5 text-sm font-black rounded-xl transition-all shadow-md flex items-center gap-2 ${canJoinMeeting(session.scheduledAt) ? 'bg-skwap-accent hover:bg-skwap-primary text-[#1A1625]' : 'bg-gray-500/50 text-white cursor-not-allowed border border-gray-500/30'}`}
+                          className={`px-6 py-2.5 text-sm font-black rounded-xl transition-all shadow-md flex items-center gap-2 ${canJoinMeeting(session.scheduledAt) ? 'bg-st-accent hover:bg-st-primary text-[#1A1625]' : 'bg-gray-500/50 text-white cursor-not-allowed border border-gray-500/30'}`}
                         >
                           <Video size={16} /> Join Meeting
                         </button>
@@ -191,7 +191,7 @@ const MySessions = () => {
                       {session.status === 'IN_PROGRESS' && (
                         <button 
                           onClick={() => navigate(`/meeting/${session._id}`)}
-                          className="px-6 py-2.5 bg-skwap-accent hover:bg-skwap-primary text-[#1A1625] text-sm font-black rounded-xl transition-all shadow-md flex items-center gap-2"
+                          className="px-6 py-2.5 bg-st-accent hover:bg-st-primary text-[#1A1625] text-sm font-black rounded-xl transition-all shadow-md flex items-center gap-2"
                         >
                           <Video size={16} /> Return to Meeting
                         </button>
@@ -206,7 +206,7 @@ const MySessions = () => {
                             type="datetime-local" 
                             value={scheduleDates[session._id] || ''}
                             onChange={(e) => setScheduleDates({ ...scheduleDates, [session._id]: e.target.value })}
-                            className="px-3 py-2 rounded-lg bg-black/40 border border-white/20 text-white text-sm focus:outline-none focus:border-skwap-accent"
+                            className="px-3 py-2 rounded-lg bg-black/40 border border-white/20 text-white text-sm focus:outline-none focus:border-st-accent"
                           />
                           <button 
                             onClick={() => handleScheduleSession(session._id)}
@@ -216,8 +216,8 @@ const MySessions = () => {
                           </button>
                         </div>
                       ) : (
-                        <div className="mt-2 text-sm text-skwap-textSecondary flex items-center gap-2">
-                          <Clock className="text-skwap-accent" size={14} />
+                        <div className="mt-2 text-sm text-st-textSecondary flex items-center gap-2">
+                          <Clock className="text-st-accent" size={14} />
                           Waiting for {session.teacher.name} to schedule the session...
                         </div>
                       )
@@ -225,8 +225,8 @@ const MySessions = () => {
                     
                     {session.status === 'PENDING_START' && session.scheduledAt && (
                       <div className="mt-1 flex flex-col gap-1">
-                        <div className="text-xs text-skwap-textSecondary flex items-center gap-1">
-                          <Clock size={12} className="text-skwap-accent" />
+                        <div className="text-xs text-st-textSecondary flex items-center gap-1">
+                          <Clock size={12} className="text-st-accent" />
                           Scheduled for: <span className="text-white font-medium">{new Date(session.scheduledAt).toLocaleString()}</span>
                         </div>
                         <div className="text-xs text-amber-400 font-medium flex items-center gap-1 mt-1 bg-amber-500/10 w-fit px-2 py-1 rounded">
@@ -243,11 +243,11 @@ const MySessions = () => {
           {/* Sidebar Pending Requests */}
           <div className="space-y-6">
             <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-              <Clock className="text-skwap-accent" /> Pending Requests
+              <Clock className="text-st-accent" /> Pending Requests
             </h2>
 
             {requests.length === 0 ? (
-               <div className="glass border-white/10 rounded-[2rem] p-6 text-center text-sm text-skwap-textSecondary">
+               <div className="glass border-white/10 rounded-[2rem] p-6 text-center text-sm text-st-textSecondary">
                 No pending requests.
               </div>
             ) : (
@@ -264,7 +264,7 @@ const MySessions = () => {
                     </div>
                     <span className="text-white text-sm font-bold">{req.learner.name}</span>
                   </div>
-                  <p className="text-skwap-textSecondary text-xs mb-4">
+                  <p className="text-st-textSecondary text-xs mb-4">
                     Requested your <strong>{req.listing.skillName}</strong> skill for {req.durationHours} hours.
                     ({req.type === 'BARTER' ? `Offered: ${req.offeredSkill}` : `Offered: ${req.credits} Credits`})
                   </p>

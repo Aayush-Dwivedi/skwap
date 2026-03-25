@@ -21,9 +21,9 @@ const submitContactForm = async (req, res) => {
 
     const mailOptions = {
       from: `"${name}" <${email}>`, // From user
-      to: 'aayushdwivedi8334@gmail.com',
+      to: process.env.ADMIN_EMAIL || 'support.skilltrade@gmail.com',
       replyTo: email,
-      subject: `Skwap Support/Fraud Report from ${name}`,
+      subject: `Skill Trade Support/Fraud Report from ${name}`,
       text: `Name: ${name}\nEmail: ${email}\n\nProblem/Feedback:\n${problem}`,
     };
 

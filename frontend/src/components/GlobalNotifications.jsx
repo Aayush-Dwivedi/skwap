@@ -76,11 +76,11 @@ const GlobalNotifications = () => {
           onClick={() => handleNotificationClick(notif)}
           className="pointer-events-auto bg-[#1A1625]/95 backdrop-blur-xl border border-white/20 text-white p-4 rounded-2xl shadow-[0_15px_40px_rgba(0,0,0,0.6)] flex items-start gap-3 cursor-pointer hover:bg-[#1A1625] transition-all hover:-translate-x-1 animate-in slide-in-from-right-8 duration-300 relative group"
         >
-          <div className="bg-skwap-accent/20 text-skwap-accent p-2 rounded-full shrink-0 mt-0.5">
+          <div className="bg-st-accent/20 text-st-accent p-2 rounded-full shrink-0 mt-0.5">
             {getIcon(notif.type)}
           </div>
           <div className="flex-1 min-w-0 pr-6">
-            <h4 className="font-bold text-sm text-skwap-accent truncate">{notif.type.replace(/_/g, ' ')}</h4>
+            <h4 className="font-bold text-sm text-st-accent truncate">{notif.type.replace(/_/g, ' ')}</h4>
             <p className="text-xs text-white/90 leading-relaxed mt-1">{notif.content}</p>
           </div>
           <button 
@@ -95,7 +95,7 @@ const GlobalNotifications = () => {
       {notifications.length > 3 && (
         <div 
           onClick={() => navigate('/notifications')}
-          className="pointer-events-auto text-center text-xs font-bold text-skwap-accent bg-[#1A1625]/80 backdrop-blur-md py-3 rounded-xl cursor-pointer hover:bg-[#1A1625]/100 border border-white/10 shadow-lg transition-transform hover:-translate-x-1"
+          className="pointer-events-auto text-center text-xs font-bold text-st-accent bg-[#1A1625]/80 backdrop-blur-md py-3 rounded-xl cursor-pointer hover:bg-[#1A1625]/100 border border-white/10 shadow-lg transition-transform hover:-translate-x-1"
         >
           + {notifications.length - 3} more unread notifications
         </div>

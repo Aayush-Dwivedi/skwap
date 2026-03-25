@@ -56,7 +56,7 @@ const Home = () => {
             className={`text-sm font-medium px-8 py-2.5 rounded-full transition-all duration-300 ${
               tab === 'LEARNING'
                 ? 'glass-btn text-white shadow-md'
-                : 'text-skwap-textSecondary hover:text-white'
+                : 'text-st-textSecondary hover:text-white'
             }`}
           >
             I want to Learn
@@ -66,7 +66,7 @@ const Home = () => {
             className={`text-sm font-medium px-8 py-2.5 rounded-full transition-all duration-300 ${
               tab === 'TEACHING'
                 ? 'glass-btn text-white shadow-md'
-                : 'text-skwap-textSecondary hover:text-white'
+                : 'text-st-textSecondary hover:text-white'
             }`}
           >
             I want to Teach
@@ -85,7 +85,7 @@ const Home = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={`Search ${tab === 'LEARNING' ? 'skills to learn' : 'people to teach'}...`}
-              className="text-skwap-accent text-sm rounded-full pl-11 pr-5 py-3 w-full xl:w-96 placeholder-skwap-textSecondary glass-input"
+              className="text-st-accent text-sm rounded-full pl-11 pr-5 py-3 w-full xl:w-96 placeholder-st-textSecondary glass-input"
             />
           </div>
         </div>
@@ -96,7 +96,7 @@ const Home = () => {
         <h1 className="text-3xl font-bold text-white tracking-tight mb-2">
           {tab === 'LEARNING' ? 'Discover Skills to Swap' : 'Share Your Expertise'}
         </h1>
-        <p className="text-skwap-textSecondary text-sm">
+        <p className="text-st-textSecondary text-sm">
           {tab === 'LEARNING' ? 'Click any card to book a session instantly.' : 'Help others grow and earn credits or new skills in return.'}
         </p>
       </div>
@@ -105,11 +105,11 @@ const Home = () => {
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-start">
           {[...Array(8)].map((_, i) => (
-            <div key={i} className="rounded-3xl h-80 bg-skwap-card/30 border border-skwap-card/20 animate-pulse" />
+            <div key={i} className="rounded-3xl h-80 bg-st-card/30 border border-st-card/20 animate-pulse" />
           ))}
         </div>
       ) : filteredListings.length === 0 ? (
-        <div className="text-skwap-textSecondary text-center py-20 glass rounded-3xl border-dashed border-white/20">
+        <div className="text-st-textSecondary text-center py-20 glass rounded-3xl border-dashed border-white/20">
           No listings found in this category. Be the first to add one!
         </div>
       ) : (
@@ -185,8 +185,8 @@ const BookingModal = ({ listing, onClose }) => {
       <div
         className="w-full max-w-md rounded-3xl overflow-hidden animate-[slideUp_0.25s_ease] glass-strong"
         style={{
-          border: '1px solid rgba(var(--skwap-text-primary), 0.12)',
-          boxShadow: '0 30px 70px rgba(0,0,0,0.35), inset 0 1.5px 0 rgba(var(--skwap-text-primary), 0.12)',
+          border: '1px solid rgba(var(--st-text-primary), 0.12)',
+          boxShadow: '0 30px 70px rgba(0,0,0,0.35), inset 0 1.5px 0 rgba(var(--st-text-primary), 0.12)',
         }}
       >
         {/* Header */}
@@ -204,16 +204,16 @@ const BookingModal = ({ listing, onClose }) => {
               />
             </div>
             <div>
-              <h3 className="text-skwap-textPrimary font-bold text-lg leading-tight">{listing.skillName}</h3>
-              <p className="text-skwap-textSecondary text-sm">with {listing.uploader?.name || 'User'}</p>
+              <h3 className="text-st-textPrimary font-bold text-lg leading-tight">{listing.skillName}</h3>
+              <p className="text-st-textSecondary text-sm">with {listing.uploader?.name || 'User'}</p>
             </div>
           </div>
 
           {/* Listing meta pills */}
           <div className="flex gap-2 mt-4 flex-wrap">
-            <span className="text-[11px] font-semibold px-2.5 py-1 bg-white/8 border border-white/10 rounded-full text-skwap-textSecondary/70 uppercase tracking-wider">{listing.method}</span>
+            <span className="text-[11px] font-semibold px-2.5 py-1 bg-white/8 border border-white/10 rounded-full text-st-textSecondary/70 uppercase tracking-wider">{listing.method}</span>
             {(listing.method === 'CREDITS' || listing.method === 'BOTH') && (
-              <span className="text-[11px] font-semibold px-2.5 py-1 bg-skwap-accent/15 border border-skwap-accent/25 rounded-full text-skwap-accent flex items-center gap-1 uppercase tracking-wider">
+              <span className="text-[11px] font-semibold px-2.5 py-1 bg-st-accent/15 border border-st-accent/25 rounded-full text-st-accent flex items-center gap-1 uppercase tracking-wider">
                 Credits Negotiable
               </span>
             )}
@@ -226,26 +226,26 @@ const BookingModal = ({ listing, onClose }) => {
           {/* Booking Type Summary */}
           <div className="bg-white/5 border border-white/10 rounded-2xl p-4 shadow-inner">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-skwap-textSecondary/40 text-[10px] uppercase font-black tracking-widest">Protocol Type</span>
+              <span className="text-st-textSecondary/40 text-[10px] uppercase font-black tracking-widest">Protocol Type</span>
               <span className={`text-[10px] font-black px-2.5 py-1 rounded-lg uppercase tracking-wider ${
-                (listing.method === 'BARTER' || (listing.method === 'BOTH' && matchedSkill)) ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-skwap-accent/20 text-skwap-accent border border-skwap-accent/30'
+                (listing.method === 'BARTER' || (listing.method === 'BOTH' && matchedSkill)) ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-st-accent/20 text-st-accent border border-st-accent/30'
               }`}>
                 {(listing.method === 'BARTER' || (listing.method === 'BOTH' && matchedSkill)) ? 'Direct Barter' : 'Credit Negotiation'}
               </span>
             </div>
             
             <div className="flex items-center justify-between">
-              <span className="text-skwap-textSecondary/40 text-[10px] uppercase font-black tracking-widest">Initial Cost</span>
+              <span className="text-st-textSecondary/40 text-[10px] uppercase font-black tracking-widest">Initial Cost</span>
               <div className="flex items-center gap-1.5">
                 {(listing.method === 'BARTER' || (listing.method === 'BOTH' && matchedSkill)) ? (
                   <>
                     <BookOpen size={12} className="text-emerald-400" />
-                    <span className="text-skwap-textPrimary text-xs font-bold font-mono tracking-tight">Offer: {matchedSkill || 'Skill'}</span>
+                    <span className="text-st-textPrimary text-xs font-bold font-mono tracking-tight">Offer: {matchedSkill || 'Skill'}</span>
                   </>
                 ) : (
                   <>
-                    <Zap size={12} className="text-skwap-accent animate-pulse" />
-                    <span className="text-skwap-accent text-xs font-black uppercase tracking-widest">TBD via Chat</span>
+                    <Zap size={12} className="text-st-accent animate-pulse" />
+                    <span className="text-st-accent text-xs font-black uppercase tracking-widest">TBD via Chat</span>
                   </>
                 )}
               </div>
@@ -253,7 +253,7 @@ const BookingModal = ({ listing, onClose }) => {
           </div>
 
           <div className="flex flex-col gap-2">
-            <label className="flex items-center gap-1.5 text-skwap-textSecondary text-xs font-semibold uppercase tracking-wider">
+            <label className="flex items-center gap-1.5 text-st-textSecondary text-xs font-semibold uppercase tracking-wider">
               <Clock size={12} /> Duration
             </label>
             <div className="grid grid-cols-4 gap-2">
@@ -264,8 +264,8 @@ const BookingModal = ({ listing, onClose }) => {
                   onClick={() => setDuration(h)}
                   className={`py-2 rounded-xl text-sm font-semibold border transition-all ${
                     duration === h
-                      ? 'bg-skwap-buttonFocus border-skwap-buttonFocus text-white shadow-md'
-                      : 'bg-white/5 border-white/10 text-skwap-textSecondary hover:bg-white/10 hover:text-white'
+                      ? 'bg-st-buttonFocus border-st-buttonFocus text-white shadow-md'
+                      : 'bg-white/5 border-white/10 text-st-textSecondary hover:bg-white/10 hover:text-white'
                   }`}
                 >
                   {h}h
@@ -276,7 +276,7 @@ const BookingModal = ({ listing, onClose }) => {
 
           {/* Message */}
           <div>
-            <label className="flex items-center gap-1.5 text-skwap-textSecondary text-xs font-semibold mb-3 uppercase tracking-wider">
+            <label className="flex items-center gap-1.5 text-st-textSecondary text-xs font-semibold mb-3 uppercase tracking-wider">
               <MessageSquare size={12} /> Message (optional)
             </label>
             <textarea
@@ -293,7 +293,7 @@ const BookingModal = ({ listing, onClose }) => {
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 py-3 rounded-xl text-sm font-medium text-skwap-textSecondary hover:text-white bg-white/5 hover:bg-white/10 border border-white/8 transition-all"
+              className="flex-1 py-3 rounded-xl text-sm font-medium text-st-textSecondary hover:text-white bg-white/5 hover:bg-white/10 border border-white/8 transition-all"
             >
               Cancel
             </button>

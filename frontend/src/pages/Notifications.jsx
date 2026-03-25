@@ -76,7 +76,7 @@ const Notifications = () => {
       case 'NEW_REQUEST': return <Clock className="text-amber-400" size={18} />;
       case 'REQUEST_ACCEPTED': return <Check className="text-emerald-400" size={18} />;
       case 'REQUEST_DECLINED': return <X className="text-rose-400" size={18} />;
-      case 'NEW_MESSAGE': return <MessageSquare className="text-skwap-accent" size={18} />;
+      case 'NEW_MESSAGE': return <MessageSquare className="text-st-accent" size={18} />;
       case 'CREDITS_RECEIVED': return <Zap className="text-yellow-400" size={18} />;
       default: return <Bell className="text-white/40" size={18} />;
     }
@@ -87,12 +87,12 @@ const Notifications = () => {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold text-white tracking-tight mb-2">Notifications</h1>
-          <p className="text-skwap-textSecondary text-sm">Stay updated on your session requests and skill swaps.</p>
+          <p className="text-st-textSecondary text-sm">Stay updated on your session requests and skill swaps.</p>
         </div>
         {notifications.some(n => !n.read) && (
           <button 
             onClick={markAllRead}
-            className="text-xs font-bold text-skwap-accent hover:text-white transition-colors uppercase tracking-widest glass px-4 py-2 rounded-xl border border-white/10"
+            className="text-xs font-bold text-st-accent hover:text-white transition-colors uppercase tracking-widest glass px-4 py-2 rounded-xl border border-white/10"
           >
             Mark all as read
           </button>
@@ -110,7 +110,7 @@ const Notifications = () => {
           <div className="w-16 h-16 glass rounded-full flex items-center justify-center mx-auto mb-4">
             <Bell size={24} className="text-white/20" />
           </div>
-          <p className="text-skwap-textSecondary font-medium">No notifications yet!</p>
+          <p className="text-st-textSecondary font-medium">No notifications yet!</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -133,7 +133,7 @@ const Notifications = () => {
                       onError={(e) => { e.target.src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${notif.sender?.name || 'User'}`; }}
                     />
                   ) : getNotifIcon(notif.type)}
-                  <div className="absolute -bottom-1 -right-1 bg-skwap-card rounded-full p-0.5 border border-white/10 shadow-lg">
+                  <div className="absolute -bottom-1 -right-1 bg-st-card rounded-full p-0.5 border border-white/10 shadow-lg">
                     {getNotifIcon(notif.type)}
                   </div>
                 </div>
@@ -179,7 +179,7 @@ const Notifications = () => {
                           handleMarkRead(notif._id);
                           openSession(notif.relatedId);
                         }}
-                        className="flex items-center gap-2 bg-skwap-accent hover:bg-skwap-accent/90 text-[#0f1715] text-xs font-bold py-2.5 px-6 rounded-xl shadow-lg transition-all hover:scale-[1.02] active:scale-95"
+                        className="flex items-center gap-2 bg-st-accent hover:bg-st-accent/90 text-[#0f1715] text-xs font-bold py-2.5 px-6 rounded-xl shadow-lg transition-all hover:scale-[1.02] active:scale-95"
                       >
                         <MessageSquare size={14} className="fill-[#0f1715]/20" /> Open Chat
                       </button>
@@ -189,7 +189,7 @@ const Notifications = () => {
                   {!notif.read && notif.type !== 'NEW_REQUEST' && notif.type !== 'REQUEST_ACCEPTED' && (
                     <button 
                       onClick={() => handleMarkRead(notif._id)}
-                      className="mt-2 text-[10px] text-skwap-accent font-bold uppercase tracking-widest hover:text-white transition-colors"
+                      className="mt-2 text-[10px] text-st-accent font-bold uppercase tracking-widest hover:text-white transition-colors"
                     >
                       Mark as read
                     </button>

@@ -5,7 +5,7 @@ import api from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 import { Send, ArrowLeft, MoreVertical, Play, CheckCircle } from 'lucide-react';
 
-const ENDPOINT = 'http://localhost:5000';
+const ENDPOINT = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000';
 let socket;
 
 const Chat = () => {
@@ -108,16 +108,16 @@ const Chat = () => {
   const isCompleted = sessionData.status === 'COMPLETED';
 
   return (
-    <div className="max-w-4xl mx-auto h-[calc(100vh-8rem)] flex flex-col bg-skwap-card/20 rounded-3xl border border-skwap-card overflow-hidden shadow-2xl backdrop-blur-md">
+    <div className="max-w-4xl mx-auto h-[calc(100vh-8rem)] flex flex-col bg-st-card/20 rounded-3xl border border-st-card overflow-hidden shadow-2xl backdrop-blur-md">
       
       {/* Chat Header */}
-      <div className="bg-skwap-card/40 border-b border-skwap-card p-4 flex items-center justify-between z-10">
+      <div className="bg-st-card/40 border-b border-st-card p-4 flex items-center justify-between z-10">
         <div className="flex items-center gap-4">
-          <button onClick={() => navigate(-1)} className="p-2 text-skwap-textSecondary hover:text-white hover:bg-skwap-card rounded-full transition-all">
+          <button onClick={() => navigate(-1)} className="p-2 text-st-textSecondary hover:text-white hover:bg-st-card rounded-full transition-all">
             <ArrowLeft size={20} />
           </button>
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-white/10 overflow-hidden border border-skwap-card">
+            <div className="w-10 h-10 rounded-full bg-white/10 overflow-hidden border border-st-card">
               <img 
                 src={otherUser.photoUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${otherUser.name}`} 
                 alt="avatar" 
@@ -127,7 +127,7 @@ const Chat = () => {
             </div>
             <div>
               <h3 className="text-white font-bold text-sm">{otherUser.name}</h3>
-              <p className="text-skwap-buttonFocus text-xs font-semibold flex items-center gap-1">
+              <p className="text-st-buttonFocus text-xs font-semibold flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Online
               </p>
             </div>
@@ -150,7 +150,7 @@ const Chat = () => {
               Completed
             </span>
           )}
-          <button className="p-2 text-skwap-textSecondary hover:text-white hover:bg-skwap-card rounded-full transition-all">
+          <button className="p-2 text-st-textSecondary hover:text-white hover:bg-st-card rounded-full transition-all">
             <MoreVertical size={20} />
           </button>
         </div>
@@ -159,10 +159,10 @@ const Chat = () => {
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto p-6 space-y-6 relative">
         {/* Decorative background behind messages */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-skwap-buttonFocus/5 rounded-full blur-[100px] pointer-events-none -z-10"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-st-buttonFocus/5 rounded-full blur-[100px] pointer-events-none -z-10"></div>
         
         {messages.length === 0 && (
-          <div className="flex flex-col items-center justify-center h-full text-skwap-textSecondary opacity-60">
+          <div className="flex flex-col items-center justify-center h-full text-st-textSecondary opacity-60">
             <MessageCircle size={48} className="mb-4" />
             <p className="text-sm">Say hello and figure out the barter details!</p>
           </div>
@@ -173,7 +173,7 @@ const Chat = () => {
           return (
             <div key={m._id} className={`flex gap-3 max-w-[80%] ${isMine ? 'ml-auto flex-row-reverse' : ''}`}>
               {!isMine && (
-                <div className="w-8 h-8 rounded-full bg-white/10 overflow-hidden flex-shrink-0 border border-skwap-card mt-auto hidden sm:block">
+                <div className="w-8 h-8 rounded-full bg-white/10 overflow-hidden flex-shrink-0 border border-st-card mt-auto hidden sm:block">
                   <img 
                     src={m.sender.photoUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${m.sender.name}`} 
                     alt="avatar" 
@@ -184,7 +184,7 @@ const Chat = () => {
               )}
               <div className={`p-4 rounded-2xl text-sm leading-relaxed shadow-sm ${
                 isMine 
-                  ? 'bg-skwap-card text-white rounded-br-sm border border-skwap-buttonFocus/40' 
+                  ? 'bg-st-card text-white rounded-br-sm border border-st-buttonFocus/40' 
                   : 'bg-white/5 text-white/90 rounded-bl-sm border border-white/10 backdrop-blur-md'
               }`}>
                 {m.text}
@@ -196,7 +196,7 @@ const Chat = () => {
       </div>
 
       {/* Input Area */}
-      <div className="p-4 bg-skwap-card/30 border-t border-skwap-card z-10">
+      <div className="p-4 bg-st-card/30 border-t border-st-card z-10">
         <form onSubmit={sendMessage} className="relative flex items-center">
           <input
             type="text"
@@ -204,12 +204,12 @@ const Chat = () => {
             disabled={isCompleted}
             onChange={(e) => setNewMessage(e.target.value)}
             placeholder={isCompleted ? "This session has been completed." : "Type your message..."}
-            className="w-full bg-skwap-bgPrimary border border-skwap-card text-white placeholder-skwap-textSecondary rounded-full py-3.5 pl-6 pr-14 focus:outline-none focus:ring-2 focus:ring-skwap-buttonFocus text-sm transition-all shadow-inner disabled:opacity-50"
+            className="w-full bg-st-bgPrimary border border-st-card text-white placeholder-st-textSecondary rounded-full py-3.5 pl-6 pr-14 focus:outline-none focus:ring-2 focus:ring-st-buttonFocus text-sm transition-all shadow-inner disabled:opacity-50"
           />
           <button 
             type="submit" 
             disabled={!newMessage.trim() || isCompleted}
-            className="absolute right-2 p-2.5 bg-skwap-buttonFocus hover:bg-skwap-accent text-white rounded-full transition-colors disabled:opacity-50"
+            className="absolute right-2 p-2.5 bg-st-buttonFocus hover:bg-st-accent text-white rounded-full transition-colors disabled:opacity-50"
           >
             <Send size={16} className="ml-0.5" />
           </button>

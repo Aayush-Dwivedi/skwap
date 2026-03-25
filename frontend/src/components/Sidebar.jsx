@@ -67,11 +67,11 @@ const Sidebar = ({ collapsed, onToggle }) => {
       "
       style={{
         width: collapsed ? 72 : 240,
-        background: `linear-gradient(170deg, rgba(var(--skwap-sidebar), var(--glass-sidebar-opacity)) 0%, rgba(var(--skwap-bg-secondary), var(--glass-strong-opacity)) 100%)`,
+        background: `linear-gradient(170deg, rgba(var(--st-sidebar), var(--glass-sidebar-opacity)) 0%, rgba(var(--st-bg-secondary), var(--glass-strong-opacity)) 100%)`,
         backdropFilter: 'blur(var(--glass-blur)) saturate(1.7)',
         WebkitBackdropFilter: 'blur(var(--glass-blur)) saturate(1.7)',
-        border: '1px solid rgba(var(--skwap-text-primary), 0.12)',
-        boxShadow: '0 10px 50px rgba(0,0,0,0.35), inset 0 1.5px 0 rgba(var(--skwap-text-primary), 0.10)',
+        border: '1px solid rgba(var(--st-text-primary), 0.12)',
+        boxShadow: '0 10px 50px rgba(0,0,0,0.35), inset 0 1.5px 0 rgba(var(--st-text-primary), 0.10)',
       }}
     >
       <div className="flex flex-col h-full py-5">
@@ -82,7 +82,7 @@ const Sidebar = ({ collapsed, onToggle }) => {
           className={`flex items-center h-11 mb-4 mx-2 px-1 rounded-xl hover:bg-white/10 transition-colors duration-200 ${collapsed ? 'justify-center' : ''}`}
         >
           <span style={{ width: ICON_CELL, minWidth: ICON_CELL }} className="flex items-center justify-center">
-            <span className="w-8 h-8 rounded-lg bg-skwap-buttonFocus flex items-center justify-center shadow-md">
+            <span className="w-8 h-8 rounded-lg bg-st-buttonFocus flex items-center justify-center shadow-md">
               <Code2 size={15} className="text-white" />
             </span>
           </span>
@@ -90,7 +90,7 @@ const Sidebar = ({ collapsed, onToggle }) => {
             className="text-white font-bold text-[17px] tracking-tight whitespace-nowrap overflow-hidden transition-all duration-500"
             style={{ maxWidth: collapsed ? 0 : 180, opacity: collapsed ? 0 : 1 }}
           >
-            Skwap
+            Skill Trade
           </span>
         </button>
 
@@ -121,7 +121,7 @@ const Sidebar = ({ collapsed, onToggle }) => {
             style={{ maxWidth: collapsed ? 0 : 180, opacity: collapsed ? 0 : 1 }}
           >
             <p className="text-[12px] text-white font-semibold leading-tight">{displayName}</p>
-            <p className="text-[10px] text-skwap-accent font-bold">View Settings</p>
+            <p className="text-[10px] text-st-accent font-bold">View Settings</p>
           </div>
         </NavLink>
 
@@ -138,29 +138,29 @@ const Sidebar = ({ collapsed, onToggle }) => {
                  ${collapsed ? 'justify-center' : ''}
                  ${isActive
                    ? 'text-white'
-                   : 'text-skwap-textSecondary hover:text-white'
+                   : 'text-st-textSecondary hover:text-white'
                  }`
               }
               style={({ isActive }) => isActive ? {
-                background: 'linear-gradient(135deg, rgba(var(--skwap-accent), 0.20) 0%, rgba(var(--skwap-button-focus), 0.15) 100%)',
-                boxShadow: '0 2px 12px rgba(var(--skwap-accent), 0.15), inset 0 1px 0 rgba(var(--skwap-text-primary), 0.08)',
-                border: '1px solid rgba(var(--skwap-accent), 0.20)',
+                background: 'linear-gradient(135deg, rgba(var(--st-accent), 0.20) 0%, rgba(var(--st-button-focus), 0.15) 100%)',
+                boxShadow: '0 2px 12px rgba(var(--st-accent), 0.15), inset 0 1px 0 rgba(var(--st-text-primary), 0.08)',
+                border: '1px solid rgba(var(--st-accent), 0.20)',
               } : {}}
             >
               {({ isActive }) => (
                 <>
                   {isActive && (
-                    <span className="absolute left-0 top-2 bottom-2 w-[3px] bg-skwap-accent rounded-full" />
+                    <span className="absolute left-0 top-2 bottom-2 w-[3px] bg-st-accent rounded-full" />
                   )}
                   {/* Icon cell */}
                   <span
                     style={{ width: ICON_CELL, minWidth: ICON_CELL }}
-                    className={`flex items-center justify-center flex-shrink-0 relative ${isActive ? 'text-skwap-accent' : ''}`}
+                    className={`flex items-center justify-center flex-shrink-0 relative ${isActive ? 'text-st-accent' : ''}`}
                   >
                     <Icon size={17} />
                     {/* Notification dot — visible even when collapsed */}
                     {isNotif && unreadCount > 0 && collapsed && (
-                      <span className="absolute top-0 right-0.5 w-2 h-2 bg-skwap-accent rounded-full" />
+                      <span className="absolute top-0 right-0.5 w-2 h-2 bg-st-accent rounded-full" />
                     )}
                   </span>
                   {/* Label */}
@@ -190,7 +190,7 @@ const Sidebar = ({ collapsed, onToggle }) => {
             <NavLink
               to="/contact-admin"
               title={collapsed ? 'Contact Admin' : undefined}
-              className={({ isActive }) => `flex items-center h-11 w-full rounded-xl transition-colors duration-200 ${collapsed ? 'justify-center' : ''} ${isActive ? 'bg-white/10 text-white' : 'text-skwap-textSecondary hover:text-white hover:bg-white/10'}`}
+              className={({ isActive }) => `flex items-center h-11 w-full rounded-xl transition-colors duration-200 ${collapsed ? 'justify-center' : ''} ${isActive ? 'bg-white/10 text-white' : 'text-st-textSecondary hover:text-white hover:bg-white/10'}`}
             >
               <span style={{ width: ICON_CELL, minWidth: ICON_CELL }} className="flex items-center justify-center flex-shrink-0">
                 <Mail size={17} />
@@ -209,7 +209,7 @@ const Sidebar = ({ collapsed, onToggle }) => {
             <button
               onClick={() => { logout(); navigate('/landing'); }}
               title={collapsed ? 'Logout' : undefined}
-              className={`flex items-center h-11 w-full rounded-xl text-skwap-textSecondary hover:text-white hover:bg-white/10 transition-colors duration-200 ${collapsed ? 'justify-center' : ''}`}
+              className={`flex items-center h-11 w-full rounded-xl text-st-textSecondary hover:text-white hover:bg-white/10 transition-colors duration-200 ${collapsed ? 'justify-center' : ''}`}
             >
               <span style={{ width: ICON_CELL, minWidth: ICON_CELL }} className="flex items-center justify-center flex-shrink-0">
                 <LogOut size={17} />

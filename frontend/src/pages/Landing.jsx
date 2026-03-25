@@ -7,13 +7,13 @@ const Landing = () => {
       <div 
         className="relative z-10 backdrop-blur-[24px] rounded-[3rem] shadow-2xl p-12 md:py-16 md:px-28 max-w-4xl w-full text-center border border-white/10 transition-all duration-500 hover:border-white/20"
         style={{
-          background: 'rgba(var(--skwap-card), var(--glass-card-opacity))',
+          background: 'rgba(var(--st-card), var(--glass-card-opacity))',
           boxShadow: '0 25px 60px rgba(0,0,0,0.3)',
         }}
       >
         <h1 className="text-5xl md:text-6xl font-extrabold text-white tracking-tight leading-tight mb-4">
           Trade your talents.<br />
-          <span className="text-skwap-accent">Learn something new.</span>
+          <span className="text-st-accent">Learn something new.</span>
         </h1>
         
         <p className="text-white/60 text-lg font-medium max-w-lg mx-auto mb-10 leading-relaxed">
@@ -23,7 +23,7 @@ const Landing = () => {
         <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
           <Link 
             to="/register" 
-            className="bg-skwap-accent hover:brightness-110 text-[#180c10] font-bold py-3.5 px-10 rounded-xl transition-all shadow-lg shadow-black/10 w-full sm:w-auto"
+            className="bg-st-accent hover:brightness-110 text-[#180c10] font-bold py-3.5 px-10 rounded-xl transition-all shadow-lg shadow-black/10 w-full sm:w-auto"
           >
             Get Started Free
           </Link>

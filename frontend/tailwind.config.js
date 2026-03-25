@@ -7,17 +7,17 @@ export default {
   theme: {
     extend: {
       colors: {
-        skwap: {
-          bgPrimary: 'rgb(var(--skwap-bg-primary))',
-          bgSecondary: 'rgb(var(--skwap-bg-secondary))',
-          sidebar: 'rgb(var(--skwap-sidebar))',
-          card: 'rgb(var(--skwap-card))',
-          cardLight: '#E8DFE2', // Keep static for now as it's for light cards
+        st: {
+          bgPrimary: 'rgb(var(--st-bg-primary))',
+          bgSecondary: 'rgb(var(--st-bg-secondary))',
+          sidebar: 'rgb(var(--st-sidebar))',
+          card: 'rgb(var(--st-card))',
+          cardLight: '#E8DFE2', 
           textPrimary: '#FFFFFF',
-          textSecondary: 'rgb(var(--skwap-text-secondary))',
-          accent: 'rgb(var(--skwap-accent))',
-          buttonDark: 'rgb(var(--skwap-button-dark))',
-          buttonFocus: 'rgb(var(--skwap-button-focus))'
+          textSecondary: 'rgb(var(--st-text-secondary))',
+          accent: 'rgb(var(--st-accent))',
+          buttonDark: 'rgb(var(--st-button-dark))',
+          buttonFocus: 'rgb(var(--st-button-focus))'
         }
       },
       fontFamily: {

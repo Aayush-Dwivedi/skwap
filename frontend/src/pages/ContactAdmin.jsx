@@ -38,10 +38,10 @@ const ContactAdmin = () => {
     <div className="max-w-2xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pt-4">
       <div>
         <h1 className="text-3xl font-bold text-white tracking-tight mb-2 flex items-center gap-3">
-          <Mail className="text-skwap-accent" />
+          <Mail className="text-st-accent" />
           Contact Admin
         </h1>
-        <p className="text-skwap-textSecondary">
+        <p className="text-st-textSecondary">
           Have feedback, found a bug, or need to report fraud? Let us know below.
         </p>
       </div>
@@ -62,7 +62,7 @@ const ContactAdmin = () => {
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="John Doe"
-                  className="w-full glass bg-white/5 border border-white/10 text-white rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-skwap-accent focus:bg-white/10 transition-all font-medium placeholder:text-white/20"
+                  className="w-full glass bg-white/5 border border-white/10 text-white rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-st-accent focus:bg-white/10 transition-all font-medium placeholder:text-white/20"
                 />
               </div>
             </div>
@@ -79,7 +79,7 @@ const ContactAdmin = () => {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="john@example.com"
-                  className="w-full glass bg-white/5 border border-white/10 text-white rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-skwap-accent focus:bg-white/10 transition-all font-medium placeholder:text-white/20"
+                  className="w-full glass bg-white/5 border border-white/10 text-white rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-st-accent focus:bg-white/10 transition-all font-medium placeholder:text-white/20"
                 />
               </div>
             </div>
@@ -96,7 +96,7 @@ const ContactAdmin = () => {
                   onChange={handleChange}
                   placeholder="Describe your feedback or issue..."
                   rows="5"
-                  className="w-full glass bg-white/5 border border-white/10 text-white rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-skwap-accent focus:bg-white/10 transition-all font-medium placeholder:text-white/20 resize-none"
+                  className="w-full glass bg-white/5 border border-white/10 text-white rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-st-accent focus:bg-white/10 transition-all font-medium placeholder:text-white/20 resize-none"
                 />
               </div>
             </div>
