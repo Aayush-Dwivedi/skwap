@@ -5,6 +5,7 @@ import './index.css'
 import App from './App.jsx'
 
 const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+console.log('Google Auth Client ID Loaded:', clientId ? 'YES' : 'MISSING');
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
