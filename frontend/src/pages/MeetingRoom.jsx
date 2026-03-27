@@ -41,6 +41,11 @@ const MeetingRoom = () => {
 
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showParticipants, setShowParticipants] = useState(false);
+  const [iceServers, setIceServers] = useState([
+    { urls: 'stun:stun.l.google.com:19302' },
+    { urls: 'stun:stun1.l.google.com:19302' },
+    { urls: 'stun:stun.services.mozilla.com' },
+  ]);
   const screenPreviewVideoRef = useRef(null);
 
   useEffect(() => {
@@ -175,17 +180,24 @@ const MeetingRoom = () => {
     }
   }, [isScreenSharing]);
 
-  // STUN Servers
-  const configuration = {
-    iceServers: [
-      { urls: 'stun:stun.l.google.com:19302' },
-      { urls: 'stun:stun1.l.google.com:19302' },
-      { urls: 'stun:stun2.l.google.com:19302' },
-      { urls: 'stun:stun3.l.google.com:19302' },
-      { urls: 'stun:stun4.l.google.com:19302' },
-      { urls: 'stun:stun.services.mozilla.com' },
-    ]
-  };
+  // ICE Servers Fetching
+  useEffect(() => {
+    const fetchIceServers = async () => {
+      try {
+        const { data } = await api.get('/media/ice-servers');
+        // Metered.ca returns either { iceServers: [...] } or the array directly depending on backend logic
+        if (data && data.iceServers) {
+          setIceServers(data.iceServers);
+        } else if (Array.isArray(data)) {
+          setIceServers(data);
+        }
+        console.log('ICE Servers configured successfully');
+      } catch (err) {
+        console.warn('Failed to fetch dynamic ICE servers, using fallbacks:', err.message);
+      }
+    };
+    fetchIceServers();
+  }, []);
 
   useEffect(() => {
     let mounted = true;
@@ -280,7 +292,7 @@ const MeetingRoom = () => {
   };
 
   const setupWebRTC = async () => {
-    const peerConnection = new RTCPeerConnection(configuration);
+    const peerConnection = new RTCPeerConnection({ iceServers });
     peerConnectionRef.current = peerConnection;
 
     // Ensure we have active tracks before adding

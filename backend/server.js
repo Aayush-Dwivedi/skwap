@@ -4,6 +4,7 @@ const cors = require('cors');
 const connectDB = require('./config/db');
 const path = require('path');
 const fs = require('fs');
+const axios = require('axios');
 
 // Log errors to a file since terminal output is hard to read
 const logFile = path.join(__dirname, 'error.log');
@@ -49,6 +50,34 @@ app.use('/api/profile', require('./routes/profileRoutes'));
 app.use('/api/listings', require('./routes/listingRoutes'));
 app.use('/api/requests', require('./routes/sessionRequestRoutes'));
 app.use('/api/credits', require('./routes/creditRoutes'));
+// --- Media & ICE Server Configuration (Metered.ca) ---
+app.get('/api/media/ice-servers', async (req, res) => {
+  const METERED_API_KEY = process.env.METERED_API_KEY;
+
+  // Fallback to Google STUN if no API key is provided
+  const fallbackIceServers = [
+    { urls: 'stun:stun.l.google.com:19302' },
+    { urls: 'stun:stun1.l.google.com:19302' },
+    { urls: 'stun:stun2.l.google.com:19302' },
+    { urls: 'stun:stun.services.mozilla.com' },
+  ];
+
+  if (!METERED_API_KEY) {
+    console.log('No METERED_API_KEY found, providing fallback STUN servers');
+    return res.json(fallbackIceServers);
+  }
+
+  try {
+    // Note: Metered.ca returns { iceServers: [...] } directly in its response
+    // Using user-provided subdomain: skilltradeproject.metered.live
+    const response = await axios.get(`https://skilltradeproject.metered.live/api/v1/turn/credentials?apiKey=${METERED_API_KEY}`);
+    res.json(response.data);
+  } catch (error) {
+    console.error('Error fetching ICE servers from Metered:', error.message);
+    res.json(fallbackIceServers);
+  }
+});
+
 app.use('/api/sessions', require('./routes/sessionRoutes'));
 app.use('/api/messages', require('./routes/messageRoutes'));
 app.use('/api/notifications', require('./routes/notificationRoutes'));
