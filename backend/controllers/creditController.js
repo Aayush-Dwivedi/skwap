@@ -79,8 +79,8 @@ const getTransactionHistory = async (req, res) => {
 
 const createRazorpayOrder = async (req, res) => {
   try {
-    const { amount } = req.body; // Amount is in credits
-    if (!amount || amount <= 0) {
+    const amountNum = Number(amount);
+    if (!amountNum || amountNum <= 0) {
       return res.status(400).json({ message: 'Invalid credit amount' });
     }
     
@@ -89,7 +89,7 @@ const createRazorpayOrder = async (req, res) => {
     // Receipt max length is 40 characters
     const shortUserId = req.user._id.toString().slice(-6);
     const options = {
-      amount: amount * 125,
+      amount: amountNum * 125,
       currency: "INR",
       receipt: `rcpt_${shortUserId}_${Date.now()}`
     };
@@ -101,6 +101,7 @@ const createRazorpayOrder = async (req, res) => {
 
     res.json(order);
   } catch (error) {
+    console.error('Razorpay Order Error:', error);
     res.status(500).json({ message: error.message });
   }
 };
@@ -143,6 +144,7 @@ const verifyRazorpayPayment = async (req, res) => {
       res.status(400).json({ message: "Invalid payment signature" });
     }
   } catch (error) {
+    console.error('Razorpay Verification Error:', error);
     res.status(500).json({ message: error.message });
   }
 };
