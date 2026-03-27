@@ -9,6 +9,21 @@ const razorpay = new Razorpay({
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
+const testRazorpay = async (req, res) => {
+  try {
+    const options = {
+      amount: 100, // 1 INR in paise
+      currency: "INR",
+      receipt: `rcpt_test_${Date.now()}`
+    };
+    const order = await razorpay.orders.create(options);
+    res.json({ success: true, order });
+  } catch (error) {
+    console.error('Test Razorpay Error:', error);
+    res.status(500).json({ success: false, message: error.message, error });
+  }
+};
+
 const purchaseCredits = async (req, res) => {
   const { amount } = req.body;
 
@@ -154,5 +169,6 @@ module.exports = {
   getCreditBalance,
   getTransactionHistory,
   createRazorpayOrder,
-  verifyRazorpayPayment
+  verifyRazorpayPayment,
+  testRazorpay
 };
