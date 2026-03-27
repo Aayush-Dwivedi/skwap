@@ -324,7 +324,7 @@ const completeSession = async (req, res) => {
       });
     }
 
-    res.json(updatedSession);
+    res.json(sessionPayload);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

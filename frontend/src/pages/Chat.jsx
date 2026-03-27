@@ -5,7 +5,7 @@ import api from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 import { Send, ArrowLeft, MoreVertical, Play, CheckCircle } from 'lucide-react';
 
-const ENDPOINT = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000';
+const ENDPOINT = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5001';
 let socket;
 
 const Chat = () => {

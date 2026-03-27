@@ -121,6 +121,14 @@ io.on('connection', (socket) => {
   socket.on('webrtc-ice-candidate', ({ candidate, toSocketId }) => {
     socket.to(toSocketId).emit('webrtc-ice-candidate', { candidate, fromSocketId: socket.id });
   });
+
+  socket.on('video-toggle', ({ sessionId, isEnabled }) => {
+    socket.to(`meeting_${sessionId}`).emit('video-toggle', { isEnabled, socketId: socket.id });
+  });
+
+  socket.on('audio-toggle', ({ sessionId, isEnabled }) => {
+    socket.to(`meeting_${sessionId}`).emit('audio-toggle', { isEnabled, socketId: socket.id });
+  });
   
   socket.on('leave-meeting', ({ sessionId, userId }) => {
     socket.leave(`meeting_${sessionId}`);
@@ -133,7 +141,7 @@ io.on('connection', (socket) => {
   });
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 process.on('uncaughtException', (err) => {
   logError(`Uncaught Exception: ${err.message}\n${err.stack}`);

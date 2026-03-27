@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
-import { Calendar, MessageCircle, CheckCircle2, XCircle, Clock, Video } from 'lucide-react';
+import { Calendar, MessageCircle, CheckCircle2, XCircle, Clock, Video, Send } from 'lucide-react';
 import { useChat } from '../contexts/ChatContext';
 import { useSocket } from '../contexts/SocketContext';
 
@@ -11,7 +11,8 @@ const MySessions = () => {
   const { openSession } = useChat();
   const { socket } = useSocket();
   const [sessions, setSessions] = useState([]);
-  const [requests, setRequests] = useState([]);
+  const [incomingRequests, setIncomingRequests] = useState([]);
+  const [outgoingRequests, setOutgoingRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [scheduleDates, setScheduleDates] = useState({});
   const navigate = useNavigate();
@@ -21,13 +22,14 @@ const MySessions = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [{ data: sData }, { data: rData }] = await Promise.all([
+      const [{ data: sData }, { data: incomingData }, { data: outgoingData }] = await Promise.all([
         api.get('/sessions'),
-        // Fetch requests where I am the teacher (to accept/decline)
-        api.get('/requests?role=teacher')
+        api.get('/requests?role=teacher'),
+        api.get('/requests?role=learner')
       ]);
       setSessions(sData);
-      setRequests(rData.filter(r => r.status === 'PENDING'));
+      setIncomingRequests(incomingData.filter(r => r.status === 'PENDING'));
+      setOutgoingRequests(outgoingData); // We want to show even non-pending ones for status
     } catch (error) {
       console.error(error);
     } finally {
@@ -42,7 +44,10 @@ const MySessions = () => {
   useEffect(() => {
     if (!socket) return;
     
-    // Listen for live updates so user doesn't need to refresh!
+    socket.on('notification received', () => {
+      fetchData();
+    });
+    
     socket.on('session updated', () => {
       fetchData();
     });
@@ -52,6 +57,7 @@ const MySessions = () => {
     });
 
     return () => {
+      socket.off('notification received');
       socket.off('session updated');
       socket.off('session created');
     };
@@ -159,14 +165,16 @@ const MySessions = () => {
                       </div>
                     </div>
                     {/* Status Badge */}
-                    <span className={`px-3 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase ${
-                      session.status === 'IN_PROGRESS' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 
-                      session.status === 'COMPLETED' ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30' :
-                      session.status === 'NEGOTIATING' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30 animate-pulse' :
-                      'bg-white/5 text-white/40 border border-white/10'
-                    }`}>
-                      {session.status.replace('_', ' ')}
-                    </span>
+                    <div className="flex-shrink-0">
+                      <span className={`inline-flex items-center justify-center px-4 py-1.5 rounded-full text-[10px] font-black tracking-[0.1em] uppercase ${
+                        session.status === 'IN_PROGRESS' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.1)]' : 
+                        session.status === 'COMPLETED' ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30' :
+                        session.status === 'NEGOTIATING' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30 animate-pulse' :
+                        'bg-white/5 text-white/40 border border-white/10'
+                      }`}>
+                        {session.status.replace('_', ' ')}
+                      </span>
+                    </div>
                   </div>
 
                   <div className="flex flex-col gap-3">
@@ -242,50 +250,97 @@ const MySessions = () => {
 
           {/* Sidebar Pending Requests */}
           <div className="space-y-6">
-            <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-              <Clock className="text-st-accent" /> Pending Requests
-            </h2>
+            {/* Incoming Requests */}
+            <div>
+              <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                <Clock className="text-emerald-400" /> Incoming Requests
+              </h2>
 
-            {requests.length === 0 ? (
-               <div className="glass border-white/10 rounded-[2rem] p-6 text-center text-sm text-st-textSecondary">
-                No pending requests.
-              </div>
-            ) : (
-              requests.map(req => (
-                <div key={req._id} className="glass-card rounded-3xl p-5 shadow-lg relative overflow-hidden group">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-8 h-8 rounded-full bg-white/10 overflow-hidden border border-white/10">
-                      <img 
-                        src={req.learner.photoUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${req.learner.name}`} 
-                        alt="Avatar" 
-                        className="w-full h-full object-cover"
-                        onError={(e) => { e.target.src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${req.learner.name}`; }}
-                      />
-                    </div>
-                    <span className="text-white text-sm font-bold">{req.learner.name}</span>
-                  </div>
-                  <p className="text-st-textSecondary text-xs mb-4">
-                    Requested your <strong>{req.listing.skillName}</strong> skill for {req.durationHours} hours.
-                    ({req.type === 'BARTER' ? `Offered: ${req.offeredSkill}` : `Offered: ${req.credits} Credits`})
-                  </p>
-                  
-                  <div className="flex gap-2">
-                    <button 
-                      onClick={() => handleRequestUpdate(req._id, 'ACCEPTED')}
-                      className="flex-1 bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-300 border border-emerald-500/50 py-2 rounded-lg text-xs font-bold flex justify-center items-center gap-1 transition-colors"
-                    >
-                      <CheckCircle2 size={14} /> Accept
-                    </button>
-                    <button 
-                      onClick={() => handleRequestUpdate(req._id, 'DECLINED')}
-                      className="flex-1 bg-red-500/20 hover:bg-red-500/40 text-red-300 border border-red-500/50 py-2 rounded-lg text-xs font-bold flex justify-center items-center gap-1 transition-colors"
-                    >
-                      <XCircle size={14} /> Decline
-                    </button>
-                  </div>
+              {incomingRequests.length === 0 ? (
+                <div className="glass border-white/10 rounded-[2rem] p-6 text-center text-sm text-st-textSecondary">
+                  No incoming requests.
                 </div>
-              ))
-            )}
+              ) : (
+                incomingRequests.map(req => (
+                  <div key={req._id} className="glass-card rounded-3xl p-5 shadow-lg relative overflow-hidden group mb-4">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="w-8 h-8 rounded-full bg-white/10 overflow-hidden border border-white/10">
+                        <img 
+                          src={req.learner.photoUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${req.learner.name}`} 
+                          alt="Avatar" 
+                          className="w-full h-full object-cover"
+                          onError={(e) => { e.target.src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${req.learner.name}`; }}
+                        />
+                      </div>
+                      <span className="text-white text-sm font-bold">{req.learner.name}</span>
+                    </div>
+                    <p className="text-st-textSecondary text-xs mb-4">
+                      Requested your <strong>{req.listing.skillName}</strong> skill.
+                      ({req.type === 'BARTER' ? `Offered: ${req.offeredSkill}` : `Offered: ${req.credits} Credits`})
+                    </p>
+                    
+                    <div className="flex gap-2">
+                      <button 
+                        onClick={() => handleRequestUpdate(req._id, 'ACCEPTED')}
+                        className="flex-1 bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-300 border border-emerald-500/50 py-2 rounded-lg text-xs font-bold transition-all"
+                      >
+                        Accept
+                      </button>
+                      <button 
+                        onClick={() => handleRequestUpdate(req._id, 'DECLINED')}
+                        className="flex-1 bg-red-500/20 hover:bg-red-500/40 text-red-300 border border-red-500/50 py-2 rounded-lg text-xs font-bold transition-all"
+                      >
+                        Decline
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+
+            {/* Outgoing Requests */}
+            <div>
+              <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                <Send className="text-st-accent" size={20} /> Requests Sent
+              </h2>
+
+              {outgoingRequests.length === 0 ? (
+                <div className="glass border-white/10 rounded-[2rem] p-6 text-center text-sm text-st-textSecondary">
+                  No outgoing requests.
+                </div>
+              ) : (
+                outgoingRequests.map(req => (
+                  <div key={req._id} className="glass-card rounded-3xl p-5 shadow-lg relative overflow-hidden group mb-4">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-white/10 overflow-hidden border border-white/10">
+                          <img 
+                            src={req.teacher.photoUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${req.teacher.name}`} 
+                            alt="Avatar" 
+                            className="w-full h-full object-cover"
+                            onError={(e) => { e.target.src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${req.teacher.name}`; }}
+                          />
+                        </div>
+                        <span className="text-white text-sm font-bold">{req.teacher.name}</span>
+                      </div>
+                      <span className={`px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest border ${
+                        req.status === 'PENDING' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20 animate-pulse' :
+                        req.status === 'ACCEPTED' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
+                        'bg-red-500/10 text-red-400 border-red-500/20'
+                      }`}>
+                        {req.status}
+                      </span>
+                    </div>
+                    <p className="text-st-textSecondary text-xs">
+                      Sent request for <strong>{req.listing.skillName}</strong>.
+                    </p>
+                    <p className="text-[10px] text-white/30 mt-2 font-medium">
+                      {req.type === 'BARTER' ? `Proposed Barter: ${req.offeredSkill}` : `Offered: ${req.credits} Credits`}
+                    </p>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
 
         </div>

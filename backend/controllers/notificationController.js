@@ -64,8 +64,25 @@ const markAllAsRead = async (req, res) => {
   }
 };
 
+const markSessionNotificationsAsRead = async (req, res) => {
+  try {
+    await Notification.updateMany(
+      { 
+        user: req.user._id, 
+        relatedId: req.params.sessionId,
+        read: false 
+      },
+      { $set: { read: true } }
+    );
+    res.json({ message: 'Session notifications marked as read' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   getNotifications,
   markAsRead,
   markAllAsRead,
+  markSessionNotificationsAsRead,
 };

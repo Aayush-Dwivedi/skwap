@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { Plus, X, Clock, MessageSquare, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ListingCard from '../components/ListingCard';
+import { useChat } from '../contexts/ChatContext';
 
 const MyPostings = () => {
   const [listings, setListings] = useState([]);
@@ -11,6 +12,7 @@ const MyPostings = () => {
   const [selectedListing, setSelectedListing] = useState(null);
   const [expandedId, setExpandedId] = useState(null);
   const { user } = useAuth();
+  const { isOpen } = useChat();
 
   const handleToggleExpand = (id) => {
     setExpandedId(prev => prev === id ? null : id);
@@ -58,7 +60,11 @@ const MyPostings = () => {
           You haven't posted any skills to teach or learn yet!
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-start">
+        <div className={`grid gap-6 items-start ${
+          isOpen 
+            ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3' 
+            : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
+        }`}>
           {listings.map((listing) => (
             <ListingCard 
               key={listing._id} 

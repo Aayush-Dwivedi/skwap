@@ -4,6 +4,8 @@ import { useAuth } from '../contexts/AuthContext';
 import toast from 'react-hot-toast';
 import { X, Clock, MessageSquare, Zap, ChevronDown, BookOpen } from 'lucide-react';
 import ListingCard from '../components/ListingCard';
+import { useChat } from '../contexts/ChatContext';
+import { useSocket } from '../contexts/SocketContext';
 
 const Home = () => {
   const [tab, setTab] = useState('LEARNING');
@@ -13,6 +15,8 @@ const Home = () => {
   const [selectedListing, setSelectedListing] = useState(null);
   const [expandedId, setExpandedId] = useState(null);
   const { user } = useAuth();
+  const { isOpen } = useChat();
+  const { socket } = useSocket();
 
   const handleToggleExpand = (id) => {
     setExpandedId(prev => prev === id ? null : id);
@@ -33,6 +37,33 @@ const Home = () => {
     };
     fetchListings();
   }, [tab]);
+
+  // Real-time synchronization for "pitches" and new listings
+  useEffect(() => {
+    if (!socket) return;
+    
+    const handleUpdate = () => {
+      // Re-fetch listings when something relevant happens (like a new request or listing update elsewhere)
+      const fetchListings = async () => {
+        try {
+          const targetType = tab === 'LEARNING' ? 'TEACH' : 'LEARN';
+          const { data } = await api.get(`/listings?type=${targetType}`);
+          setListings(data);
+        } catch (error) {
+          console.error('Error refreshing listings', error);
+        }
+      };
+      fetchListings();
+    };
+
+    socket.on('notification received', handleUpdate);
+    socket.on('session created', handleUpdate);
+    
+    return () => {
+      socket.off('notification received', handleUpdate);
+      socket.off('session created', handleUpdate);
+    };
+  }, [socket, tab]);
 
   const filteredListings = listings.filter(
     listing => {
@@ -73,10 +104,10 @@ const Home = () => {
           </button>
         </div>
 
-        <div className="flex items-center w-full xl:w-auto">
-          <div className="relative flex-grow xl:flex-none">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none z-10">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C8B9BF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <div className="flex items-center w-full xl:w-auto xl:max-w-[50%]">
+          <div className="relative w-full">
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none z-10 opacity-50">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
               </svg>
             </span>
@@ -85,7 +116,7 @@ const Home = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={`Search ${tab === 'LEARNING' ? 'skills to learn' : 'people to teach'}...`}
-              className="text-st-accent text-sm rounded-full pl-11 pr-5 py-3 w-full xl:w-96 placeholder-st-textSecondary glass-input"
+              className="text-white text-sm rounded-full pl-11 pr-5 py-3 w-full border border-white/10 bg-white/5 placeholder-white/30 focus:outline-none focus:border-st-accent/50 focus:bg-white/10 transition-all duration-300 min-w-0"
             />
           </div>
         </div>
@@ -103,7 +134,11 @@ const Home = () => {
 
       {/* Cards Grid */}
       {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-start">
+        <div className={`grid gap-6 items-start ${
+          isOpen 
+            ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3' 
+            : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
+        }`}>
           {[...Array(8)].map((_, i) => (
             <div key={i} className="rounded-3xl h-80 bg-st-card/30 border border-st-card/20 animate-pulse" />
           ))}
@@ -113,7 +148,11 @@ const Home = () => {
           No listings found in this category. Be the first to add one!
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-start">
+        <div className={`grid gap-6 items-start ${
+          isOpen 
+            ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3' 
+            : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
+        }`}>
           {filteredListings.map((listing) => (
             <ListingCard
               key={listing._id}

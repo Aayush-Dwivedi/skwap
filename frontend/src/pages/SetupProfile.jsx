@@ -39,7 +39,7 @@ const SetupProfile = () => {
         },
       });
       // Backend now returns full Cloudinary URL or absolute path
-      const apiBase = import.meta.env.VITE_API_BASE_URL ? import.meta.env.VITE_API_BASE_URL.replace('/api', '') : 'http://localhost:5000';
+      const apiBase = import.meta.env.VITE_API_BASE_URL ? import.meta.env.VITE_API_BASE_URL.replace('/api', '') : 'http://localhost:5001';
       const fullUrl = data.url.startsWith('http') ? data.url : `${apiBase}${data.url}`;
       setFormData({ ...formData, photoUrl: fullUrl });
       toast.success('Photo uploaded!');

@@ -80,7 +80,7 @@ const ListingCard = ({ listing, currentUserId, onBook, isExpanded = false, onTog
           <h4 className="text-[9px] font-black uppercase tracking-wider text-st-textSecondary mb-2">
             LOOKING FOR
           </h4>
-          <p className="text-[13px] text-white/90 font-medium leading-relaxed">
+          <p className="text-[13px] text-white/90 font-medium leading-relaxed line-clamp-2">
             {(listing.barterSkills?.length > 0 ? listing.barterSkills : listing.uploader?.skillsToLearn || ['Flexible']).join(' or ')}
           </p>
         </div>

@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import api from '../services/api';
 import { useAuth } from './AuthContext';
 import { useSocket } from './SocketContext';
@@ -8,10 +9,37 @@ const ChatContext = createContext();
 export const ChatProvider = ({ children }) => {
   const { user } = useAuth();
   const { socket } = useSocket();
-  const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
+  
+  // Persistent State Initializers
+  const [isOpen, setIsOpen] = useState(() => {
+    return localStorage.getItem('skwap_chat_open') === 'true';
+  });
   const [activeSession, setActiveSession] = useState(null);
   const [sessions, setSessions] = useState([]);
   const [unreadCounts, setUnreadCounts] = useState({});
+
+  // Restore Active Session from localStorage on mount (once sessions are loaded)
+  useEffect(() => {
+    if (sessions.length > 0 && !activeSession) {
+      const savedSessionId = localStorage.getItem('skwap_active_session_id');
+      if (savedSessionId) {
+        const session = sessions.find(s => s._id === savedSessionId);
+        if (session) setActiveSession(session);
+      }
+    }
+  }, [sessions]);
+
+  // Sync state to localStorage
+  useEffect(() => {
+    localStorage.setItem('skwap_chat_open', isOpen);
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (activeSession?._id) {
+      localStorage.setItem('skwap_active_session_id', activeSession._id);
+    }
+  }, [activeSession]);
 
   useEffect(() => {
     if (!user) return;
@@ -27,6 +55,8 @@ export const ChatProvider = ({ children }) => {
 
     fetchSessions();
   }, [user]);
+
+  // Navigation listener REMOVED as per user request to keep chat open across pages
 
   useEffect(() => {
     if (!socket || !user) return;
@@ -84,6 +114,21 @@ export const ChatProvider = ({ children }) => {
     socket.on('message received', handleMessageUnread);
     return () => socket.off('message received', handleMessageUnread);
   }, [socket, user, isOpen, activeSession]);
+
+  // Clear unread counts for active session when opened
+  useEffect(() => {
+    if (isOpen && activeSession) {
+      setUnreadCounts(prev => {
+        if (prev[activeSession._id] === 0) return prev;
+        return { ...prev, [activeSession._id]: 0 };
+      });
+      
+      // Clear general notifications for this session
+      api.put(`/notifications/session/${activeSession._id}/read`).catch(err => {
+        console.error('Failed to clear session notifications', err);
+      });
+    }
+  }, [isOpen, activeSession]);
 
   const toggleChat = () => setIsOpen(!isOpen);
   

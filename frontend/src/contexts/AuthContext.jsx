@@ -99,6 +99,8 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('userInfo');
     localStorage.removeItem('skill-trade-wallpaper');
     localStorage.removeItem('skill-trade-theme');
+    localStorage.removeItem('skwap_chat_open');
+    localStorage.removeItem('skwap_active_session_id');
     setUser(null);
     setProfile(null);
     setHasProfile(false);

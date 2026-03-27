@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useSocket } from '../contexts/SocketContext';
 import api from '../services/api';
-import { Bell, X, Calendar, Wallet, CheckCircle2 } from 'lucide-react';
+import { Bell, X, Calendar, Wallet, CheckCircle2, MessageSquare, AlertCircle, PhoneOff, XCircle } from 'lucide-react';
 
 const GlobalNotifications = () => {
   const { user } = useAuth();
@@ -17,7 +17,15 @@ const GlobalNotifications = () => {
       try {
         const { data } = await api.get('/notifications');
         // Filter only unread
-        setNotifications(data.filter(n => !n.read));
+        const unread = data.filter(n => !n.read);
+        setNotifications(unread);
+        
+        // Auto-dismiss initial unread
+        unread.forEach(n => {
+          setTimeout(() => {
+            setNotifications(prev => prev.filter(item => item._id !== n._id));
+          }, 5000);
+        });
       } catch (err) {
         console.error(err);
       }
@@ -27,11 +35,37 @@ const GlobalNotifications = () => {
     if (socket) {
       socket.on('notification received', (newNotif) => {
         setNotifications(prev => [newNotif, ...prev]);
+        setTimeout(() => {
+          setNotifications(prev => prev.filter(n => n._id !== newNotif._id));
+        }, 5000);
+      });
+
+      // Show toast for new messages if chat is closed or active session is different
+      socket.on('message received', (msg) => {
+        // We need to check if chat is open and if it's the active session
+        // However, GlobalNotifications doesn't have useChat context by default
+        // Let's add it or use a simple logic: if the user is not on the chat or chat is closed.
+        // For simplicity, we'll show a toast if the message is from someone else.
+        if (msg.sender._id !== user._id && msg.sender !== user._id) {
+          const toastNotif = {
+            _id: msg._id,
+            type: 'NEW_MESSAGE',
+            content: `New message from ${msg.sender.name || 'User'}: "${msg.text.substring(0, 30)}${msg.text.length > 30 ? '...' : ''}"`,
+            createdAt: new Date().toISOString()
+          };
+          setNotifications(prev => [toastNotif, ...prev]);
+          setTimeout(() => {
+            setNotifications(prev => prev.filter(n => n._id !== toastNotif._id));
+          }, 5000);
+        }
       });
     }
 
     return () => {
-      if (socket) socket.off('notification received');
+      if (socket) {
+        socket.off('notification received');
+        socket.off('message received');
+      }
     };
   }, [user, socket]);
 
@@ -60,6 +94,11 @@ const GlobalNotifications = () => {
     if (type === 'SESSION_SCHEDULED') return <Calendar size={18} />;
     if (type === 'WALLET_UPDATE') return <Wallet size={18} />;
     if (type === 'REQUEST_ACCEPTED') return <CheckCircle2 size={18} />;
+    if (type === 'REQUEST_DECLINED') return <XCircle size={18} className="text-red-400" />;
+    if (type === 'NEW_REQUEST') return <AlertCircle size={18} className="text-emerald-400" />;
+    if (type === 'SESSION_CANCELLED') return <PhoneOff size={18} className="text-red-400" />;
+    if (type === 'SESSION_STARTED') return <Zap size={18} className="text-amber-400" />;
+    if (type === 'NEW_MESSAGE') return <MessageSquare size={18} className="text-st-accent" />;
     return <Bell size={18} />;
   };
 
@@ -74,9 +113,12 @@ const GlobalNotifications = () => {
         <div 
           key={notif._id}
           onClick={() => handleNotificationClick(notif)}
-          className="pointer-events-auto bg-[#1A1625]/95 backdrop-blur-xl border border-white/20 text-white p-4 rounded-2xl shadow-[0_15px_40px_rgba(0,0,0,0.6)] flex items-start gap-3 cursor-pointer hover:bg-[#1A1625] transition-all hover:-translate-x-1 animate-in slide-in-from-right-8 duration-300 relative group"
+          className="pointer-events-auto bg-[#1A1625]/85 backdrop-blur-2xl border border-white/10 text-white p-5 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex items-start gap-3 cursor-pointer hover:bg-[#1A1625] transition-all hover:-translate-y-1 animate-in slide-in-from-right-8 duration-500 relative group"
+          style={{
+            boxShadow: '0 25px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1)'
+          }}
         >
-          <div className="bg-st-accent/20 text-st-accent p-2 rounded-full shrink-0 mt-0.5">
+          <div className="bg-st-accent/10 border border-st-accent/20 text-st-accent p-2.5 rounded-2xl shrink-0 mt-0.5 shadow-lg">
             {getIcon(notif.type)}
           </div>
           <div className="flex-1 min-w-0 pr-6">

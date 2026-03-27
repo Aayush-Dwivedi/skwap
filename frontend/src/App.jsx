@@ -4,7 +4,6 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import { SocketProvider } from './contexts/SocketContext';
 import { ChatProvider } from './contexts/ChatContext';
 import Layout from './components/Layout';
-import FloatingChat from './components/FloatingChat';
 import GlobalNotifications from './components/GlobalNotifications';
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -107,7 +106,6 @@ function App() {
               </Routes>
               
               <GlobalNotifications />
-              <FloatingChat />
             </ThemeProvider>
           </ChatProvider>
         </SocketProvider>

@@ -1,12 +1,14 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';
+import FloatingChat from './FloatingChat';
 import { useAuth } from '../contexts/AuthContext';
 
 /* ── Page Transition Wrapper ── */
 const AnimatedPage = ({ children, locationKey }) => (
   <div
     key={locationKey}
+    className="h-full"
     style={{
       animation: 'pageIn 0.28s cubic-bezier(0.4,0,0.2,1) both',
     }}
@@ -123,52 +125,63 @@ const Layout = () => {
   return (
     <div className="flex h-screen overflow-hidden text-st-textPrimary font-sans relative">
       {/* Decorative Background Orbs — acting as localized highlights on the wallpaper */}
-      <div className="orb-float fixed top-0 left-0 w-[500px] h-[500px] bg-st-accent rounded-full blur-[150px] opacity-15 pointer-events-none mix-blend-screen" />
-      <div className="orb-float-slow fixed bottom-0 right-0 w-[600px] h-[600px] bg-rose-900 rounded-full blur-[150px] opacity-20 pointer-events-none mix-blend-screen" />
-      <div className="orb-float-mid fixed top-1/2 left-1/3 w-[350px] h-[350px] bg-purple-900/40 rounded-full blur-[130px] opacity-15 pointer-events-none mix-blend-screen" />
+      <div className="orb-float fixed top-0 left-0 w-[500px] h-[500px] bg-st-accent rounded-full blur-[150px] opacity-15 pointer-events-none mix-blend-screen transition-all duration-1000" />
+      <div className="orb-float-slow fixed bottom-0 right-0 w-[600px] h-[600px] bg-rose-900 rounded-full blur-[150px] opacity-20 pointer-events-none mix-blend-screen transition-all duration-1000" />
+      <div className="orb-float-mid fixed top-1/2 left-1/3 w-[350px] h-[350px] bg-purple-900/40 rounded-full blur-[130px] opacity-15 pointer-events-none mix-blend-screen transition-all duration-1000" />
 
       {/* Sidebar receives collapsed state and toggle handler */}
-      <Sidebar collapsed={collapsed} onToggle={() => setCollapsed(prev => !prev)} />
+      <Sidebar 
+        collapsed={collapsed} 
+        onToggle={() => setCollapsed(prev => !prev)} 
+      />
 
       {/* Main content area */}
-      <main className="flex-1 relative z-10 flex pt-6 pb-6 pr-6 gap-2 group">
+      <main className="flex-1 relative z-10 flex pt-6 pb-6 pr-6 group scale-100">
         {/* Spacer that matches sidebar width — animating width on an empty div avoids layout reflow */}
         <div
           style={{
-            width: collapsed ? '98px' : '288px',
+            width: collapsed ? '96px' : '264px',
             flexShrink: 0,
             transition: 'width 420ms cubic-bezier(0.4, 0, 0.2, 1)',
           }}
         />
-        {/* Floating glass box — fills remaining height, only its contents scroll */}
-        <div
-          id="main-scroll-box"
-          className="
-            flex-1 min-h-0
-            rounded-[2.5rem]
-            overflow-y-auto
-            p-6 md:p-8
-            isolate
-            relative
-          "
-          style={{
-            scrollbarWidth: 'none',
-            msOverflowStyle: 'none',
-            background: `linear-gradient(160deg, rgba(var(--st-bg-secondary), var(--glass-card-opacity)) 0%, rgba(var(--st-bg-primary), var(--glass-card-opacity)) 100%)`,
-            backdropFilter: 'blur(var(--glass-blur)) saturate(1.6)',
-            WebkitBackdropFilter: 'blur(var(--glass-blur)) saturate(1.6)',
-            border: '1px solid rgba(var(--st-text-primary), 0.08)',
-            boxShadow: '0 25px 60px rgba(0,0,0,0.25), inset 0 1.5px 0 rgba(var(--st-text-primary), 0.08)',
-          }}
-        >
-          <style>{`#main-scroll-box::-webkit-scrollbar { display: none; }`}</style>
-          <AnimatedPage locationKey={location.key}>
-            <Outlet />
-          </AnimatedPage>
+        {/* Main content + ScrollTrack Wrapper */}
+        <div className="flex-1 flex min-w-0 relative ml-6">
+          {/* Floating glass box — fills remaining height, only its contents scroll */}
+          <div
+            id="main-scroll-box"
+            className="
+              flex-1 min-h-0
+              rounded-[2.5rem]
+              overflow-y-auto
+              p-6 md:p-8
+              isolate
+              relative
+            "
+            style={{
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none',
+              background: `linear-gradient(160deg, rgba(var(--st-bg-secondary), var(--glass-card-opacity)) 0%, rgba(var(--st-bg-primary), var(--glass-card-opacity)) 100%)`,
+              backdropFilter: 'blur(var(--glass-blur)) saturate(1.6)',
+              WebkitBackdropFilter: 'blur(var(--glass-blur)) saturate(1.6)',
+              border: '1px solid rgba(var(--st-text-primary), 0.08)',
+              boxShadow: '0 25px 60px rgba(0,0,0,0.25), inset 0 1.5px 0 rgba(var(--st-text-primary), 0.08)',
+            }}
+          >
+            <style>{`#main-scroll-box::-webkit-scrollbar { display: none; }`}</style>
+            <AnimatedPage locationKey={location.key}>
+              <Outlet />
+            </AnimatedPage>
+          </div>
+
+          {/* Dedicated Scrollbar Area - anchored to the main box */}
+          <div className="absolute top-0 bottom-0 right-[-14px] w-3 flex justify-center pointer-events-none z-[100]">
+            <ScrollTrack targetId="main-scroll-box" />
+          </div>
         </div>
 
-        {/* Right-side custom scrollbar track */}
-        <ScrollTrack targetId="main-scroll-box" />
+        {/* Spilled Chat Panel - Only takes space when open */}
+        <FloatingChat />
       </main>
     </div>
   );
