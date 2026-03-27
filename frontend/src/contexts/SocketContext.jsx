@@ -23,7 +23,7 @@ export const SocketProvider = ({ children }) => {
 
     // Robust URL detection: Prefer VITE_SOCKET_URL, fallback to VITE_API_BASE_URL (removing /api), finally localhost
     const apiUrl = import.meta.env.VITE_API_BASE_URL;
-    const inferredSocketUrl = apiUrl ? apiUrl.replace('/api', '') : 'http://localhost:5001';
+    const inferredSocketUrl = apiUrl ? apiUrl.replace('/api', '') : 'http://localhost:5000';
     const socketUrl = import.meta.env.VITE_SOCKET_URL || inferredSocketUrl;
     
     console.log('Socket: Connecting to', socketUrl);
