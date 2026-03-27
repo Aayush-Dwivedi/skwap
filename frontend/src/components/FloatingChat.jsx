@@ -222,8 +222,10 @@ const FloatingChat = () => {
     <div 
       className={`
         h-full transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]
-        overflow-hidden flex flex-col relative z-[5]
-        ${isOpen ? 'w-[400px] opacity-100 ml-6' : 'w-0 opacity-0 pointer-events-none ml-0'}
+        overflow-hidden flex flex-col relative z-50
+        ${isOpen 
+          ? 'w-full md:w-[400px] opacity-100 md:ml-6 fixed inset-0 md:relative' 
+          : 'w-0 opacity-0 pointer-events-none ml-0 md:fixed md:right-0'}
       `}
       style={{
         background: `linear-gradient(160deg, rgba(var(--st-bg-secondary), var(--glass-card-opacity)) 0%, rgba(var(--st-bg-primary), var(--glass-card-opacity)) 100%)`,
@@ -231,7 +233,7 @@ const FloatingChat = () => {
         WebkitBackdropFilter: 'blur(var(--glass-blur)) saturate(1.6)',
         border: '1px solid rgba(var(--st-text-primary), 0.08)',
         boxShadow: '0 25px 60px rgba(0,0,0,0.25), inset 0 1.5px 0 rgba(var(--st-text-primary), 0.08)',
-        borderRadius: '2.5rem'
+        borderRadius: isOpen && window.innerWidth < 768 ? '0' : '2.5rem'
       }}
     >
         {/* Header */}

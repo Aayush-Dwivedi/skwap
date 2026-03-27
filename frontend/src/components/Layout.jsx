@@ -3,6 +3,9 @@ import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import FloatingChat from './FloatingChat';
 import { useAuth } from '../contexts/AuthContext';
+import { Home, Wallet as WalletIcon, Calendar, User, MessageSquare } from 'lucide-react';
+import { NavLink } from 'react-router-dom';
+import { useChat } from '../contexts/ChatContext';
 
 /* ── Page Transition Wrapper ── */
 const AnimatedPage = ({ children, locationKey }) => (
@@ -138,7 +141,9 @@ const Layout = () => {
       {/* Main content area */}
       <main className="flex-1 relative z-10 flex pt-6 pb-6 pr-6 group scale-100">
         {/* Spacer that matches sidebar width — animating width on an empty div avoids layout reflow */}
+        {/* Hidden on mobile, matches Sidebar.jsx hidden md:flex */}
         <div
+          className="hidden md:block"
           style={{
             width: collapsed ? '96px' : '264px',
             flexShrink: 0,
@@ -146,15 +151,15 @@ const Layout = () => {
           }}
         />
         {/* Main content + ScrollTrack Wrapper */}
-        <div className="flex-1 flex min-w-0 relative ml-6">
+        <div className="flex-1 flex min-w-0 relative sm:ml-6">
           {/* Floating glass box — fills remaining height, only its contents scroll */}
           <div
             id="main-scroll-box"
             className="
               flex-1 min-h-0
-              rounded-[2.5rem]
+              rounded-[1.5rem] sm:rounded-[2.5rem]
               overflow-y-auto
-              p-6 md:p-8
+              p-4 sm:p-8
               isolate
               relative
             "
@@ -183,7 +188,52 @@ const Layout = () => {
         {/* Spilled Chat Panel - Only takes space when open */}
         <FloatingChat />
       </main>
+
+      {/* 📱 Mobile Bottom Navigation Bar */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 px-4 pb-6 pt-2 pointer-events-none">
+        <div className="max-w-md mx-auto glass-strong rounded-3xl border border-white/10 shadow-2xl pointer-events-auto flex items-center justify-around p-2">
+          <MobileNavItem to="/explore" icon={Home} label="Home" />
+          <MobileNavItem to="/wallet" icon={WalletIcon} label="Wallet" />
+          <MobileNavItem to="/sessions" icon={Calendar} label="Sessions" />
+          <MobileChatToggle />
+          <MobileNavItem to="/edit-profile" icon={User} label="Profile" />
+        </div>
+      </div>
     </div>
+  );
+};
+
+/* ── Mobile Nav Helper Components ── */
+const MobileNavItem = ({ to, icon: Icon, label }) => (
+  <NavLink
+    to={to}
+    className={({ isActive }) => `
+      flex flex-col items-center justify-center gap-1 flex-1 py-2 rounded-2xl transition-all
+      ${isActive ? 'text-st-accent bg-white/5 shadow-inner' : 'text-white/40 hover:text-white/60'}
+    `}
+  >
+    <Icon size={20} />
+    <span className="text-[10px] font-bold uppercase tracking-widest">{label}</span>
+  </NavLink>
+);
+
+const MobileChatToggle = () => {
+  const { toggleChat, unreadCounts } = useChat();
+  const totalChatUnread = Object.values(unreadCounts).reduce((a, b) => a + b, 0);
+
+  return (
+    <button
+      onClick={toggleChat}
+      className="flex flex-col items-center justify-center gap-1 flex-1 py-2 rounded-2xl text-white/40 relative"
+    >
+      <div className="relative">
+        <MessageSquare size={20} />
+        {totalChatUnread > 0 && (
+          <span className="absolute -top-1 -right-1 w-3 h-3 bg-st-accent rounded-full border border-st-bgPrimary" />
+        )}
+      </div>
+      <span className="text-[10px] font-bold uppercase tracking-widest">Chat</span>
+    </button>
   );
 };
 
