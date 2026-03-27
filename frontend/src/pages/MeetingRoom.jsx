@@ -180,6 +180,10 @@ const MeetingRoom = () => {
     iceServers: [
       { urls: 'stun:stun.l.google.com:19302' },
       { urls: 'stun:stun1.l.google.com:19302' },
+      { urls: 'stun:stun2.l.google.com:19302' },
+      { urls: 'stun:stun3.l.google.com:19302' },
+      { urls: 'stun:stun4.l.google.com:19302' },
+      { urls: 'stun:stun.services.mozilla.com' },
     ]
   };
 
@@ -314,10 +318,11 @@ const MeetingRoom = () => {
 
     peerConnection.oniceconnectionstatechange = () => {
       console.log('ICE Connection State:', peerConnection.iceConnectionState);
-      if (peerConnection.iceConnectionState === 'connected') {
-        setConnectionStatus('connected');
-      } else if (peerConnection.iceConnectionState === 'failed') {
-        setConnectionStatus('failed');
+      setConnectionStatus(peerConnection.iceConnectionState);
+      
+      if (peerConnection.iceConnectionState === 'failed') {
+        console.error('WebRTC ICE Connection Failed. This often happens behind strict firewalls.');
+        setError('Connection failed. Please check your internet or try refreshing.');
       }
     };
 
@@ -412,7 +417,8 @@ const MeetingRoom = () => {
           fromUserId: user._id 
         });
       } catch (err) {
-        console.error('Error creating offer:', err);
+        console.error('Error creating/sending offer:', err);
+        setError('Failed to initiate call. Try refreshing.');
       }
     });
 
@@ -460,12 +466,15 @@ const MeetingRoom = () => {
 
     // 4. Received ICE Candidate
     socket.on('webrtc-ice-candidate', async ({ candidate, fromSocketId }) => {
-      console.log('Received ICE candidate');
+      console.log('Received ICE candidate from:', fromSocketId);
       try {
-        if (peerConnectionRef.current && peerConnectionRef.current.remoteDescription) {
+        if (!peerConnectionRef.current) return;
+        
+        if (peerConnectionRef.current.remoteDescription && peerConnectionRef.current.remoteDescription.type) {
           await peerConnectionRef.current.addIceCandidate(new RTCIceCandidate(candidate));
+          console.log('ICE candidate added successfully');
         } else {
-          console.log('Queueing ICE candidate until remote description is set');
+          console.log('Queueing ICE candidate - remote description not yet set');
           iceCandidateQueue.current.push(candidate);
         }
       } catch (err) {

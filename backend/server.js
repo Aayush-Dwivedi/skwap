@@ -106,11 +106,12 @@ io.on('connection', (socket) => {
   // WebRTC Video Meeting Signaling
   socket.on('join-meeting', ({ sessionId, userId }) => {
     socket.join(`meeting_${sessionId}`);
-    console.log(`User ${userId} joined meeting ${sessionId}`);
+    console.log(`User ${userId} (Socket: ${socket.id}) joined meeting ${sessionId}`);
     socket.to(`meeting_${sessionId}`).emit('user-joined-meeting', { userId, socketId: socket.id });
   });
 
   socket.on('webrtc-offer', ({ offer, sessionId, toSocketId, fromUserId }) => {
+    console.log(`Offer from ${fromUserId} to ${toSocketId}`);
     socket.to(toSocketId).emit('webrtc-offer', { offer, fromSocketId: socket.id, fromUserId });
   });
 
