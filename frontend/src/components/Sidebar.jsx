@@ -92,11 +92,10 @@ const Sidebar = ({ collapsed, onToggle }) => {
 
   return (
     <div
-      className="
-        fixed top-6 left-6 bottom-6 z-50
-        hidden md:flex flex-col
+      className={`
+        relative h-full flex flex-col
         transition-all duration-[420ms] ease-out
-      "
+      `}
       style={{
         width: collapsed ? 72 : 240,
         background: `linear-gradient(170deg, rgba(var(--st-sidebar), var(--glass-sidebar-opacity)) 0%, rgba(var(--st-bg-secondary), var(--glass-strong-opacity)) 100%)`,

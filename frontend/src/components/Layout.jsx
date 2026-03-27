@@ -126,40 +126,32 @@ const Layout = () => {
   const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <div className="flex h-screen overflow-hidden text-st-textPrimary font-sans relative">
+    <div className="flex h-screen overflow-hidden text-st-textPrimary font-sans relative p-4 sm:p-6 gap-0 md:gap-6">
       {/* Decorative Background Orbs — acting as localized highlights on the wallpaper */}
       <div className="orb-float fixed top-0 left-0 w-[500px] h-[500px] bg-st-accent rounded-full blur-[150px] opacity-15 pointer-events-none mix-blend-screen transition-all duration-1000" />
       <div className="orb-float-slow fixed bottom-0 right-0 w-[600px] h-[600px] bg-rose-900 rounded-full blur-[150px] opacity-20 pointer-events-none mix-blend-screen transition-all duration-1000" />
       <div className="orb-float-mid fixed top-1/2 left-1/3 w-[350px] h-[350px] bg-purple-900/40 rounded-full blur-[130px] opacity-15 pointer-events-none mix-blend-screen transition-all duration-1000" />
 
-      {/* Sidebar receives collapsed state and toggle handler */}
-      <Sidebar 
-        collapsed={collapsed} 
-        onToggle={() => setCollapsed(prev => !prev)} 
-      />
+      {/* Sidebar as a regular flex sibling on desktop */}
+      <div className="hidden md:block h-full flex-shrink-0">
+        <Sidebar 
+          collapsed={collapsed} 
+          onToggle={() => setCollapsed(prev => !prev)} 
+        />
+      </div>
 
       {/* Main content area */}
-      <main className="flex-1 relative z-10 flex pt-4 pb-24 px-4 md:pt-6 md:pb-6 md:pr-6 group scale-100">
-        {/* Spacer that matches sidebar width — animating width on an empty div avoids layout reflow */}
-        {/* Hidden on mobile, matches Sidebar.jsx hidden md:flex */}
-        <div
-          className="hidden md:block"
-          style={{
-            width: collapsed ? '96px' : '264px',
-            flexShrink: 0,
-            transition: 'width 420ms cubic-bezier(0.4, 0, 0.2, 1)',
-          }}
-        />
-        {/* Main content + ScrollTrack Wrapper */}
-        <div className="flex-1 flex min-w-0 relative sm:ml-6">
+      <main className="flex-1 min-w-0 relative z-10 flex flex-col md:flex-row pb-20 md:pb-0 group scale-100">
+        {/* Wrapper for Glass Box and Chat */}
+        <div className="flex-1 flex min-w-0 relative">
           {/* Floating glass box — fills remaining height, only its contents scroll */}
           <div
             id="main-scroll-box"
             className="
               flex-1 min-h-0
-              rounded-[1.5rem] sm:rounded-[2.5rem]
+              rounded-[1.5rem] sm:rounded-[2rem]
               overflow-y-auto
-              p-4 sm:p-8
+              p-5 sm:p-8
               isolate
               relative
             "
