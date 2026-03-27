@@ -78,7 +78,7 @@ const Wallet = () => {
   };
 
   const purchaseOptions = [
-    { amount: 80, price: '₹100', color: 'from-blue-500 to-indigo-600' },
+    { amount: 80, price: '₹5', color: 'from-blue-500 to-indigo-600' },
     { amount: 400, price: '₹500', color: 'from-purple-500 to-pink-600', popular: true },
     { amount: 800, price: '₹1000', color: 'from-amber-400 to-orange-600' },
   ];

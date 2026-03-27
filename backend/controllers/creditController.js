@@ -100,12 +100,14 @@ const createRazorpayOrder = async (req, res) => {
       return res.status(400).json({ message: 'Invalid credit amount' });
     }
     
-    // 1 credit = 1.25 INR. Razorpay expects amount in paise (1 INR = 100 paise)
-    // So, 1 credit = 125 paise
+    // TEMPORARY: 80 credits = 5 INR for testing (500 paise)
+    // NORMAL: 1 credit = 1.25 INR (125 paise)
+    const multiplier = (amountNum === 80) ? 6.25 : 125;
+    
     // Receipt max length is 40 characters
     const shortUserId = req.user._id.toString().slice(-6);
     const options = {
-      amount: amountNum * 125,
+      amount: Math.round(amountNum * multiplier),
       currency: "INR",
       receipt: `rcpt_${shortUserId}_${Date.now()}`
     };
