@@ -12,7 +12,6 @@ const logError = (msg) => {
   const timestamp = new Date().toISOString();
   fs.appendFileSync(logFile, `[${timestamp}] ${msg}\n`);
 };
-
 // Load env vars
 dotenv.config();
 
@@ -63,17 +62,13 @@ app.get('/api/media/ice-servers', async (req, res) => {
   ];
 
   if (!METERED_API_KEY) {
-    console.log('No METERED_API_KEY found, providing fallback STUN servers');
     return res.json(fallbackIceServers);
   }
 
   try {
-    // Note: Metered.ca returns { iceServers: [...] } directly in its response
-    // Using user-provided subdomain: skilltradeproject.metered.live
     const response = await axios.get(`https://skilltradeproject.metered.live/api/v1/turn/credentials?apiKey=${METERED_API_KEY}`);
     res.json(response.data);
   } catch (error) {
-    console.error('Error fetching ICE servers from Metered:', error.message);
     res.json(fallbackIceServers);
   }
 });

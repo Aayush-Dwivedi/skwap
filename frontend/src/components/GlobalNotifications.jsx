@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useSocket } from '../contexts/SocketContext';
 import api from '../services/api';
-import { Bell, X, Calendar, Wallet, CheckCircle2, MessageSquare, AlertCircle, PhoneOff, XCircle } from 'lucide-react';
+import { Bell, X, Calendar, Wallet, CheckCircle2, MessageSquare, AlertCircle, PhoneOff, XCircle, Zap } from 'lucide-react';
 
 const GlobalNotifications = () => {
   const { user } = useAuth();
