@@ -8,7 +8,7 @@ router.get('/balance', protect, getCreditBalance);
 router.get('/history', protect, getTransactionHistory);
 
 // Razorpay Routes
-router.get('/test-orders', protect, testRazorpay);
+router.get('/test-orders', testRazorpay);
 router.post('/create-razorpay-order', protect, createRazorpayOrder);
 router.post('/verify-razorpay-payment', protect, verifyRazorpayPayment);
 
