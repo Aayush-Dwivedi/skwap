@@ -94,6 +94,7 @@ const getTransactionHistory = async (req, res) => {
 
 const createRazorpayOrder = async (req, res) => {
   try {
+    const { amount } = req.body;
     const amountNum = Number(amount);
     if (!amountNum || amountNum <= 0) {
       return res.status(400).json({ message: 'Invalid credit amount' });
