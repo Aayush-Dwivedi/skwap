@@ -9,21 +9,6 @@ const razorpay = new Razorpay({
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
-const testRazorpay = async (req, res) => {
-  try {
-    const options = {
-      amount: 100, // 1 INR in paise
-      currency: "INR",
-      receipt: `rcpt_test_${Date.now()}`
-    };
-    const order = await razorpay.orders.create(options);
-    res.json({ success: true, order });
-  } catch (error) {
-    console.error('Test Razorpay Error:', error);
-    res.status(500).json({ success: false, message: error.message, error });
-  }
-};
-
 const purchaseCredits = async (req, res) => {
   const { amount } = req.body;
 
@@ -100,14 +85,12 @@ const createRazorpayOrder = async (req, res) => {
       return res.status(400).json({ message: 'Invalid credit amount' });
     }
     
-    // TEMPORARY: 80 credits = 5 INR for testing (500 paise)
-    // NORMAL: 1 credit = 1.25 INR (125 paise)
-    const multiplier = (amountNum === 80) ? 6.25 : 125;
-    
+    // 1 credit = 1.25 INR. Razorpay expects amount in paise (1 INR = 100 paise)
+    // So, 1 credit = 125 paise
     // Receipt max length is 40 characters
     const shortUserId = req.user._id.toString().slice(-6);
     const options = {
-      amount: Math.round(amountNum * multiplier),
+      amount: amountNum * 125,
       currency: "INR",
       receipt: `rcpt_${shortUserId}_${Date.now()}`
     };
@@ -172,6 +155,5 @@ module.exports = {
   getCreditBalance,
   getTransactionHistory,
   createRazorpayOrder,
-  verifyRazorpayPayment,
-  testRazorpay
+  verifyRazorpayPayment
 };
