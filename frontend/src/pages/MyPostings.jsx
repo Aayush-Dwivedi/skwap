@@ -91,8 +91,8 @@ const MyPostings = () => {
 
 const PreviewModal = ({ listing, onClose }) => {
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-300" onClick={onClose}>
-      <div className="glass-strong rounded-[2.5rem] p-8 max-w-md w-full relative border border-white/15 shadow-2xl" onClick={e => e.stopPropagation()}>
+    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in duration-300" onClick={onClose}>
+      <div className="glass-strong rounded-t-[2rem] sm:rounded-[2.5rem] p-6 sm:p-8 max-w-md w-full relative border border-white/15 shadow-2xl" onClick={e => e.stopPropagation()}>
         <button onClick={onClose} className="absolute top-6 right-6 text-white/40 hover:text-white">
           <X size={20} />
         </button>

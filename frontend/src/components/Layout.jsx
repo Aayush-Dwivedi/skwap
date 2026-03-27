@@ -139,7 +139,7 @@ const Layout = () => {
       />
 
       {/* Main content area */}
-      <main className="flex-1 relative z-10 flex pt-6 pb-6 pr-6 group scale-100">
+      <main className="flex-1 relative z-10 flex pt-4 pb-24 px-4 md:pt-6 md:pb-6 md:pr-6 group scale-100">
         {/* Spacer that matches sidebar width — animating width on an empty div avoids layout reflow */}
         {/* Hidden on mobile, matches Sidebar.jsx hidden md:flex */}
         <div

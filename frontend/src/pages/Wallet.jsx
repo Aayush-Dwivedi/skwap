@@ -102,7 +102,7 @@ const Wallet = () => {
           <div>
             <p className="text-st-textSecondary text-sm font-medium mb-1 uppercase tracking-widest">Available Balance</p>
             <div className="flex items-baseline gap-2">
-              <span className="text-6xl md:text-7xl font-black text-white tracking-tighter tabular-nums">
+              <span className="text-5xl sm:text-7xl font-black text-white tracking-tighter tabular-nums text-glow">
                 {loading ? '...' : balance}
               </span>
               <span className="text-xl font-bold text-st-accent">CREDITS</span>

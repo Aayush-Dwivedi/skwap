@@ -765,8 +765,8 @@ const MeetingRoom = () => {
 
           {/* Info Side */}
           <div className="flex flex-col text-center lg:text-left items-center lg:items-start">
-            <h1 className="text-3xl lg:text-4xl font-black text-white mb-2 tracking-tight drop-shadow-md">Ready to join?</h1>
-            <p className="text-st-textSecondary mb-8 text-sm font-medium">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white mb-2 tracking-tight drop-shadow-md leading-tight">Ready to join?</h1>
+            <p className="text-st-textSecondary mb-6 sm:mb-8 text-xs sm:text-sm font-medium">
               Session: <span className="text-st-accent font-bold px-2 py-1 bg-st-accent/10 rounded-md block mt-2 mx-auto lg:mx-0 w-max">{session?.request?.requestedSkill || 'Skill Swap'}</span>
             </p>
 
@@ -912,7 +912,7 @@ const MeetingRoom = () => {
             )}
             
             {/* Local Video (PiP) */}
-            <div className={`absolute bottom-28 right-6 w-40 sm:w-60 aspect-video bg-[#1A1625] rounded-3xl overflow-hidden border-2 shadow-2xl transition-all duration-300 z-20 hover:scale-105 ${localAudioLevel > 15 ? 'border-emerald-500 shadow-[0_0_25px_rgba(16,185,129,0.4)]' : 'border-white/20'}`}>
+            <div className={`absolute bottom-24 sm:bottom-28 right-4 sm:right-6 w-32 sm:w-60 aspect-video bg-[#1A1625] rounded-2xl sm:rounded-3xl overflow-hidden border-2 shadow-2xl transition-all duration-300 z-[25] hover:scale-105 ${localAudioLevel > 15 ? 'border-emerald-500 shadow-[0_0_25px_rgba(16,185,129,0.4)]' : 'border-white/20'}`}>
               <video 
                 ref={localVideoRef} 
                 autoPlay 
@@ -937,7 +937,7 @@ const MeetingRoom = () => {
 
             {/* Screen Share Preview (PiP) */}
             {isScreenSharing && (
-              <div className="absolute top-28 right-6 w-40 sm:w-60 aspect-video bg-black rounded-2xl overflow-hidden border border-emerald-500/50 shadow-2xl transition-all duration-300 z-[25] animate-in slide-in-from-right-4">
+              <div className="absolute top-24 sm:top-28 right-4 sm:right-6 w-32 sm:w-60 aspect-video bg-black rounded-xl sm:rounded-2xl overflow-hidden border border-emerald-500/50 shadow-2xl transition-all duration-300 z-[30] animate-in slide-in-from-right-4">
                 <video 
                   ref={screenPreviewVideoRef} 
                   autoPlay 
@@ -955,7 +955,7 @@ const MeetingRoom = () => {
           {/* Participants Side Drawer */}
           <div 
             className={`
-              absolute top-0 right-0 bottom-0 w-80 z-40
+              fixed md:absolute top-0 right-0 bottom-0 w-full md:w-80 z-50 md:z-40
               transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]
               ${showParticipants ? 'translate-x-0' : 'translate-x-full'}
             `}
