@@ -69,7 +69,9 @@ const Wallet = () => {
       });
       rzp.open();
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to initiate purchase');
+      console.error('Purchase Initiation Error:', error);
+      const msg = error.response?.data?.message || error.message || 'Failed to initiate purchase';
+      toast.error(msg);
     } finally {
       setIsPurchasing(false);
     }
