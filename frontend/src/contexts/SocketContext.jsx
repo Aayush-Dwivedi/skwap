@@ -21,10 +21,16 @@ export const SocketProvider = ({ children }) => {
       return;
     }
 
-    const socketUrl = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5001';
+    // Robust URL detection: Prefer VITE_SOCKET_URL, fallback to VITE_API_BASE_URL (removing /api), finally localhost
+    const apiUrl = import.meta.env.VITE_API_BASE_URL;
+    const inferredSocketUrl = apiUrl ? apiUrl.replace('/api', '') : 'http://localhost:5001';
+    const socketUrl = import.meta.env.VITE_SOCKET_URL || inferredSocketUrl;
+    
+    console.log('Socket: Connecting to', socketUrl);
     const newSocket = io(socketUrl, {
-      reconnectionAttempts: 5,
-      reconnectionDelay: 1000,
+      reconnectionAttempts: 8,
+      reconnectionDelay: 2000,
+      transports: ['websocket', 'polling'], // Try websocket first, then polling
     });
 
     newSocket.on('connect', () => {
