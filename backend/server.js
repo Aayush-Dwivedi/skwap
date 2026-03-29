@@ -15,6 +15,8 @@ const logError = (msg) => {
 // Load env vars
 dotenv.config();
 
+const PORT = process.env.PORT || 5000;
+
 // Connect to database
 connectDB();
 
@@ -49,6 +51,20 @@ app.use('/api/profile', require('./routes/profileRoutes'));
 app.use('/api/listings', require('./routes/listingRoutes'));
 app.use('/api/requests', require('./routes/sessionRequestRoutes'));
 app.use('/api/credits', require('./routes/creditRoutes'));
+
+// Health check endpoint for Render/UptimeRobot
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ status: 'active', timestamp: new Date() });
+});
+
+// Self-Heartbeat script for Render Free Tier (every 14 mins)
+const RENDER_EXTERNAL_URL = process.env.RENDER_EXTERNAL_URL || `http://localhost:${PORT}`;
+setInterval(() => {
+  axios.get(`${RENDER_EXTERNAL_URL}/api/health`)
+    .then(() => console.log('Self-heartbeat success'))
+    .catch((err) => console.log('Self-heartbeat failed (server might be waking up)'));
+}, 14 * 60 * 1000); 
+
 // --- Media & ICE Server Configuration (Metered.ca) ---
 app.get('/api/media/ice-servers', async (req, res) => {
   const METERED_API_KEY = process.env.METERED_API_KEY;
@@ -66,7 +82,10 @@ app.get('/api/media/ice-servers', async (req, res) => {
   }
 
   try {
-    const response = await axios.get(`https://skilltradeproject.metered.live/api/v1/turn/credentials?apiKey=${METERED_API_KEY}`);
+    const response = await axios.get(
+      `https://skilltradeproject.metered.live/api/v1/turn/credentials?apiKey=${METERED_API_KEY}`,
+      { timeout: 5000 } // 5s timeout to prevent hanging on cold starts
+    );
     res.json(response.data);
   } catch (error) {
     res.json(fallbackIceServers);
@@ -102,9 +121,11 @@ io.on('connection', (socket) => {
   socket.on('new message', async (newMessageReceived) => {
     let session = newMessageReceived.session;
     
+    // Moving require outside for performance
+    const Session = require('./models/Session');
+    
     // If session is just an ID, we need to fetch it to know who to notify
     if (typeof session === 'string' || session instanceof String || (session && !session.learner)) {
-      const Session = require('./models/Session');
       session = await Session.findById(session);
     }
 
@@ -166,7 +187,6 @@ io.on('connection', (socket) => {
   });
 });
 
-const PORT = process.env.PORT || 5000;
 
 process.on('uncaughtException', (err) => {
   logError(`Uncaught Exception: ${err.message}\n${err.stack}`);

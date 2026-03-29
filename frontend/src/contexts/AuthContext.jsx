@@ -10,6 +10,7 @@ export const AuthProvider = ({ children }) => {
   const [profile, setProfile] = useState(null); // Full profile data (name, photoUrl, etc)
   const [hasProfile, setHasProfile] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isWaking, setIsWaking] = useState(false); // New state to detect cold starts
 
   const checkProfile = async (currentUser) => {
     console.log('Checking profile for user:', currentUser?._id);
@@ -42,7 +43,14 @@ export const AuthProvider = ({ children }) => {
       if (userInfo) {
         const parsedUser = JSON.parse(userInfo);
         setUser(parsedUser);
+        
+        // Start a timer to detect slow cold starts
+        const wakingTimer = setTimeout(() => setIsWaking(true), 2500);
+        
         await checkProfile(parsedUser);
+        
+        clearTimeout(wakingTimer);
+        setIsWaking(false);
       }
       setLoading(false);
     };
@@ -121,7 +129,15 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={value}>
-      {!loading && children}
+      {loading ? (
+        <div className="min-h-screen flex flex-col items-center justify-center bg-[#0a0508] text-white p-6">
+          <div className="w-12 h-12 border-4 border-st-accent border-t-transparent rounded-full animate-spin mb-6"></div>
+          <h2 className="text-2xl font-black mb-2 tracking-tighter uppercase">Initializing</h2>
+          <p className="text-st-textSecondary text-sm max-w-xs text-center leading-relaxed">
+            {isWaking ? 'The server is waking up from its slumber... this can take a minute on free tiers. Hang tight! 🚀' : 'Starting Skwap engine...'}
+          </p>
+        </div>
+      ) : children}
     </AuthContext.Provider>
   );
 };
