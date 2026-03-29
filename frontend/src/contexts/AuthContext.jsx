@@ -134,7 +134,7 @@ export const AuthProvider = ({ children }) => {
           <div className="w-12 h-12 border-4 border-st-accent border-t-transparent rounded-full animate-spin mb-6"></div>
           <h2 className="text-2xl font-black mb-2 tracking-tighter uppercase">Initializing</h2>
           <p className="text-st-textSecondary text-sm max-w-xs text-center leading-relaxed">
-            {isWaking ? 'The server is waking up from its slumber... this can take a minute on free tiers. Hang tight! 🚀' : 'Starting Skwap engine...'}
+            {isWaking ? 'The server is waking up from its slumber... this can take a minute on free tiers. Hang tight! 🚀' : 'Starting Skill Trade engine...'}
           </p>
         </div>
       ) : children}
