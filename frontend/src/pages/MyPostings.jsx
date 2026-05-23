@@ -5,6 +5,7 @@ import { Plus, X, Clock, MessageSquare, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ListingCard from '../components/ListingCard';
 import { useChat } from '../contexts/ChatContext';
+import toast from 'react-hot-toast';
 
 const MyPostings = () => {
   const [listings, setListings] = useState([]);
@@ -32,6 +33,20 @@ const MyPostings = () => {
 
     fetchMyListings();
   }, []);
+
+  const handleDeleteListing = async (id) => {
+    if (window.confirm('Are you sure you want to delete this listing? This action cannot be undone.')) {
+      try {
+        await api.delete(`/listings/${id}`);
+        toast.success('Listing deleted successfully');
+        setListings(prev => prev.filter(item => item._id !== id));
+        setSelectedListing(null);
+      } catch (error) {
+        console.error('Failed to delete listing', error);
+        toast.error(error.response?.data?.message || 'Failed to delete listing');
+      }
+    }
+  };
 
   return (
     <div>
@@ -83,13 +98,14 @@ const MyPostings = () => {
         <PreviewModal
           listing={selectedListing}
           onClose={() => setSelectedListing(null)}
+          onDelete={handleDeleteListing}
         />
       )}
     </div>
   );
 };
 
-const PreviewModal = ({ listing, onClose }) => {
+const PreviewModal = ({ listing, onClose, onDelete }) => {
   return (
     <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in duration-300" onClick={onClose}>
       <div className="glass-strong rounded-t-[2rem] sm:rounded-[2.5rem] p-6 sm:p-8 max-w-md w-full relative border border-white/15 shadow-2xl" onClick={e => e.stopPropagation()}>
@@ -116,11 +132,16 @@ const PreviewModal = ({ listing, onClose }) => {
           </div>
         </div>
         
-        <div className="mt-8 flex gap-3">
-          <Link to={`/edit-listing/${listing._id}`} className="flex-1 glass text-white font-bold py-3 rounded-xl text-center hover:bg-white/10 transition-all border border-white/10">
-            Edit Listing
-          </Link>
-          <button onClick={onClose} className="flex-1 glass-btn text-white font-bold py-3 rounded-xl transition-all">
+        <div className="mt-8 flex flex-col gap-3">
+          <div className="flex gap-3">
+            <Link to={`/edit-listing/${listing._id}`} className="flex-1 glass text-white font-bold py-3 rounded-xl text-center hover:bg-white/10 transition-all border border-white/10">
+              Edit Listing
+            </Link>
+            <button onClick={() => onDelete(listing._id)} className="flex-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 font-bold py-3 rounded-xl transition-all">
+              Delete Listing
+            </button>
+          </div>
+          <button onClick={onClose} className="w-full glass-btn text-white font-bold py-3 rounded-xl transition-all">
             Close
           </button>
         </div>
