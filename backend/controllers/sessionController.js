@@ -595,7 +595,7 @@ const scheduleSession = async (req, res) => {
       user: targetUserId,
       sender: req.user._id,
       type: 'SESSION_SCHEDULED',
-      content: `${schedulerProfile?.name || 'Your partner'} scheduled the session for ${new Date(scheduledAt).toLocaleString()}.`,
+      content: `${schedulerProfile?.name || 'Your partner'} scheduled the session for [DATE:${scheduledAt}].`,
       relatedId: session._id
     });
 
@@ -622,7 +622,7 @@ const scheduleSession = async (req, res) => {
     // Send Email to Both Users using the unified sendEmail helper
     try {
       const sendEmail = require('../utils/sendEmail');
-      const formattedDate = new Date(scheduledAt).toLocaleString();
+      const formattedDate = new Date(scheduledAt).toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }) + ' (IST)';
 
       const emailHtmlLearner = `
         <div style="font-family: sans-serif; max-width: 550px; margin: 0 auto; padding: 20px; line-height: 1.5; color: #333;">

@@ -13,6 +13,23 @@ const Notifications = () => {
   const { socket } = useSocket();
   const { openSession } = useChat();
 
+  const formatContent = (content) => {
+    if (!content) return '';
+    let formatted = content.replace(/undefined/g, 'User');
+    
+    // Match [DATE:2026-05-23T10:15:00.000Z] or similar and parse/format it locally
+    const dateRegex = /\[DATE:([^\]]+)\]/g;
+    formatted = formatted.replace(dateRegex, (match, isoStr) => {
+      try {
+        return new Date(isoStr).toLocaleString();
+      } catch {
+        return isoStr;
+      }
+    });
+    
+    return formatted;
+  };
+
   const fetchNotifications = async () => {
     try {
       const { data } = await api.get('/notifications');
@@ -142,7 +159,7 @@ const Notifications = () => {
                   <div className="flex items-start justify-between gap-2 mb-1">
                     <div className="flex items-center gap-2">
                       <p className={`text-sm font-medium ${notif.read ? 'text-white/70' : 'text-white'}`}>
-                        {notif.content?.replace(/undefined/g, 'User')}
+                        {formatContent(notif.content)}
                       </p>
                       {notif.type === 'NEW_REQUEST' && !notif.read && (
                         <span className="text-[9px] bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded border border-amber-500/20 font-bold uppercase tracking-tighter">Action Required</span>
