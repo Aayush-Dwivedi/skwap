@@ -11,8 +11,6 @@ const submitContactForm = async (req, res) => {
   }
 
   try {
-    const resendApiKey = process.env.RESEND_API_KEY;
-    const resendFrom = process.env.RESEND_FROM || 'Skill Trade Support <onboarding@resend.dev>';
     const adminEmail = process.env.ADMIN_EMAIL || 'support.skilltrade@gmail.com';
 
     const emailHtml = `
@@ -26,24 +24,12 @@ const submitContactForm = async (req, res) => {
       </div>
     `;
 
-    if (!resendApiKey) {
-      console.warn('RESEND_API_KEY missing in .env. Skipping actual email send.');
-      return res.status(200).json({ message: 'Message recorded (Resend API not configured)' });
-    }
-
-    const axios = require('axios');
-    await axios.post('https://api.resend.com/emails', {
-      from: resendFrom,
-      to: [adminEmail],
+    const sendEmail = require('../utils/sendEmail');
+    await sendEmail({
+      to: adminEmail,
       replyTo: email,
       subject: `Skill Trade Support/Fraud Report from ${name}`,
-      html: emailHtml,
-    }, {
-      headers: {
-        'Authorization': `Bearer ${resendApiKey}`,
-        'Content-Type': 'application/json'
-      },
-      timeout: 10000
+      html: emailHtml
     });
 
     res.status(200).json({ message: 'Your message has been sent successfully!' });
