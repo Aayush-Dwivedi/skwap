@@ -27,8 +27,6 @@ const EditProfile = () => {
     twitter: '',
     portfolio: '',
     email: '',
-    password: '',
-    confirmPassword: '',
     showSocialLinks: true
   });
 
@@ -156,11 +154,6 @@ const EditProfile = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (formData.password && formData.password !== formData.confirmPassword) {
-      alert('Passwords do not match');
-      return;
-    }
-
     setSaving(true);
     try {
       // 1. Update Profile Details
@@ -183,13 +176,7 @@ const EditProfile = () => {
       // Update global profile state instantly
       setProfile(updatedProfile);
 
-      // 2. Update Account Details (Password) if provided
-      if (formData.password) {
-        const { data: updatedUser } = await api.put('/auth/profile', {
-          password: formData.password
-        });
-        localStorage.setItem('userInfo', JSON.stringify(updatedUser));
-      }
+
 
       toast.success('Settings updated successfully!');
       setIsDirty(false);
@@ -434,7 +421,7 @@ const EditProfile = () => {
             <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2 border-b border-st-card pb-2">
               <LogOut size={18} className="rotate-180 text-st-accent" /> Account Security
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-6">
               <div>
                 <label className="block text-st-textSecondary text-xs font-medium mb-1.5 ml-1 flex items-center gap-1.5">
                   Email Address <span className="text-[10px] text-st-accent italic">(Read-only)</span>
@@ -445,32 +432,6 @@ const EditProfile = () => {
                   readOnly
                   className="w-full glass border border-white/5 text-white/40 rounded-xl px-4 py-3 text-sm cursor-not-allowed opacity-50"
                 />
-              </div>
-              <div className="md:col-span-1 border-l border-st-card pl-0 md:pl-6">
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-st-textSecondary text-xs font-medium mb-1.5 ml-1">New Password</label>
-                    <input 
-                      type="password" 
-                      name="password"
-                      value={formData.password}
-                      onChange={handleChange}
-                      placeholder="Leave blank to keep current" 
-                      className="w-full glass-input rounded-xl px-4 py-3 placeholder-white/20 transition-all text-sm"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-st-textSecondary text-xs font-medium mb-1.5 ml-1">Confirm New Password</label>
-                    <input 
-                      type="password" 
-                      name="confirmPassword"
-                      value={formData.confirmPassword}
-                      onChange={handleChange}
-                      placeholder="Confirm new password" 
-                      className="w-full glass-input rounded-xl px-4 py-3 placeholder-white/20 transition-all text-sm"
-                    />
-                  </div>
-                </div>
               </div>
             </div>
           </div>

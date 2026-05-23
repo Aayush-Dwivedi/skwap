@@ -8,6 +8,8 @@ import GlobalNotifications from './components/GlobalNotifications';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 import Landing from './pages/Landing';
 import EditProfile from './pages/EditProfile';
 import CreateListing from './pages/CreateListing';
@@ -77,9 +79,11 @@ function App() {
                   </AuthRoute>
                 } />
 
-                {/* Auth Routes */}
+                 {/* Auth Routes */}
                 <Route path="/login" element={<AuthRoute><Login /></AuthRoute>} />
                 <Route path="/register" element={<AuthRoute><Register /></AuthRoute>} />
+                <Route path="/forgot-password" element={<AuthRoute><ForgotPassword /></AuthRoute>} />
+                <Route path="/reset-password/:token" element={<AuthRoute><ResetPassword /></AuthRoute>} />
                 <Route path="/setup-profile" element={<ProtectedRoute requireProfile={false}><SetupProfile /></ProtectedRoute>} />
                 
                 {/* Protected routes wrapped in Layout */}
