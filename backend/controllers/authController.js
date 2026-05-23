@@ -260,7 +260,8 @@ const forgotPassword = async (req, res) => {
     res.status(200).json({ message: 'Password reset link sent to your email.' });
   } catch (error) {
     console.error('Forgot password error:', error);
-    res.status(500).json({ message: 'Could not send reset email. Please try again later.' });
+    const apiErrorMsg = error.response?.data?.message || 'Could not send reset email. Please try again later.';
+    res.status(error.response?.status || 500).json({ message: apiErrorMsg });
   }
 };
 
