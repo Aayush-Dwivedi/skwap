@@ -619,60 +619,48 @@ const scheduleSession = async (req, res) => {
     req.io.to(session.learner._id.toString()).emit('session updated', sessionPayload);
     req.io.to(session.teacher._id.toString()).emit('session updated', sessionPayload);
 
-    // Send Email to Both Users
-    const resendApiKey = process.env.RESEND_API_KEY;
-    if (resendApiKey) {
-      try {
-        const resendFrom = process.env.RESEND_FROM || 'Skill Trade <onboarding@resend.dev>';
-        const formattedDate = new Date(scheduledAt).toLocaleString();
+    // Send Email to Both Users using the unified sendEmail helper
+    try {
+      const sendEmail = require('../utils/sendEmail');
+      const formattedDate = new Date(scheduledAt).toLocaleString();
 
-        const emailHtmlLearner = `
-          <div style="font-family: sans-serif; max-width: 550px; margin: 0 auto; padding: 20px; line-height: 1.5; color: #333;">
-            <h2 style="color: #e01e5a;">Your Skill Trade Meeting is Scheduled!</h2>
-            <p>Hi ${lProf?.name || 'User'},</p>
-            <p>Your session with <strong>${tProf?.name || 'your partner'}</strong> for <strong>"${updatedSession.request.requestedSkill || 'Skill Trade'}"</strong> has been successfully scheduled for:</p>
-            <p style="font-size: 16px; font-weight: bold; background: #f5f5f5; padding: 12px; border-radius: 6px; text-align: center; color: #e01e5a;">${formattedDate}</p>
-            <p>Please ensure you log in on time to join the meeting room inside your Skill Trade dashboard.</p>
-            <p>Best regards,<br/>The Skill Trade Team</p>
-          </div>
-        `;
+      const emailHtmlLearner = `
+        <div style="font-family: sans-serif; max-width: 550px; margin: 0 auto; padding: 20px; line-height: 1.5; color: #333;">
+          <h2 style="color: #e01e5a;">Your Skill Trade Meeting is Scheduled!</h2>
+          <p>Hi ${lProf?.name || 'User'},</p>
+          <p>Your session with <strong>${tProf?.name || 'your partner'}</strong> for <strong>"${updatedSession.request.requestedSkill || 'Skill Trade'}"</strong> has been successfully scheduled for:</p>
+          <p style="font-size: 16px; font-weight: bold; background: #f5f5f5; padding: 12px; border-radius: 6px; text-align: center; color: #e01e5a;">${formattedDate}</p>
+          <p>Please ensure you log in on time to join the meeting room inside your Skill Trade dashboard.</p>
+          <p>Best regards,<br/>The Skill Trade Team</p>
+        </div>
+      `;
 
-        const emailHtmlTeacher = `
-          <div style="font-family: sans-serif; max-width: 550px; margin: 0 auto; padding: 20px; line-height: 1.5; color: #333;">
-            <h2 style="color: #e01e5a;">Your Skill Trade Meeting is Scheduled!</h2>
-            <p>Hi ${tProf?.name || 'User'},</p>
-            <p>You have successfully scheduled your session with <strong>${lProf?.name || 'your partner'}</strong> for <strong>"${updatedSession.request.requestedSkill || 'Skill Trade'}"</strong> at:</p>
-            <p style="font-size: 16px; font-weight: bold; background: #f5f5f5; padding: 12px; border-radius: 6px; text-align: center; color: #e01e5a;">${formattedDate}</p>
-            <p>Please ensure you log in on time to join the meeting room inside your Skill Trade dashboard.</p>
-            <p>Best regards,<br/>The Skill Trade Team</p>
-          </div>
-        `;
+      const emailHtmlTeacher = `
+        <div style="font-family: sans-serif; max-width: 550px; margin: 0 auto; padding: 20px; line-height: 1.5; color: #333;">
+          <h2 style="color: #e01e5a;">Your Skill Trade Meeting is Scheduled!</h2>
+          <p>Hi ${tProf?.name || 'User'},</p>
+          <p>You have successfully scheduled your session with <strong>${lProf?.name || 'your partner'}</strong> for <strong>"${updatedSession.request.requestedSkill || 'Skill Trade'}"</strong> at:</p>
+          <p style="font-size: 16px; font-weight: bold; background: #f5f5f5; padding: 12px; border-radius: 6px; text-align: center; color: #e01e5a;">${formattedDate}</p>
+          <p>Please ensure you log in on time to join the meeting room inside your Skill Trade dashboard.</p>
+          <p>Best regards,<br/>The Skill Trade Team</p>
+        </div>
+      `;
 
-        const axios = require('axios');
-        await Promise.all([
-          axios.post('https://api.resend.com/emails', {
-            from: resendFrom,
-            to: [updatedSession.learner.email],
-            subject: 'Your Skill Trade Meeting is Scheduled!',
-            html: emailHtmlLearner,
-          }, {
-            headers: { 'Authorization': `Bearer ${resendApiKey}`, 'Content-Type': 'application/json' },
-            timeout: 10000
-          }),
-          axios.post('https://api.resend.com/emails', {
-            from: resendFrom,
-            to: [updatedSession.teacher.email],
-            subject: 'Your Skill Trade Meeting is Scheduled!',
-            html: emailHtmlTeacher,
-          }, {
-            headers: { 'Authorization': `Bearer ${resendApiKey}`, 'Content-Type': 'application/json' },
-            timeout: 10000
-          })
-        ]);
-        console.log('Scheduling emails sent successfully via Resend');
-      } catch (emailErr) {
-        console.error('Failed to send scheduling emails via Resend:', emailErr);
-      }
+      await Promise.all([
+        sendEmail({
+          to: updatedSession.learner.email,
+          subject: 'Your Skill Trade Meeting is Scheduled!',
+          html: emailHtmlLearner,
+        }),
+        sendEmail({
+          to: updatedSession.teacher.email,
+          subject: 'Your Skill Trade Meeting is Scheduled!',
+          html: emailHtmlTeacher,
+        })
+      ]);
+      console.log('Scheduling emails sent successfully via unified sendEmail helper');
+    } catch (emailErr) {
+      console.error('Failed to send scheduling emails via sendEmail helper:', emailErr);
     }
 
     res.json(updatedSession);

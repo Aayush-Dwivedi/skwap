@@ -84,10 +84,12 @@ const MySessions = () => {
   };
 
   const handleScheduleSession = async (id) => {
-    const date = scheduleDates[id];
-    if (!date) return alert('Please select a date and time');
+    const localDateStr = scheduleDates[id];
+    if (!localDateStr) return alert('Please select a date and time');
     try {
-      await api.put(`/sessions/${id}/schedule`, { scheduledAt: date });
+      // Parse in local browser timezone and convert to ISO string (UTC) to prevent timezone offsets
+      const utcDateStr = new Date(localDateStr).toISOString();
+      await api.put(`/sessions/${id}/schedule`, { scheduledAt: utcDateStr });
       alert('Session scheduled successfully!');
       fetchData();
     } catch (error) {
