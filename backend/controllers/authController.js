@@ -198,20 +198,9 @@ const forgotPassword = async (req, res) => {
 
     await user.save();
 
-    // 3. Send email
-    const transporter = nodemailer.createTransport({
-      host: 'smtp.gmail.com',
-      port: 465,
-      secure: true,
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-      family: 4, // Force IPv4 to resolve connect ENETUNREACH on Render
-      connectionTimeout: 10000, // 10s connection timeout
-      greetingTimeout: 10000,   // 10s greeting timeout
-      socketTimeout: 10000,     // 10s socket activity timeout
-    });
+    // 3. Send email using Resend HTTP API
+    const resendApiKey = process.env.RESEND_API_KEY;
+    const resendFrom = process.env.RESEND_FROM || 'Skill Trade <onboarding@resend.dev>';
 
     // Support local testing, fallback to CLIENT_URL or referrer/origin
     const clientUrl = process.env.CLIENT_URL || req.headers.referer || req.headers.origin || 'http://localhost:5173';
@@ -222,11 +211,7 @@ const forgotPassword = async (req, res) => {
     const baseUrl = cleanOrigin.replace('/forgot-password', '');
     const resetUrl = `${baseUrl}/reset-password/${resetToken}`;
 
-    const mailOptions = {
-      from: `"Skill Trade Support" <${process.env.EMAIL_USER || 'support.skilltrade@gmail.com'}>`,
-      to: user.email,
-      subject: 'Skill Trade - Password Reset Request',
-      html: `
+    const emailHtml = `
         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 550px; margin: 0 auto; padding: 30px; background-color: #0b0709; color: #ffffff; border-radius: 16px; border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 10px 40px rgba(0,0,0,0.5);">
           <div style="text-align: center; margin-bottom: 25px;">
             <div style="display: inline-block; padding: 12px; background: rgba(224, 30, 90, 0.1); border-radius: 12px; margin-bottom: 10px;">
@@ -248,18 +233,29 @@ const forgotPassword = async (req, res) => {
             <a href="${resetUrl}" style="color: #e01e5a; word-break: break-all; text-decoration: none;">${resetUrl}</a>
           </p>
         </div>
-      `,
-    };
+      `;
 
-    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-      console.warn('EMAIL credentials missing in .env. Skipping actual email send.');
+    if (!resendApiKey) {
+      console.warn('RESEND_API_KEY missing in .env. Skipping actual email send.');
       return res.status(200).json({
-        message: 'Password reset link generated successfully (SMTP not configured)',
+        message: 'Password reset link generated successfully (Resend API not configured)',
         resetToken,
       });
     }
 
-    await transporter.sendMail(mailOptions);
+    const axios = require('axios');
+    await axios.post('https://api.resend.com/emails', {
+      from: resendFrom,
+      to: [user.email],
+      subject: 'Skill Trade - Password Reset Request',
+      html: emailHtml,
+    }, {
+      headers: {
+        'Authorization': `Bearer ${resendApiKey}`,
+        'Content-Type': 'application/json'
+      },
+      timeout: 10000
+    });
 
     res.status(200).json({ message: 'Password reset link sent to your email.' });
   } catch (error) {
