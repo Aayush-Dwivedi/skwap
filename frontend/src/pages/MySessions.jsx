@@ -144,25 +144,25 @@ const MySessions = () => {
                       <div className="w-12 h-12 rounded-full overflow-hidden bg-white/10 border border-white/10">
                         {/* Display the other person's avatar */}
                         <img 
-                          src={(session.learner._id === user?._id ? session.teacher.photoUrl : session.learner.photoUrl) || `https://api.dicebear.com/7.x/avataaars/svg?seed=${session.learner._id === user?._id ? session.teacher.name : session.learner.name}`} 
+                          src={(session.learner?._id === user?._id ? session.teacher?.photoUrl : session.learner?.photoUrl) || `https://api.dicebear.com/7.x/avataaars/svg?seed=${session.learner?._id === user?._id ? session.teacher?.name : session.learner?.name}`} 
                           alt="Avatar" 
                           className="w-full h-full object-cover" 
                           onError={(e) => {
-                            const name = session.learner._id === user?._id ? session.teacher.name : session.learner.name;
-                            e.target.src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${name}`;
+                            const name = session.learner?._id === user?._id ? session.teacher?.name : session.learner?.name;
+                            e.target.src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${name || 'User'}`;
                           }}
                         />
                       </div>
                       <div>
                         <h3 className="text-white font-bold text-lg">
-                          {session.learner._id === user?._id ? `Learning from ${session.teacher.name}` : `Teaching ${session.learner.name}`}
+                          {session.learner?._id === user?._id ? `Learning from ${session.teacher?.name || 'User'}` : `Teaching ${session.learner?.name || 'User'}`}
                         </h3>
                         <p className="text-st-textSecondary text-xs">
-                          {session.request.type === 'BARTER' 
-                            ? `Barter: ${session.request.offeredSkill}` 
+                          {session.request?.type === 'BARTER' 
+                            ? `Barter: ${session.request?.offeredSkill}` 
                             : session.status === 'NEGOTIATING' 
                               ? 'Negotiating Credits...' 
-                              : `${session.finalCredits || session.request.credits} Credits (Finalized)`}
+                              : `${session.finalCredits || session.request?.credits || 0} Credits (Finalized)`}
                         </p>
                       </div>
                     </div>
@@ -209,7 +209,7 @@ const MySessions = () => {
                     </div>
                     
                     {session.status === 'PENDING_START' && !session.scheduledAt && (
-                      session.teacher._id === user?._id ? (
+                      session.teacher?._id === user?._id ? (
                         <div className="mt-2 p-4 rounded-xl border border-white/10 bg-white/5 flex flex-wrap items-center gap-3">
                           <span className="text-white text-sm font-bold">Schedule Session:</span>
                           <input 
@@ -228,7 +228,7 @@ const MySessions = () => {
                       ) : (
                         <div className="mt-2 text-sm text-st-textSecondary flex items-center gap-2">
                           <Clock className="text-st-accent" size={14} />
-                          Waiting for {session.teacher.name} to schedule the session...
+                          Waiting for {session.teacher?.name || 'teacher'} to schedule the session...
                         </div>
                       )
                     )}
@@ -268,16 +268,16 @@ const MySessions = () => {
                     <div className="flex items-center gap-3 mb-3">
                       <div className="w-8 h-8 rounded-full bg-white/10 overflow-hidden border border-white/10">
                         <img 
-                          src={req.learner.photoUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${req.learner.name}`} 
+                          src={req.learner?.photoUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${req.learner?.name}`} 
                           alt="Avatar" 
                           className="w-full h-full object-cover"
-                          onError={(e) => { e.target.src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${req.learner.name}`; }}
+                          onError={(e) => { e.target.src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${req.learner?.name || 'User'}`; }}
                         />
                       </div>
-                      <span className="text-white text-sm font-bold">{req.learner.name}</span>
+                      <span className="text-white text-sm font-bold">{req.learner?.name || 'User'}</span>
                     </div>
                     <p className="text-st-textSecondary text-xs mb-4">
-                      Requested your <strong>{req.listing.skillName}</strong> skill.
+                      Requested your <strong>{req.requestedSkill || req.listing?.skillName || 'Deleted Skill'}</strong> skill.
                       ({req.type === 'BARTER' ? `Offered: ${req.offeredSkill}` : `Offered: ${req.credits} Credits`})
                     </p>
                     
@@ -317,13 +317,13 @@ const MySessions = () => {
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-full bg-white/10 overflow-hidden border border-white/10">
                           <img 
-                            src={req.teacher.photoUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${req.teacher.name}`} 
+                            src={req.teacher?.photoUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${req.teacher?.name}`} 
                             alt="Avatar" 
                             className="w-full h-full object-cover"
-                            onError={(e) => { e.target.src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${req.teacher.name}`; }}
+                            onError={(e) => { e.target.src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${req.teacher?.name || 'User'}`; }}
                           />
                         </div>
-                        <span className="text-white text-sm font-bold">{req.teacher.name}</span>
+                        <span className="text-white text-sm font-bold">{req.teacher?.name || 'User'}</span>
                       </div>
                       <span className={`px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest border ${
                         req.status === 'PENDING' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20 animate-pulse' :
@@ -334,7 +334,7 @@ const MySessions = () => {
                       </span>
                     </div>
                     <p className="text-st-textSecondary text-xs">
-                      Sent request for <strong>{req.listing.skillName}</strong>.
+                      Sent request for <strong>{req.requestedSkill || req.listing?.skillName || 'Deleted Skill'}</strong>.
                     </p>
                     <p className="text-[10px] text-white/30 mt-2 font-medium">
                       {req.type === 'BARTER' ? `Proposed Barter: ${req.offeredSkill}` : `Offered: ${req.credits} Credits`}
