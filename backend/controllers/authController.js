@@ -205,6 +205,9 @@ const forgotPassword = async (req, res) => {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
       },
+      connectionTimeout: 10000, // 10s connection timeout
+      greetingTimeout: 10000,   // 10s greeting timeout
+      socketTimeout: 10000,     // 10s socket activity timeout
     });
 
     // Support local testing, fallback to CLIENT_URL or referrer/origin
