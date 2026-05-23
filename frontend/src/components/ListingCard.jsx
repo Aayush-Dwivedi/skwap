@@ -187,9 +187,12 @@ const ListingCard = ({ listing, currentUserId, onBook, isExpanded = false, onTog
               Request Swap
             </button>
           ) : (
-            <div className="w-full bg-white/5 border border-white/10 text-white/40 text-center font-semibold py-4 rounded-xl text-[15px] tracking-wide">
-              Your Listing
-            </div>
+            <button 
+              onClick={(e) => { e.stopPropagation(); onBook(listing); }}
+              className="no-expand w-full bg-white/5 hover:bg-white/10 border border-white/10 text-white/60 hover:text-white text-center font-semibold py-4 rounded-xl text-[15px] tracking-wide transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+            >
+              Your Listing (Manage)
+            </button>
           )}
         </div>
 

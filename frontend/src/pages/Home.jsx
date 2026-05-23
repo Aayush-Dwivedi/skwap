@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import api from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 import toast from 'react-hot-toast';
@@ -20,6 +21,20 @@ const Home = () => {
 
   const handleToggleExpand = (id) => {
     setExpandedId(prev => prev === id ? null : id);
+  };
+
+  const handleDeleteListing = async (id) => {
+    if (window.confirm('Are you sure you want to delete this listing? This action cannot be undone.')) {
+      try {
+        await api.delete(`/listings/${id}`);
+        toast.success('Listing deleted successfully');
+        setListings(prev => prev.filter(item => item._id !== id));
+        setSelectedListing(null);
+      } catch (error) {
+        console.error('Failed to delete listing', error);
+        toast.error(error.response?.data?.message || 'Failed to delete listing');
+      }
+    }
   };
 
   useEffect(() => {
@@ -166,12 +181,20 @@ const Home = () => {
         </div>
       )}
 
-      {/* Booking Modal */}
+      {/* Booking / Preview Modal */}
       {selectedListing && (
-        <BookingModal
-          listing={selectedListing}
-          onClose={() => setSelectedListing(null)}
-        />
+        (selectedListing.user?._id === user?._id || selectedListing.user === user?._id) ? (
+          <PreviewModal
+            listing={selectedListing}
+            onClose={() => setSelectedListing(null)}
+            onDelete={handleDeleteListing}
+          />
+        ) : (
+          <BookingModal
+            listing={selectedListing}
+            onClose={() => setSelectedListing(null)}
+          />
+        )
       )}
     </div>
   );
@@ -353,6 +376,52 @@ const BookingModal = ({ listing, onClose }) => {
           to   { opacity: 1; transform: translateY(0); }
         }
       `}</style>
+    </div>
+  );
+};
+
+/* ─────────────────────────── PREVIEW MODAL ─────────────────────────── */
+const PreviewModal = ({ listing, onClose, onDelete }) => {
+  return (
+    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in duration-300" onClick={onClose}>
+      <div className="glass-strong rounded-t-[2rem] sm:rounded-[2.5rem] p-6 sm:p-8 max-w-md w-full relative border border-white/15 shadow-2xl" onClick={e => e.stopPropagation()}>
+        <button onClick={onClose} className="absolute top-6 right-6 text-white/40 hover:text-white">
+          <X size={20} />
+        </button>
+        <h3 className="text-xl font-bold text-white mb-2">Listing Preview</h3>
+        <p className="text-st-textSecondary text-sm mb-6">This is how others see your skill card.</p>
+        
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center gap-3 p-4 bg-white/5 rounded-2xl border border-white/10">
+            <Zap className="text-amber-400" size={20} />
+            <div>
+              <p className="text-white font-bold text-sm">1 credit / hr</p>
+              <p className="text-white/40 text-[10px] uppercase">Exchange Rate</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3 p-4 bg-white/5 rounded-2xl border border-white/10">
+            <Clock className="text-st-accent" size={20} />
+            <div>
+              <p className="text-white font-bold text-sm">{listing.availability || 'Flexible Schedule'}</p>
+              <p className="text-white/40 text-[10px] uppercase">Availability</p>
+            </div>
+          </div>
+        </div>
+        
+        <div className="mt-8 flex flex-col gap-3">
+          <div className="flex gap-3">
+            <Link to={`/edit-listing/${listing._id}`} className="flex-1 glass text-white font-bold py-3 rounded-xl text-center hover:bg-white/10 transition-all border border-white/10">
+              Edit Listing
+            </Link>
+            <button onClick={() => onDelete(listing._id)} className="flex-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 font-bold py-3 rounded-xl transition-all">
+              Delete Listing
+            </button>
+          </div>
+          <button onClick={onClose} className="w-full glass-btn text-white font-bold py-3 rounded-xl transition-all">
+            Close
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
