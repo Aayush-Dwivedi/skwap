@@ -198,16 +198,9 @@ const forgotPassword = async (req, res) => {
 
     await user.save();
 
-    // 3. Send email using Resend HTTP API
-    const resendApiKey = process.env.RESEND_API_KEY;
-    const resendFrom = process.env.RESEND_FROM || 'Skill Trade <onboarding@resend.dev>';
-
     // Support local testing, fallback to CLIENT_URL or referrer/origin
     const clientUrl = process.env.CLIENT_URL || req.headers.referer || req.headers.origin || 'http://localhost:5173';
-    // Remove trailing slash if present
     const cleanOrigin = clientUrl.endsWith('/') ? clientUrl.slice(0, -1) : clientUrl;
-    // When visiting the forgot password page, the route will contain '/forgot-password' or similar. 
-    // Strip that path if we are using the referer as base URL.
     const baseUrl = cleanOrigin.replace('/forgot-password', '');
     const resetUrl = `${baseUrl}/reset-password/${resetToken}`;
 
@@ -235,32 +228,18 @@ const forgotPassword = async (req, res) => {
         </div>
       `;
 
-    if (!resendApiKey) {
-      console.warn('RESEND_API_KEY missing in .env. Skipping actual email send.');
-      return res.status(200).json({
-        message: 'Password reset link generated successfully (Resend API not configured)',
-        resetToken,
-      });
-    }
-
-    const axios = require('axios');
-    await axios.post('https://api.resend.com/emails', {
-      from: resendFrom,
-      to: [user.email],
+    // 3. Send email using the unified sendEmail utility (Resend -> SMTP fallback)
+    const sendEmail = require('../utils/sendEmail');
+    await sendEmail({
+      to: user.email,
       subject: 'Skill Trade - Password Reset Request',
-      html: emailHtml,
-    }, {
-      headers: {
-        'Authorization': `Bearer ${resendApiKey}`,
-        'Content-Type': 'application/json'
-      },
-      timeout: 10000
+      html: emailHtml
     });
 
     res.status(200).json({ message: 'Password reset link sent to your email.' });
   } catch (error) {
     console.error('Forgot password error:', error);
-    const apiErrorMsg = error.response?.data?.message || 'Could not send reset email. Please try again later.';
+    const apiErrorMsg = error.response?.data?.message || error.message || 'Could not send reset email. Please try again later.';
     res.status(error.response?.status || 500).json({ message: apiErrorMsg });
   }
 };
