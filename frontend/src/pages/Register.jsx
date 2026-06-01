@@ -62,9 +62,9 @@ const Register = () => {
         }}
       >
         <div className="flex flex-col items-center mb-8">
-          <div className="bg-st-buttonDark p-3 rounded-2xl mb-4 shadow-inner">
-             {/* Logo placeholder */}
-             <div className="w-8 h-8 rounded bg-white text-st-buttonDark flex items-center justify-center font-bold">S</div>
+          <div className="bg-st-buttonDark p-1.5 rounded-2xl mb-4 shadow-inner">
+             {/* Logo image */}
+             <img src="/logo.png" alt="Skill Trade Logo" className="w-12 h-12 object-cover rounded-xl" />
           </div>
           <h2 className="text-3xl font-bold text-white mb-2">Create Account</h2>
           <p className="text-st-textSecondary text-sm">Join the Skill Trade community</p>

@@ -131,8 +131,8 @@ const Sidebar = ({ collapsed, onToggle }) => {
           className={`flex items-center h-11 mb-4 mx-2 px-1 rounded-xl hover:bg-white/10 transition-colors duration-200 ${collapsed ? 'justify-center' : ''}`}
         >
           <span style={{ width: ICON_CELL, minWidth: ICON_CELL }} className="flex items-center justify-center">
-            <span className="w-8 h-8 rounded-lg bg-st-buttonFocus flex items-center justify-center shadow-md">
-              <Code2 size={15} className="text-white" />
+            <span className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center shadow-md">
+              <img src="/logo.png" alt="Logo" className="w-full h-full object-cover" />
             </span>
           </span>
           <span
